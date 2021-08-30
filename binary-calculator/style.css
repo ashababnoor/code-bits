@@ -1,0 +1,52 @@
+.container {
+    width: min(20em, 100%);
+    margin: 2em auto;
+}
+
+.container h1 {
+    text-align: center;
+    color: darkgreen;
+    text-shadow: 0 0 3px darkgreen;
+}
+
+#res {
+    background-color: lightgray;
+    font-size: 20px;
+    height: 1em;
+    border-style: solid;
+    vertical-align: middle;
+    padding: 0.7em;
+}
+
+#btn0,
+#btn1 {
+    background-color: lightgreen;
+    color: brown;
+}
+
+#btnClr,
+#btnEql {
+    color: white;
+    background-color: darkgreen;
+}
+
+#btnSum,
+#btnSub,
+#btnMul,
+#btnDiv {
+    background-color: black;
+    color: red;
+}
+
+#btns button {
+    width: 25%;
+    height: 36px;
+    font-size: 18px;
+    margin: 0px;
+    float: left;
+    font-weight: 500;
+}
+
+.red {
+    color: red;
+}
