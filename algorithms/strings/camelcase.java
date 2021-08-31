@@ -1,24 +1,9 @@
 //https://www.hackerrank.com/challenges/camelcase
 
-import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.text.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
+import java.util.Scanner;
 
-class Result {
-
-    /*
-     * Complete the 'camelcase' function below.
-     *
-     * The function is expected to return an INTEGER.
-     * The function accepts STRING s as parameter.
-     */
-
-    public static int camelcase(String s) {
-    // Write your code here
+public class camelcase {
+    public static int camelCase(String s){
         int num = 0;
 
         char[] letters = s.toCharArray();
@@ -31,21 +16,13 @@ class Result {
         return num+1;
     }
 
-}
+    public static void main(String[] args) {
+        String s = null;
+        //s = "iAmACamelCaseWord";
 
-public class Solution {
-    public static void main(String[] args) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
-
-        String s = bufferedReader.readLine();
-
-        int result = Result.camelcase(s);
-
-        bufferedWriter.write(String.valueOf(result));
-        bufferedWriter.newLine();
-
-        bufferedReader.close();
-        bufferedWriter.close();
+        Scanner scanner = new Scanner(System.in);
+        s = scanner.nextLine();
+        System.out.println(camelCase(s));
+        scanner.close();
     }
 }
