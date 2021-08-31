@@ -2,7 +2,7 @@
 
 import java.util.Scanner;
 
-public class camelcase {
+public class CamelCase {
     public static int camelCase(String s){
         int num = 0;
 
