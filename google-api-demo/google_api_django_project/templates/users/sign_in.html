@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+<!-- Loading from static -->
+{% load static %}
+
+<!-- Head will be extended below -->
+{% block extend_head %} {% endblock %}
+
+<!-- Content block -->
+{% block content %}
+
+<h3>Google API Django Project - Sign In</h3>
+
+<div class="container">
+
+    <form id="signinform" method="POST" action="/sign-in">
+        {% csrf_token %}
+        <label for="username">Username</label> {{form.username}}
+
+        <label for="password">Password</label> {{form.password}}
+
+        <label class="check-container">Show Passwords
+            <input type="checkbox" onclick="showPword()">
+            <span class="checkmark"></span>
+        </label>
+
+        <button type="submit">Sign in</button>
+    </form>
+
+</div>
+
+{% endblock %}
+
+<!-- Footer will be extended below -->
+{% block extend_footer %} {% endblock %}
