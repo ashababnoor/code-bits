@@ -1,5 +1,6 @@
 :root {
     --primary-clr: #9c07b6;
+    --primary-clr-dark: #730786;
 }
 
 body {
@@ -289,7 +290,7 @@ button[type=submit] {
 }
 
 button[type=submit]:hover {
-    background-color: #730786;
+    background-color: var(--primary-clr-dark);
 }
 
 .container {
@@ -323,7 +324,7 @@ table th {
 }
 
 .selected {
-    background-color: #730786;
+    background-color: var(--primary-clr-dark);
     color: #FFF;
 }
 
