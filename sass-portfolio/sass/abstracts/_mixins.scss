@@ -1,0 +1,30 @@
+@mixin flexCenter(
+    $direction: row,
+    $gap-size: 0,
+    $mobile: true
+) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: $direction;
+    gap: #{$gap-size}em;
+
+    @if mobile{
+        @include mobile{
+            flex-direction: column;
+        }
+    }
+}
+
+@mixin theme ($light-theme: true) {
+    @if $light-theme {
+        background: lighten($color: $bg-color, $amount: 100%);
+        color: darken($color: $text-color, $amount: 100%);
+    }
+}
+
+@mixin mobile {
+    @media (max-width: $mobile) {
+        @content
+    }
+}

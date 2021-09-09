@@ -1,0 +1,31 @@
+@import './abstracts/restart';
+@import './abstracts/variables';
+@import './abstracts/mixins';
+@import './abstracts/functions';
+
+
+body {
+    background-color: $bg-color;
+}
+
+.main{
+    @include flexCenter($gap-size: 2);
+    padding: 2em;
+    color: $text-color;
+
+    #{&}__paragraph {
+        font-weight: weight(bold);
+
+        &:hover{
+            color: $text-color-hover;
+        }
+    }
+}
+
+.light-theme{
+    @include theme(true)
+}
+
+.dark-theme{
+    @include theme(false)
+}
