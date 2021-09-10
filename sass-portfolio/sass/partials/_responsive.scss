@@ -1,0 +1,85 @@
+@include media-md {
+    // .menu-btn {
+    //     visibility: hidden;
+    //     position: inherit;
+    // }
+
+    // header {
+    //     position: inherit;
+    //     z-index: 1;
+    // }
+
+    // .nav {
+    //     position: inherit;
+    //     visibility: visible;
+
+    //     .menu-nav {
+    //         display: flex;
+    //         flex-direction: row;
+    //         justify-content: flex-end;
+    //         transform: translateY(0);
+    //         height: 100%;
+    //         background: transparent;
+    //         padding: 1.5rem 2em;
+
+    //         &__item {
+    //             display: inline;
+    //             padding-right: 1.5rem;
+    //             transform: translateX(0);
+    //         }
+
+    //         &__link {
+    //             padding-top: 1rem;
+    //             font-size: 1.5rem;
+    //         }
+    //     }
+    // }
+
+    .about__bio {
+        font-size: 1.5rem;
+    }
+
+    .jobs h6 {
+        font-size: 0.85em;
+    } 
+
+    .projects {
+        &__bio-image {
+            height: 40vh;
+        }
+
+        &__items {
+            grid-template-columns: auto auto;
+        }
+
+        &__item {
+            width: 100%;
+            height: calc(calc(60vw - 2rem) / 2);
+        }
+
+        .text-secondary {
+            font-size: 2.5rem;
+        }
+    }
+
+    .contact__list {
+        grid-gap: 3rem;
+    }
+}
+
+@include media-lg {
+    .projects {
+        &__items {
+            grid-template-columns: auto auto auto;
+        }
+
+        &__item {
+            width: 100%;
+            height: calc(calc(60vw - 4rem) / 3);
+        }
+    }
+
+    .contact__list {
+        grid-template-columns: auto auto auto;
+    }
+}

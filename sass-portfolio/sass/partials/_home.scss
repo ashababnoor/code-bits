@@ -4,21 +4,13 @@
     overflow: hidden;
     align-items: center;
     text-align: center;
-    background: 
-        linear-gradient(
-            to right,
-            rgba($primary-color, 0.5),
-            rgba($primary-color, 0.3)
-        ),
-        url(../images/underwater.jpg) center top;
-    background-size: cover;
+    @include background;
 
     &__name{
         font-size: 4.5rem;
         padding-bottom: 1rem;
-        margin-top: 1rem;
+        margin-bottom: 1rem;
         border-bottom: 2px solid set-text-color($primary-color);
-        margin-bottom: 0.75rem;
 
         &--last{
             color: $secondary-color;

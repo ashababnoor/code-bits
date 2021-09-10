@@ -4,13 +4,17 @@
 @import './abstracts/functions';
 @import './partials/home';
 @import './partials/menu';
+@import './partials/about';
+@import './partials/project';
+@import './partials/contact';
+@import './partials/responsive';
 
 
 body{
     background: $primary-color;
     color: set-text-color($primary-color);
     height: 100vh;
-    line-height: 1;
+    line-height: 1.1;
 }
 
 h1, h2, h3{
@@ -47,6 +51,10 @@ main{
             }
         }
     }
+}
+
+.text-secondary {
+    color: $secondary-color;
 }
 
 footer{
