@@ -3,9 +3,13 @@ $text-color: #eee;
 $text-color-hover: rgb(214, 94, 94);
 
 $font-weights: (
-    'regular': 400,
+    'normal': 400,
+    'regular': 500,
     'bold': 700,
     'bolder': 900
 );
 
 $mobile: 800px;
+
+$primary-color: #272727;
+$secondary-color: #ff652f;

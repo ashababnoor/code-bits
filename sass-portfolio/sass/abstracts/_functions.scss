@@ -1,3 +1,12 @@
 @function weight($weight-name){
-    @return map-get($font-weights, $weight-name)
+    @return map-get($font-weights, $weight-name);
+}
+
+@function set-text-color($color){
+    @if (lightness($color) > 40%){
+        @return #222;
+    }
+    @else {
+        @return #fff;
+    }
 }
