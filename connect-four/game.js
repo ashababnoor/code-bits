@@ -136,21 +136,22 @@ $('.board button').on('click', function(){
         if (horizontalWinCheck() || verticalWinCheck() || diagonalWinCheck()){
             $('h1').text(currName + " you have won!");
             $('h2').fadeOut('fast');
-            $('h3').fadeOut('fast');
+            $('h3').text('(Reload page to play again!)');
             game_active = false;
         }
-
-        currPlayer = currPlayer * -1;
-
-        if (currPlayer == 1){
-            currName = player1;
-            currColor = player1_color;
-            $('h3').text(currName+" it is your turn, pick a column to drop in!");
-        }
         else {
-            currName = player2;
-            currColor = player2_color;
-            $('h3').text(currName+" it is your turn, pick a column to drop in!");
+            currPlayer = currPlayer * -1;
+
+            if (currPlayer == 1){
+                currName = player1;
+                currColor = player1_color;
+                $('h3').text(currName+" it is your turn, pick a column to drop in!");
+            }
+            else {
+                currName = player2;
+                currColor = player2_color;
+                $('h3').text(currName+" it is your turn, pick a column to drop in!");
+            }
         }
     }
 })
