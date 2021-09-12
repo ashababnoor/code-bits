@@ -124,30 +124,33 @@ let currColor = player1_color;
 $('h3').text(currName+" it is your turn, pick a column to drop in!");
 
 $('.board button').on('click', function(){
-    let col = $(this).closest('td').index();
-    let bottomAvail = checkBottom(col);
+    if (game_active) {
+        let col = $(this).closest('td').index();
+        let bottomAvail = checkBottom(col);
 
-    changeColor(bottomAvail, col, currColor);
-    if (bottomAvail == 0) {
-        $('button#chip-0'+(col+1)).prop('disabled', true);
-    }
+        changeColor(bottomAvail, col, currColor);
+        if (bottomAvail == 0) {
+            $('button#chip-0'+(col+1)).prop('disabled', true);
+        }
 
-    if (horizontalWinCheck() || verticalWinCheck() || diagonalWinCheck()){
-        $('h1').text(currName + " you have won!");
-        $('h2').fadeOut('fast');
-        $('h3').fadeOut('fast');
-    }
+        if (horizontalWinCheck() || verticalWinCheck() || diagonalWinCheck()){
+            $('h1').text(currName + " you have won!");
+            $('h2').fadeOut('fast');
+            $('h3').fadeOut('fast');
+            game_active = false;
+        }
 
-    currPlayer = currPlayer * -1;
+        currPlayer = currPlayer * -1;
 
-    if (currPlayer == 1){
-        currName = player1;
-        currColor = player1_color;
-        $('h3').text(currName+" it is your turn, pick a column to drop in!");
-    }
-    else {
-        currName = player2;
-        currColor = player2_color;
-        $('h3').text(currName+" it is your turn, pick a column to drop in!");
+        if (currPlayer == 1){
+            currName = player1;
+            currColor = player1_color;
+            $('h3').text(currName+" it is your turn, pick a column to drop in!");
+        }
+        else {
+            currName = player2;
+            currColor = player2_color;
+            $('h3').text(currName+" it is your turn, pick a column to drop in!");
+        }
     }
 })
