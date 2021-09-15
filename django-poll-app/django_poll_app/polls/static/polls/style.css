@@ -1,0 +1,14 @@
+:root{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    display: inline-block;
+    background: green;
+    color: white;
+}
+
+li a {
+    color: green;
+    text-decoration: none;
+}
