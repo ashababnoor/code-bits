@@ -65,6 +65,6 @@ while True:
 
 print("Balls remaining:")
 print("\t Blue balls -", blue_balls_remaining)
-print("\t Red balls -", red_balls_remaining)
+print("\t Red balls  -", red_balls_remaining)
 
 
