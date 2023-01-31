@@ -26,6 +26,10 @@ h3 {
     margin-top: 1.75em;
 }
 
+.score-board {
+    display: none;
+}
+
 .chip {
     padding: 0.05em;
 }

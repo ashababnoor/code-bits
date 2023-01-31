@@ -1,0 +1,1 @@
+Hello, this data was read from data.txt file!
