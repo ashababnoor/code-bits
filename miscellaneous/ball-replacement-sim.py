@@ -12,6 +12,7 @@ ball remaining in the bag?
 
 import random
 
+
 init_no_of_blue_balls = 20
 init_no_of_red_balls = 13
 
@@ -25,6 +26,7 @@ normal_choices = [blue_ball, red_ball]
 only_blue_choices = [blue_ball]
 only_red_choices = [red_ball]
 
+
 while True:
     # checking if i have at least two balls remaining
     total_balls_remaining = blue_balls_remaining + red_balls_remaining
@@ -32,8 +34,14 @@ while True:
         break
     
     # choosing the first ball
-    if blue_balls_remaining and red_balls_remaining:
+    if blue_balls_remaining > 0 and red_balls_remaining > 0:
         first_ball_chosen = random.choice(normal_choices)
+    elif blue_balls_remaining > 0:
+        first_ball_chosen = random.choice(only_blue_choices)
+    elif red_balls_remaining > 0:
+        first_ball_chosen = random.choice(only_red_choices)
+    else:
+        break
 
     # reducing the number of balls based on what was chosen
     if first_ball_chosen == blue_ball:
@@ -42,11 +50,11 @@ while True:
         red_balls_remaining -= 1
 
     # choosing the second ball 
-    if blue_balls_remaining and red_balls_remaining:    
+    if blue_balls_remaining > 0 and red_balls_remaining > 0:    
         second_ball_chosen = random.choice(normal_choices)
-    elif blue_balls_remaining:
+    elif blue_balls_remaining > 0:
         second_ball_chosen = random.choice(only_blue_choices)
-    elif red_balls_remaining:
+    elif red_balls_remaining > 0:
         second_ball_chosen = random.choice(only_red_choices)
     else:
         break
@@ -62,6 +70,8 @@ while True:
         blue_balls_remaining += 1
     else:
         red_balls_remaining += 1
+
+
 
 print("Balls remaining:")
 print("\t Blue balls -", blue_balls_remaining)
