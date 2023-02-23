@@ -7,6 +7,7 @@ TO-DO:
 - Create generator and parser for text file 
 - Decide how to give points 
 - Add point calculation to game.js
+- Font for title: Lilita One (Connect Four)
 */
 
 window.load = loadData();

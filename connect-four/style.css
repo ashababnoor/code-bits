@@ -49,3 +49,34 @@ button {
 .turn-blue {
     background: #0071BC;
 }
+
+table {
+    overflow: hidden;
+    display: inline-block;
+    padding: 1.5em 2em;
+    box-shadow: inset 0 0 1em 0.65em #fff;
+}
+
+td,
+th {
+    padding: 1em;
+    position: relative;
+}
+
+td:hover::after {
+    background-color: #ffa;
+    box-shadow: 0 0 1em 0.35em #ffa;
+    content: '';
+    height: 10000px;
+    left: 0;
+    position: absolute;
+    top: -5000px;
+    width: 100%;
+    z-index: -1;
+}
+
+
+/* tr>td:nth-child(2)>button:hover [data-col="col-2"] {
+    background: aquamarine;
+    box-shadow: 0 0 50px 15px #D4145A;
+} */
