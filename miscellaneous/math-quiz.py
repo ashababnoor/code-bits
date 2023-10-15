@@ -1,4 +1,5 @@
 import random
+import textwrap
 
 # Quiz Configuration 
 number_lower_range = 1
@@ -55,6 +56,7 @@ def get_question() -> float:
     Returns:
         answer (float)
     '''
+    
     number1 = random.randint(number_lower_range, number_upper_range)
     number2 = random.randint(number_lower_range, number_upper_range)
     answer = number1 + number2
@@ -122,9 +124,24 @@ def print_correct_answer_message() -> None:
 
 def print_exit_message() -> None:
     print(f"{light_blue}Good bye!{reset}")
+    std_print()
+    
+def print_welcome_message() -> None:
+    std_print()
+    std_print(f"{light_blue_bold}Welcome to Math Quiz!{reset}")
+    instructions = f"""
+    {bold}Instructions:{reset}
+        Answer each question on your first try to get a point.
+        Type "exit" at any time to end the game and exit.
+    """
+    std_print(textwrap.dedent(instructions))
+    std_print()
+
 
 # Main driver code
 if __name__ == "__main__":
+    print_welcome_message()
+    
     keep_playing = True
     while (keep_playing):
         answer = get_question()
