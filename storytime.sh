@@ -1,4 +1,4 @@
-min_value=0.07
+min_value=0.1
 max_value=0.25
 
 function multiply_until_integer() {
@@ -27,12 +27,12 @@ function get_random_number() {
     local result_array=($(multiply_until_integer $min_max_val_difference))
     
     local lower_limit=1
-    local upper_limit=$(( ${result_array[1]} * 10 ))
-    local multiplied_by=$(( ${result_array[2]} * 10 ))
+    local upper_limit=${$(bc <<< "${result_array[1]} * 10")%.*}
+    local multiplied_by=$(bc <<< "${result_array[2]} * 10" )
     local multiplications=${result_array[3]}
 
     # Get a random integer using shuf 
-    local random_int=$(shuf -i $lower_limit-${upper_limit%.*} -n 1)
+    local random_int=$(shuf -i $lower_limit-$upper_limit -n 1)
 
     # Calculate random number within specified range
     local random_number=$(bc <<< "scale=$(( multiplications + 1 )); ($random_int / $multiplied_by) + $min_value")
