@@ -59,9 +59,9 @@ function get_last_commit_changes() {
     echo "Changes made in last commit: ${purple_bold}$last_commit_short_hash${reset} ($last_commit_time)"
     git diff --name-status $last_commit_hash^..$last_commit_hash | awk '
         BEGIN {
-            color_A = "\033[1;32m";  # Green
-            color_M = "\033[1;33m";  # Yellow
-            color_D = "\033[1;31m";  # Red
+            color_A = "\033[0;32m";  # Green
+            color_M = "\033[0;33m";  # Yellow
+            color_D = "\033[0;31m";  # Red
             color_fbk = "\033[0;36m" # Light Blue; Fallback color
             reset = "\033[0m";       # Reset color
         }
