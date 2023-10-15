@@ -70,6 +70,17 @@ def get_answer(answer: float) -> bool:
         return get_answer(answer)
 
 def check_for_exit_statement() -> tuple[bool, float]:
+    '''
+    This function takes user input and checks wether user wants to exit or not
+    
+    Args:
+        None
+    
+    Returns:
+        tuple[bool, float]:
+            bool: Users wants to keep playing or not
+            float: User input if user wants to keep playing, 0 if they don't
+    '''
     exit_statement = "exit"
     
     user_input = input()
