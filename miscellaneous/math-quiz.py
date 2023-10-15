@@ -125,9 +125,13 @@ def check_for_exit_statement() -> tuple[bool, float]:
     '''
     exit_statement = "exit"
     
-    user_input = input()
+    user_input = input().strip()
     if user_input == exit_statement:
         return True, 0
+    
+    if not user_input.isnumeric():
+        print(f"{yellow}Not a number.{reset} Try again.")
+        return check_for_exit_statement()
     
     return False, float(user_input)
 
