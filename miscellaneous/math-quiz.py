@@ -6,6 +6,10 @@ number_lower_range = 1
 number_upper_range = 10
 question_template = "What is {number1} {operand} {number2}?"
 
+question_counter = 0
+score_counter = 0
+first_attempt_failed = False
+
 
 # Define bold text and reset color and formatting
 bold='\033[1m'  # bold text
@@ -56,6 +60,10 @@ def get_question() -> float:
     Returns:
         answer (float)
     '''
+    global question_counter, first_attempt_failed
+    
+    question_counter += 1
+    first_attempt_failed = False
     
     number1 = random.randint(number_lower_range, number_upper_range)
     number2 = random.randint(number_lower_range, number_upper_range)
@@ -81,6 +89,8 @@ def get_answer(answer: float) -> bool:
     Returns:
         keep_playing (bool): Weather player wants to keep playing or not
     '''
+    global score_counter, first_attempt_failed
+    
     user_wants_to_exit, user_input = check_for_exit_statement()
     keep_playing = True
     
@@ -90,9 +100,14 @@ def get_answer(answer: float) -> bool:
         return keep_playing
     
     if user_input == answer:
+        if not first_attempt_failed:
+            score_counter += 1
+        
         print_correct_answer_message()
         return keep_playing
     else:
+        first_attempt_failed = True
+        
         print_wrong_answer_message()
         return get_answer(answer)
 
@@ -120,10 +135,15 @@ def print_wrong_answer_message() -> None:
     print(f"{red}Wrong Answer!{reset} Try again.")
 
 def print_correct_answer_message() -> None:
-    print(f"{green}Correct answer!{reset}")
+    global question_counter, score_counter
+    
+    print(f"{green}Correct answer!{reset} Score: {score_counter}/{question_counter}")
 
 def print_exit_message() -> None:
-    print(f"{light_blue}Good bye!{reset}")
+    global question_counter, score_counter
+    
+    print(f"You have scored {score_counter} questions correctly on your first try out of {question_counter}!")
+    print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
     
 def print_welcome_message() -> None:
