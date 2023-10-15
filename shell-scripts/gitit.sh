@@ -53,7 +53,7 @@ function get_last_commit_changes() {
     # Find the commit range of the last push
     local last_commit_hash=$(git log -n 1 --pretty=format:%H)
     local last_commit_short_hash=$(git rev-parse --short $last_commit_hash)
-    local last_commit_time=$(git log -n 1 --format="%cd")
+    local last_commit_time=$(git log -n 1 --format="%cd" --date=format:'%a %d %b %Y %H:%M:%S %z')
 
     # Show modified files in the last commit
     echo "Changes made in last commit: ${purple_bold}$last_commit_short_hash${reset} ($last_commit_time)"
