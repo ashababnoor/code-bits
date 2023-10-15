@@ -67,12 +67,15 @@ def get_question() -> float:
     
     number1 = random.randint(number_lower_range, number_upper_range)
     number2 = random.randint(number_lower_range, number_upper_range)
-    answer = number1 + number2
+    operands = ["+", "-", "*", "/"]
+
+    operand = random.choice(operands)
+    answer = eval(f"{number1} {operand} {number2}")
     
     print(
         question_template.format(
             number1=number1, 
-            operand="+",
+            operand=operand,
             number2=number2
         )
     )
@@ -127,14 +130,17 @@ def check_for_exit_statement() -> tuple[bool, float]:
     
     user_input = input().strip()
     if user_input == exit_statement:
-        return True, 0
-    
-    if not user_input.isnumeric():
-        print(f"{yellow}Not a number.{reset} Try again.")
-        return check_for_exit_statement()
-    
-    return False, float(user_input)
+        return True, 0        
 
+    try:
+        return False, float(user_input)
+    except:
+        print_not_a_number_message()
+        return check_for_exit_statement()
+
+def print_not_a_number_message() -> None:
+    print(f"{yellow}Not a number.{reset} Try again.")
+    
 def print_wrong_answer_message() -> None:
     print(f"{red}Wrong Answer!{reset} Try again.")
 
