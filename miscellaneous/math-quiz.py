@@ -70,7 +70,8 @@ def get_question() -> float:
     operands = ["+", "-", "*", "/"]
 
     operand = random.choice(operands)
-    answer = eval(f"{number1} {operand} {number2}")
+    answer = round(eval(f"{number1} {operand} {number2}"), 2)
+    print(answer)
     
     print(
         question_template.format(
@@ -152,7 +153,7 @@ def print_correct_answer_message() -> None:
 def print_exit_message() -> None:
     global question_counter, score_counter
     
-    print(f"You have scored {score_counter} questions correctly on your first try out of {question_counter}!")
+    print(f"You have answered {score_counter} questions correctly on your first try out of {question_counter-1}!")
     print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
     
