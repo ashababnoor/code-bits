@@ -65,8 +65,10 @@ def get_answer(answer: float) -> bool:
         return keep_playing
     
     if user_input == answer:
+        print_correct_answer_message()
         return keep_playing
     else:
+        print_wrong_answer_message()
         return get_answer(answer)
 
 def check_for_exit_statement() -> tuple[bool, float]:
@@ -89,6 +91,11 @@ def check_for_exit_statement() -> tuple[bool, float]:
     
     return False, float(user_input)
 
+def print_wrong_answer_message() -> None:
+    print("Wrong Answer! Try again.")
+
+def print_correct_answer_message() -> None:
+    print("Correct answer!")
 
 # Main driver code
 if __name__ == "__main__":
@@ -96,4 +103,3 @@ if __name__ == "__main__":
     while (keep_playing):
         answer = get_question()
         keep_playing = get_answer(answer)
-
