@@ -47,11 +47,72 @@ function get_random_number() {
 
 # input_string=$1
 
-input_string="Octopuses have three hearts. Two pump blood to the gills, while the third pumps it to the rest of the body."
+input_string="Octopuses have three hearts."
 
-for (( i=0; i<${#input_string}; i++ )); do
-    echo -n "${input_string:$i:1}"
-    sleep $(get_random_number $min_value $max_value)
-done
+# for (( i=0; i<${#input_string}; i++ )); do
+#     sleeptime=$(get_random_number $min_value $max_value)
+#     echo $sleeptime
+#     echo -n "${input_string:0:$i}"
+#     # echo
+#     sleep 0.05 # $sleeptime
+# done
 
-echo
+# echo
+
+text="There was once a hare who was friends with a tortoise. One day, he challenged the tortoise to a race. Seeing how slow the tortoise was going, the hare thought he’ll win this easily. So he took a nap while the tortoise kept on going. When the hare woke up, he saw that the tortoise was already at the finish line. Much to his chagrin, the tortoise won the race while he was busy sleeping."
+
+# Function to split the text into chunks
+# function split_text() {
+#     local str="$1"
+#     local len=${#str}
+#     for ((i = 0; i < len; i += chunk_size)); do
+#         echo "${str:$i:$chunk_size}"
+#     done
+# }
+
+# # # Split the text into chunks and print
+# split_text "$text" | while IFS= read -r chunk; do
+#     for ((i = 0; i < ${#chunk}; i++)); do
+#         echo -n "${chunk:$i:1}"
+#         sleep $delay
+#     done
+#     echo  # Add a newline after each chunk
+# done
+
+# # Print some lines
+# echo "Line 1"
+# echo "Line 2"
+# echo "Line 3"
+
+# # Move the cursor up one line
+# echo -e "\033[A"
+
+# # Print something on the line above
+# echo "This is on the line above"
+
+#!/bin/bash
+
+function print_chunks() {
+    if [ $# -eq 0 ]; then
+        echo "Error: No input string provided."
+        return 1
+    fi
+
+    local input_string=$1
+    local chunk_size=${2:-10}  # Default chunk size is 10
+
+    local len=${#input_string}
+    local i=0
+
+    while [ $i -lt $len ]; do
+        local chunk="${input_string:$i:$chunk_size}"
+        for (( j=0; j<${#chunk}; j++ )); do
+            echo -n "${chunk:$j:1}"
+            sleep 0.05  # Optional: Add a small delay between characters
+        done
+        echo ""  # Print a newline after each chunk
+        i=$((i + chunk_size))
+    done
+}
+
+print_chunks $text
