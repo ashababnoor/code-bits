@@ -48,16 +48,17 @@ function get_random_number() {
 # input_string=$1
 
 input_string="Octopuses have three hearts."
+echo
 
-# for (( i=0; i<${#input_string}; i++ )); do
-#     sleeptime=$(get_random_number $min_value $max_value)
-#     echo $sleeptime
-#     echo -n "${input_string:0:$i}"
-#     # echo
-#     sleep 0.05 # $sleeptime
-# done
+for (( i=0; i<${#input_string}; i++ )); do
+    sleeptime=$(get_random_number $min_value $max_value)
+    echo "\033[A$sleeptime"
+    echo -n "${input_string:0:$i}"
+    printf "\r"
+    sleep 0.05 # $sleeptime
+done
 
-# echo
+echo
 
 text="There was once a hare who was friends with a tortoise. One day, he challenged the tortoise to a race. Seeing how slow the tortoise was going, the hare thought he’ll win this easily. So he took a nap while the tortoise kept on going. When the hare woke up, he saw that the tortoise was already at the finish line. Much to his chagrin, the tortoise won the race while he was busy sleeping."
 
@@ -79,13 +80,14 @@ text="There was once a hare who was friends with a tortoise. One day, he challen
 #     echo  # Add a newline after each chunk
 # done
 
-# # Print some lines
+# Print some lines
 # echo "Line 1"
 # echo "Line 2"
 # echo "Line 3"
 
 # # Move the cursor up one line
 # echo -e "\033[A"
+# echo -e "\033[AThis is on the line above"
 
 # # Print something on the line above
 # echo "This is on the line above"
@@ -115,4 +117,4 @@ function print_chunks() {
     done
 }
 
-print_chunks $text
+# print_chunks $text
