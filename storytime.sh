@@ -40,8 +40,6 @@ function get_random_number() {
     echo $random_number
 }
 
-get_random_number $min_value $max_value
-
 # if [ $# -eq 0 ]; then
 #     echo "Error: No input string provided."
 #     exit 1
@@ -53,7 +51,7 @@ input_string="Octopuses have three hearts. Two pump blood to the gills, while th
 
 for (( i=0; i<${#input_string}; i++ )); do
     echo -n "${input_string:$i:1}"
-    sleep 0.1
+    sleep $(get_random_number $min_value $max_value)
 done
 
 echo
