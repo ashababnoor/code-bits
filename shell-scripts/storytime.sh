@@ -40,6 +40,31 @@ function get_random_number() {
     echo $random_number
 }
 
+function print_string_in_dynamic_speed(){
+    if [ $# -eq 0 ]; then
+        echo "Error: No input string provided."
+        # exit 1
+    fi
+
+    input_string=${1-"Octopuses have three hearts."}
+
+    echo
+    local one_line_up="\033[A"
+
+    for (( i=0; i<${#input_string}; i++ )); do
+        sleeptime=$(get_random_number $min_value $max_value)
+        echo -n $one_line_up
+        echo "Speed: $sleeptime"
+        echo -n "${input_string:0:$i}"
+        printf "\r"
+        sleep 0.05 # $sleeptime
+    done
+
+    echo
+}
+
+print_string_in_dynamic_speed
+
 # if [ $# -eq 0 ]; then
 #     echo "Error: No input string provided."
 #     exit 1
@@ -47,20 +72,22 @@ function get_random_number() {
 
 # input_string=$1
 
-input_string="Octopuses have three hearts."
-echo
+# input_string="Octopuses have three hearts."
+# echo
+# one_line_up="\033[A"
 
-for (( i=0; i<${#input_string}; i++ )); do
-    sleeptime=$(get_random_number $min_value $max_value)
-    echo "\033[A$sleeptime"
-    echo -n "${input_string:0:$i}"
-    printf "\r"
-    sleep 0.05 # $sleeptime
-done
+# for (( i=0; i<${#input_string}; i++ )); do
+#     sleeptime=$(get_random_number $min_value $max_value)
+#     echo -n $one_line_up
+#     echo "Speed: $sleeptime"
+#     echo -n "${input_string:0:$i}"
+#     printf "\r"
+#     sleep 0.05 # $sleeptime
+# done
 
-echo
+# echo
 
-text="There was once a hare who was friends with a tortoise. One day, he challenged the tortoise to a race. Seeing how slow the tortoise was going, the hare thought he’ll win this easily. So he took a nap while the tortoise kept on going. When the hare woke up, he saw that the tortoise was already at the finish line. Much to his chagrin, the tortoise won the race while he was busy sleeping."
+# text="There was once a hare who was friends with a tortoise. One day, he challenged the tortoise to a race. Seeing how slow the tortoise was going, the hare thought he’ll win this easily. So he took a nap while the tortoise kept on going. When the hare woke up, he saw that the tortoise was already at the finish line. Much to his chagrin, the tortoise won the race while he was busy sleeping."
 
 # Function to split the text into chunks
 # function split_text() {
