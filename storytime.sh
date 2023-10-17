@@ -42,7 +42,14 @@ function get_random_number() {
 
 get_random_number $min_value $max_value
 
-input_string="YourLongStringHere"
+# if [ $# -eq 0 ]; then
+#     echo "Error: No input string provided."
+#     exit 1
+# fi
+
+# input_string=$1
+
+input_string="Octopuses have three hearts. Two pump blood to the gills, while the third pumps it to the rest of the body."
 
 for (( i=0; i<${#input_string}; i++ )); do
     echo -n "${input_string:$i:1}"
