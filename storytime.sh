@@ -41,3 +41,12 @@ function get_random_number() {
 }
 
 get_random_number $min_value $max_value
+
+input_string="YourLongStringHere"
+
+for (( i=0; i<${#input_string}; i++ )); do
+    echo -n "${input_string:$i:1}"
+    sleep 0.1
+done
+
+echo
