@@ -28,3 +28,4 @@ from base_intl_top_terms
 group by
   country_code
   , week
+limit 10
