@@ -6,13 +6,15 @@ class Query:
         "__query_path",
         "__query_string",
         "query_name",
+        "seeds",
     )
 
     __root_dir = os.path.dirname(os.path.dirname(__file__))
     __query_dir = "sql"
 
-    def __init__(self, query_name) -> None:
+    def __init__(self, query_name, seeds=1) -> None:
         self.query_name = query_name
+        self.seeds = seeds
         self.__query_path = os.path.join(
             Query.__root_dir, Query.__query_dir, f"{self.query_name}.sql"
         )

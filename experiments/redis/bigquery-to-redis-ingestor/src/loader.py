@@ -9,14 +9,6 @@ class Bigquery:
         for row in self.__cnn.query(query):
             yield row
 
-    def test_connection(self):
-        import os
-
-        datasets = self.__cnn.list_datasets(
-            project=os.environ.get("BIGQUERY_PROJECT_ID")
-        )
-        return True if datasets else False
-
     @staticmethod
     def _get_connection(cred):
         if cred is not None:
@@ -24,3 +16,11 @@ class Bigquery:
 
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred
         return bigquery.Client()
+    
+    def test_connection(self):
+        import os
+
+        datasets = self.__cnn.list_datasets(
+            project=os.environ.get("BIGQUERY_PROJECT_ID")
+        )
+        return True if datasets else False
