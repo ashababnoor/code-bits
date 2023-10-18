@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 
+
 class Bigquery:
     def __init__(self, google_cred):
         self.__cnn = Bigquery._get_connection(google_cred)
@@ -7,10 +8,13 @@ class Bigquery:
     def execute(self, query):
         for row in self.__cnn.query(query):
             yield row
-    
+
     def test_connection(self):
         import os
-        datasets = self.__cnn.list_datasets(project=os.environ.get("BIGQUERY_PROJECT_ID"))
+
+        datasets = self.__cnn.list_datasets(
+            project=os.environ.get("BIGQUERY_PROJECT_ID")
+        )
         return True if datasets else False
 
     @staticmethod
