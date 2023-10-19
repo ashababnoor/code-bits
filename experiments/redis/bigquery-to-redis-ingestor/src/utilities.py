@@ -1,53 +1,67 @@
+from datetime import datetime
+
+
+# Define bold text and reset color and formatting
+bold='\033[1m'               # bold text
+reset='\033[0m'              # reset color and formatting
+
+# Define non-bold color codes
+blue='\033[0;34m'            # Blue
+light_blue='\033[0;36m'      # Light Blue
+green='\033[0;32m'           # Green
+red='\033[0;31m'             # Red
+yellow='\033[0;33m'          # Yellow
+purple='\033[0;35m'          # Purple
+
+# Define bold color codes
+blue_bold='\033[1;34m'       # Bold Blue
+light_blue_bold='\033[1;36m' # Bold Light Blue
+green_bold='\033[1;32m'      # Bold Green
+red_bold='\033[1;31m'        # Bold Red
+yellow_bold='\033[1;33m'     # Bold Yellow
+purple_bold='\033[1;35m'     # Bold Purple
+
+
+now: str = lambda: datetime.now().strftime('%H:%M:%S')
+
 def get_attributes(object: any) -> list:
     return [
         attr 
         for attr in dir(object) 
-        if not callable(getattr(object, attr)) 
-        and not attr.startswith('__')
+        if not callable(getattr(object, attr)) and not attr.startswith('__')
     ]
 
 def get_regular_methods(object: any) -> list:
     return [
         method 
         for method in dir(object) 
-        if callable(getattr(object, method)) 
-        and not method.startswith('__')
+        if callable(getattr(object, method)) and not method.startswith('__')
     ]
     
 def get_dunder_methods(object: any) -> list:
     return [
         method 
         for method in dir(object) 
-        if callable(getattr(object, method)) 
-        and method.startswith('__')
-    ]
+        if callable(getattr(object, method)) and method.startswith('__')
+    ]    
+
 
 if __name__ == "__main__":
     from connector import bq
-    import os
+    from models import Query
     
-    root_dir = os.path.dirname(os.path.dirname(__file__))
-    query_dir = "sql/"
-    query_file_name = "address_history" # "popular_search_terms"
-    query_file_ext = "sql"
-
-    query_file_path = os.path.join(
-        root_dir,
-        query_dir, 
-        f"{query_file_name}.{query_file_ext}"
-    )
-    with open(query_file_path, "r") as file:
-        query = file.read()
-
-    for row in bq.query(query):
+    query = Query("popular_search_terms", seeds=2, limit=1)
+    query_string = query.get_query_string()
+    
+    for row in bq.execute(query_string):
         attributes = get_attributes(row)
         regular_methods = get_regular_methods(row)
         dunder_methods = get_dunder_methods(row)
         
         print(f"{attributes = }")       
         print(f"{regular_methods = }") 
-
-        print(f"{row.items() = }")
-        print(f"{row.keys() = }")
-        print(f"{row.values() = }")
+        print(f"{dunder_methods = }")
         break
+    
+    print()
+    print(f"{now() = }")
