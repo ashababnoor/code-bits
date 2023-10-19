@@ -29,4 +29,3 @@ group by
   country_code
   , week
 order by country_code, week desc
-limit 20
