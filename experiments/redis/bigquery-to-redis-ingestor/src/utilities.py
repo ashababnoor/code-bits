@@ -207,19 +207,33 @@ def get_dunder_methods(object: any) -> list:
         for method in dir(object) 
         if callable(getattr(object, method)) and method.startswith('__')
     ]
-    
-def to_human_readable_time(seconds: int, use_short_names=True) -> str:
+
+def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True) -> str:
     import humanize
     from datetime import timedelta
-    short_names = {" minutes": "min", " seconds": "s", " milli": "m", " micro": "μ", "seconds": "s"}
+    short_names = {
+        " days": "d", " day": "d",
+        " hours": "h", " hour": "h",
+        " minutes": "min", " minute": "min",
+        " seconds": "s", " second": "s",
+        " milliseconds": "ms", " millisecond": "ms",
+        " microseconds": "μs", " microsecond": "μs"
+    }
 
     delta = timedelta(seconds=seconds)
     human_readable_time = humanize.precisedelta(delta, minimum_unit="microseconds")
+    human_readable_time = human_readable_time.replace(" and ", ", ")
+    
+    if len(units) > max_depth:
+        units = human_readable_time.split(", ")
+        units = units[:max_depth]
+        human_readable_time = ", ".join(units)
+    
     if use_short_names:
         for name, short_name in short_names.items(): human_readable_time = human_readable_time.replace(name, short_name)
     return human_readable_time
 
-        
+
 # Driver code
 if __name__ == "__main__":    
     with CodeBlock("Utility functions") as block:
