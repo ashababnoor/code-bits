@@ -79,8 +79,8 @@ class CodeBlock():
             return
 
         if self.declarative:
-            core_header = f"{self.declaration_message}:"
-            if self.message is not None: core_header +=  f" {self.message}"
+            core_header = self.declaration_message
+            if self.message is not None: core_header +=  f": {self.message}"
         else:
             core_header = f"{self.message}"
         
@@ -96,13 +96,23 @@ class CodeBlock():
     def __exit__(self, exc_type, exc_value, traceback):
         print("\n" * (self.separation-1))
         
-class Timer():
-    def __init__(self) -> None:
-        pass
+class TimerBlock(CodeBlock):
+    declaration_message: str = "Inside TimerBlock"
+    
+    def __init__(
+            self, 
+            message: str="", 
+            format: str=Color.bold, 
+            pretty: bool=True, 
+            declarative: bool=False, 
+            separation: int=1
+        ) -> None:
+        super().__init__(message, format, pretty, declarative, separation)
     
     def __enter__(self):
         import time
         self.start_time = time.time()
+        super().__enter__()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -110,6 +120,7 @@ class Timer():
         self.end_time = time.time()
         self.elapsed_time = self.end_time - self.start_time
         print(f"Elapsed time: {self.elapsed_time} seconds")
+        super().__exit__(exc_type, exc_value, traceback)
 
 
 # Utility lambdas
@@ -158,3 +169,8 @@ if __name__ == "__main__":
         Print.success("success message using Print class")
         Print.warning("warning message using Print class")
         Print.error("error message using Print class")
+        
+    
+    with TimerBlock(declarative=True) as block:
+        print("Inside timerblock")
+        
