@@ -67,7 +67,8 @@ class CodeBlock():
             declarative: bool=False, 
             separation: int=1
         ):
-        self.message = message
+        message = message.strip()
+        self.message = message if message == "" else None
         self.format = format
         self.pretty = pretty
         self.declarative = declarative
