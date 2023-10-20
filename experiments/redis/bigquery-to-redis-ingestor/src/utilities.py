@@ -66,8 +66,12 @@ class CodeBlock():
             pretty: bool=True, 
             separation: int=1
         ):
-        message = str(message).strip()
-        self.message = message if not message == "" else None
+        if message is not None:
+            message = str(message).strip()
+            self.message = message if not message == "" else None
+        else:
+            self.message = message
+                                
         self.format = format
         self.pretty = pretty
         self.declarative = declarative
@@ -97,12 +101,15 @@ class CodeBlock():
         
 class TimerBlock(CodeBlock):
     declaration_message: str = "Inside TimerBlock"
+    force_record_counter: int = 0
     
     def __init__(
             self, 
             message: str="", 
             format: str=Color.bold, 
             declarative: bool=False,
+            *,
+            force_record: bool=False,
             **kwargs
         ) -> None:
         super().__init__(
@@ -111,6 +118,23 @@ class TimerBlock(CodeBlock):
             declarative, 
             **kwargs
         )
+        self.force_record = force_record
+
+    def __add_to_global_records(self):
+        if self.message is None and not self.force_record:
+            return
+        if self.message is None and self.force_record:
+            message = f"Untitled task {TimerBlock.force_record_counter}"
+            TimerBlock.force_record_counter += 1
+        else:
+            message = self.message
+        
+        global global_code_execution_records
+        if "global_code_execution_records" not in globals() or not type(global_code_execution_records) == dict:
+            global_code_execution_records = {}
+        
+        global_code_execution_records[message] = self.elapsed_time
+        return
     
     def __enter__(self):
         import time
@@ -122,10 +146,26 @@ class TimerBlock(CodeBlock):
         import time
         self.end_time = time.time()
         self.elapsed_time = self.end_time - self.start_time
-        human_readable_time = to_human_readable_time(self.elapsed_time)
         
+        human_readable_time = to_human_readable_time(self.elapsed_time)
         print(f"{Color.light_blue}Elapsed time:{Color.reset} {human_readable_time}")
+        
+        self.__add_to_global_records()
         super().__exit__(exc_type, exc_value, traceback)
+        
+    @staticmethod
+    def global_summary(pretty=True):
+        global global_code_execution_records
+        if "global_code_execution_records" not in globals() or not type(global_code_execution_records) == dict:
+            Print.error("No execution timing record found!")
+            return
+        padding = 0
+        if pretty:
+            padding += len(max(global_code_execution_records))
+        for message, elapsed_time in global_code_execution_records.items():
+            message = f"{message}"
+            human_readable_time = to_human_readable_time(elapsed_time)
+            print(f"{message: <{padding}}: {human_readable_time}")
 
 
 # Utility lambdas
@@ -164,27 +204,34 @@ def to_human_readable_time(seconds: int) -> str:
 
 # Driver code
 if __name__ == "__main__":    
-    with CodeBlock("Utility functions") as block:
-        from models import Query
+    # with CodeBlock("Utility functions") as block:
+    #     from models import Query
                 
-        query = Query("popular_search_terms", seeds=2, limit=1)
-        print(f"{get_attributes(query) = }")       
-        print(f"{get_regular_methods(query) = }") 
+    #     query = Query("popular_search_terms", seeds=2, limit=1)
+    #     print(f"{get_attributes(query) = }")       
+    #     print(f"{get_regular_methods(query) = }") 
     
     
-    with CodeBlock("Utility lambdas") as block:
-        print(f"{now() = }")
+    # with CodeBlock("Utility lambdas") as block:
+    #     print(f"{now() = }")
     
     
-    with CodeBlock("Utility classes") as block:
-        Print.log("log message using Print class")
-        Print.success("success message using Print class")
-        Print.warning("warning message using Print class")
-        Print.error("error message using Print class")
-        
+    # with CodeBlock("Utility classes") as block:
+    #     Print.log("log message using Print class")
+    #     Print.success("success message using Print class")
+    #     Print.warning("warning message using Print class")
+    #     Print.error("error message using Print class")
     
-    with TimerBlock() as block:
+    with TimerBlock(force_record=True) as block:
         start = 1
         finish = 1_000
         print(f"Generating list from {start:,} to {finish:,}")
         list_ = [i for i in range(start, finish+1)]
+        
+    with TimerBlock("Long", force_record=True) as block:
+        start = 1
+        finish = 1_000
+        print(f"Generating list from {start:,} to {finish:,}")
+        list_ = [i for i in range(start, finish+1)]
+    
+    TimerBlock.global_summary()
