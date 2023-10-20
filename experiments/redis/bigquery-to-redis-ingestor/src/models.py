@@ -3,6 +3,7 @@ from copy import copy
 from typing import Union
 from utilities import *
 
+
 class Query:
     __slots__ = (
         "__query_path",
@@ -60,23 +61,23 @@ class Query:
 
 
 if __name__ == "__main__":
-    print(f"{green_bold}Query class regular constructor:{reset}")
+    print(f"{Color.green_bold}Query class regular constructor:{Color.reset}")
     query = Query("popular_search_terms")
     print(query)
-    print(f"{light_blue}Original query string:{reset}")
+    print(f"{Color.light_blue}Original query string:{Color.reset}")
     print(query.get_query_string())
     
     print("\n")
 
-    print(f"{green_bold}'add_limit()' with inplace=False:{reset}")
+    print(f"{Color.green_bold}'add_limit()' with inplace=False:{Color.reset}")
     print(query.add_limit(10))
-    print(f"{light_blue}Modified query string:{reset}")
+    print(f"{Color.light_blue}Modified query string:{Color.reset}")
     print(query.add_limit(10).get_query_string())
 
     print("\n")
 
-    print(f"{green_bold}Query class constructor with limit:{reset}")
+    print(f"{Color.green_bold}Query class constructor with limit:{Color.reset}")
     query = Query("address_history", limit=25)
     print(query)
-    print(f"{light_blue}Original query:{reset}")
+    print(f"{Color.light_blue}Original query:{Color.reset}")
     print(query.get_query_string())
