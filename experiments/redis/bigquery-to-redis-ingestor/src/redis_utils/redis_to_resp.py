@@ -19,8 +19,10 @@ def redis_commands_to_resp(input_file, output_file):
         for resp_command in resp_commands:
             file.write(resp_command)
 
-# Example usage
-input_file = 'redis_commands.txt'
-output_file = 'resp_commands.txt'
 
-redis_commands_to_resp(input_file, output_file)
+if __name__ == "__main__":
+    # Example usage
+    input_file = 'redis_commands.txt'
+    output_file = 'resp_commands.txt'
+
+    redis_commands_to_resp(input_file, output_file)

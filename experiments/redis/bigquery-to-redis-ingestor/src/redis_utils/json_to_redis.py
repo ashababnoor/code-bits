@@ -1,8 +1,10 @@
 import json
 
-def json_to_redis_commands(json_str, output_file):
+def json_to_redis_commands(json_file, output_file):
     # Parse the JSON string
-    data = json.loads(json_str)
+    
+    with open(json_file, "r") as file:
+        data = json.load(file)
     
     # Initialize a list to store Redis commands
     redis_commands = []
@@ -19,8 +21,10 @@ def json_to_redis_commands(json_str, output_file):
     with open(output_file, 'w') as file:
         file.write('\n'.join(redis_commands))
 
-# Example usage
-json_string = '{"name": "John Doe", "age": 30, "address": {"city": "New York", "state": "NY"}}'
-output_file = 'redis_commands.txt'
 
-json_to_redis_commands(json_string, output_file)
+if __name__ == "__main__":
+    # Example usage
+    json_string = '{"name": "John Doe", "age": 30, "address": {"city": "New York", "state": "NY"}}'
+    output_file = 'redis_commands.txt'
+
+    json_to_redis_commands(json_string, output_file)

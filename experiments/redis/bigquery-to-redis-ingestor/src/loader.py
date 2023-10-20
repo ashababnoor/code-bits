@@ -56,3 +56,11 @@ class Bigquery:
             json.dump(query_output_dict, json_file, default=str) 
 
         if verbose: Print.success("Writing to json file completed!")
+            
+    def generate_redis_protocol_file(
+        self, 
+        query: Query, 
+        save_path: str, 
+        verbose: bool=False
+    ):
+        pass

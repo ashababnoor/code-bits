@@ -48,4 +48,30 @@ with TimerBlock("Bigquery.write_to_json_file()") as block:
         , verbose=True
     )
 
+from redis_utils.json_to_redis import json_to_redis_commands
+from redis_utils.redis_to_resp import redis_commands_to_resp
+
+# Defining Redis files names and paths
+redis_commands_file_name = f"redis_commands_{query.query_name}.txt"
+resp_file_name = f"resp_{query.query_name}.txt"
+
+redis_commands_file_path = os.path.join(
+    root_dir,
+    data_dir, 
+    redis_commands_file_name
+)
+resp_file_name = os.path.join(
+    root_dir,
+    data_dir, 
+    resp_file_name
+)
+
+
+with TimerBlock("JSON to Redis commands") as block:
+    json_to_redis_commands(query_output_json_file_path, redis_commands_file_path)
+    
+with TimerBlock("Redis to Resp commands") as block:
+    redis_commands_to_resp(redis_commands_file_path, resp_file_name)
+
+
 TimerBlock.timing_summary()
