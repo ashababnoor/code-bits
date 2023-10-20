@@ -56,6 +56,33 @@ class Print():
     def error(message: str):
         Print.__message_builder(Print.error_keyword, Print.error_keyword_color, message)
 
+class CodeBlock():
+    declaration_message: str = "Inside CodeBlock"
+    
+    def __init__(self, message: str, format: str=Color.bold, pretty: bool=True, declarative: bool=False):
+        self.message = message
+        self.format = format
+        self.pretty = pretty
+        self.declarative = declarative
+    
+    def __enter__(self):
+        if self.declarative:
+            core_header = f"{self.declaration_message}: {self.message}"
+        else:
+            core_header = f"{self.message}"
+        
+        header = self.format + core_header + Color.reset
+        print(header)
+
+        if self.pretty:
+            horizontal_line = self.format + ("-" * len(core_header)) + Color.reset
+            print(horizontal_line)
+        
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print()
+
 
 # Utility lambdas
 now: str = lambda: datetime.now().strftime('%H:%M:%S')
@@ -85,22 +112,21 @@ def get_dunder_methods(object: any) -> list:
 
 
 # Driver code
-if __name__ == "__main__":
-    from models import Query
+if __name__ == "__main__":    
+    with CodeBlock("Utility functions") as block:
+        from models import Query
+                
+        query = Query("popular_search_terms", seeds=2, limit=1)
+        print(f"{get_attributes(query) = }")       
+        print(f"{get_regular_methods(query) = }") 
     
     
-    print(f"{Color.green_bold}Utility functions{Color.reset}")
-    query = Query("popular_search_terms", seeds=2, limit=1)
-    print(f"{get_attributes(query) = }")       
-    print(f"{get_regular_methods(query) = }") 
-    print()
+    with CodeBlock("Utility lambdas") as block:
+        print(f"{now() = }")
     
-    print(f"{Color.green_bold}Utility lambdas{Color.reset}")
-    print(f"{now() = }")
     
-    print()
-    print(f"{Color.green_bold}Utility classes{Color.reset}")
-    Print.log("log message using Print class")
-    Print.success("success message using Print class")
-    Print.warning("warning message using Print class")
-    Print.error("error message using Print class")
+    with CodeBlock("Utility classes") as block:
+        Print.log("log message using Print class")
+        Print.success("success message using Print class")
+        Print.warning("warning message using Print class")
+        Print.error("error message using Print class")
