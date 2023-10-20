@@ -61,14 +61,14 @@ class CodeBlock():
     
     def __init__(
             self, 
-            message: str=None, 
+            message: str="", 
             format: str=Color.bold, 
             pretty: bool=True, 
             declarative: bool=False, 
             separation: int=1
         ):
         message = message.strip()
-        self.message = message if message == "" else None
+        self.message = message if not message == "" else None
         self.format = format
         self.pretty = pretty
         self.declarative = declarative
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     
     
     print("Hello")
-    with CodeBlock(declarative=True) as block:
+    with CodeBlock("Utility classes", declarative=True) as block:
         Print.log("log message using Print class")
         Print.success("success message using Print class")
         Print.warning("warning message using Print class")
