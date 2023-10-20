@@ -97,7 +97,13 @@ class CodeBlock():
         print("\n" * (self.separation-1))
         
 class Timer():
-    pass
+    def __init__(self) -> None:
+        pass
+    
+    def __enter__(self):
+        import time
+        self.start_time = time.time()
+        return self
 
 
 # Utility lambdas
