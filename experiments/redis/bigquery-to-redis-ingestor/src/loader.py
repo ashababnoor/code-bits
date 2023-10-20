@@ -32,13 +32,27 @@ class Bigquery:
             query: Query, 
             save_path: str, 
             verbose: bool=False
-        ):
-        
-        if verbose: Print.log(f"Writing to file started: {now()}")
-        
+        ):        
         with open(save_path, "w") as file:
             for row in self.execute(query.get_query_string()):
                 file.write(str(dict(row))+"\n")
         
-        if verbose: Print.log(f"Writing to file ended: {now()}")
-        if verbose: Print.success("Writing to file completed!")
+        if verbose: Print.success("Writing to text file completed!")
+    
+    def write_to_json_file(
+            self, 
+            query: Query, 
+            save_path: str, 
+            verbose: bool=False
+        ):
+        import json
+        
+        query_output_dict = {
+            ", ".join([str(row.values()[i]) for i in range(query.seeds)]): dict(row)
+            for row in self.execute(query.get_query_string())
+        }
+        
+        with open(save_path, 'w') as json_file:
+            json.dump(query_output_dict, json_file, default=str) 
+
+        if verbose: Print.success("Writing to json file completed!")

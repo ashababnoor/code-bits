@@ -34,12 +34,18 @@ query_output_json_file_path = os.path.join(
 )
 
 
-with TimerBlock("Bigquery.write_to_text_file()", pretty=False) as block:
+with TimerBlock("Bigquery.write_to_text_file()") as block:
     bq.write_to_text_file(
         query=query
         , save_path=query_output_text_file_path
         , verbose=True
     )
+    
+with TimerBlock("Bigquery.write_to_json_file()") as block:
+    bq.write_to_json_file(
+        query=query
+        , save_path=query_output_json_file_path
+        , verbose=True
+    )
 
-Print.bold("Execution Time Reocrds")
-TimerBlock.timing_summary(use_header=False)
+TimerBlock.timing_summary()
