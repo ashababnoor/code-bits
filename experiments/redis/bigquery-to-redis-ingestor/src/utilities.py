@@ -95,6 +95,9 @@ class CodeBlock():
 
     def __exit__(self, exc_type, exc_value, traceback):
         print("\n" * (self.separation-1))
+        
+class Timer():
+    pass
 
 
 # Utility lambdas
