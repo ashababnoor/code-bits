@@ -63,8 +63,9 @@ class CodeBlock():
             self, 
             message: str="", 
             format: str=Color.bold, 
+            declarative: bool=False,
+            *, # Rest are kwargs 
             pretty: bool=True, 
-            declarative: bool=False, 
             separation: int=1
         ):
         message = str(message).strip()
@@ -103,11 +104,15 @@ class TimerBlock(CodeBlock):
             self, 
             message: str="", 
             format: str=Color.bold, 
-            pretty: bool=True, 
-            declarative: bool=False, 
-            separation: int=1
+            declarative: bool=False,
+            **kwargs
         ) -> None:
-        super().__init__(message, format, pretty, declarative, separation)
+        super().__init__(
+            message, 
+            format, 
+            declarative, 
+            **kwargs
+        )
     
     def __enter__(self):
         import time
@@ -119,7 +124,7 @@ class TimerBlock(CodeBlock):
         import time
         self.end_time = time.time()
         self.elapsed_time = self.end_time - self.start_time
-        print(f"Elapsed time: {self.elapsed_time} seconds")
+        print(f"{Color.light_blue}Elapsed time:{Color.reset} {self.elapsed_time} seconds")
         super().__exit__(exc_type, exc_value, traceback)
 
 
@@ -171,6 +176,8 @@ if __name__ == "__main__":
         Print.error("error message using Print class")
         
     
-    with TimerBlock(declarative=True) as block:
-        print("Inside timerblock")
-        
+    with TimerBlock() as block:
+        start = 1
+        finish = 1_000
+        print(f"Generating list from {start:,} to {finish:,}")
+        list_ = [i for i in range(start, finish+1)]
