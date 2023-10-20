@@ -67,7 +67,7 @@ class CodeBlock():
             format: str=Color.bold, 
             declarative: bool=False,
             *, # Rest are kwargs 
-            pretty: bool=True, 
+            pretty: bool=False, 
             separation: int=1
         ):
         if message is not None:
@@ -158,22 +158,22 @@ class TimerBlock(CodeBlock):
         super().__exit__(exc_type, exc_value, traceback)
     
     @staticmethod
-    def timing_summary(*, declarative: bool=True, use_padding: bool=True, pretty: bool=False,) -> None:
+    def timing_summary(*, use_header: bool=True, use_padding: bool=True, pretty: bool=False,) -> None:
         global global_code_execution_records
         if "global_code_execution_records" not in globals() or not type(global_code_execution_records) == dict:
             Print.error("No execution timing record found!")
             return
         
         padding = 0
-        if declarative:
+        if use_header:
             header = "Execution Time Reocrds"
             print(f"{Color.bold}{header}{Color.reset}")
         
         if use_padding:
             padding += len(max(global_code_execution_records))
         
-        if declarative and pretty:
-            horizontal_line = "-" * len(declarative)
+        if use_header and pretty:
+            horizontal_line = "-" * len(use_header)
             print(f"{Color.bold}{horizontal_line}{Color.reset}")
         
         for message, elapsed_time in global_code_execution_records.items():
@@ -224,7 +224,7 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
     human_readable_time = humanize.precisedelta(delta, minimum_unit="microseconds")
     human_readable_time = human_readable_time.replace(" and ", ", ")
     
-    if len(units) > max_depth:
+    if len(human_readable_time.split(", ")) > max_depth:
         units = human_readable_time.split(", ")
         units = units[:max_depth]
         human_readable_time = ", ".join(units)
