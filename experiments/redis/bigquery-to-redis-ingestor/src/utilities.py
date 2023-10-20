@@ -152,20 +152,30 @@ class TimerBlock(CodeBlock):
         
         self.__add_to_global_records()
         super().__exit__(exc_type, exc_value, traceback)
-        
+    
     @staticmethod
-    def global_summary(pretty=True):
+    def timing_summary(*, pretty: bool=True, header: bool=True) -> None:
         global global_code_execution_records
         if "global_code_execution_records" not in globals() or not type(global_code_execution_records) == dict:
             Print.error("No execution timing record found!")
             return
+        
         padding = 0
+        if header:
+            header = "Execution Time Reocrds"
+            print(f"{Color.bold}{header}{Color.reset}")
+            
         if pretty:
             padding += len(max(global_code_execution_records))
+        
+        if header and pretty:
+            horizontal_line = "-" * len(header)
+            print(f"{Color.bold}{horizontal_line}{Color.reset}")
+        
         for message, elapsed_time in global_code_execution_records.items():
             message = f"{message}"
             human_readable_time = to_human_readable_time(elapsed_time)
-            print(f"{message: <{padding}}: {human_readable_time}")
+            print(f"{message: <{padding}} : {human_readable_time}")
 
 
 # Utility lambdas
@@ -204,23 +214,23 @@ def to_human_readable_time(seconds: int) -> str:
 
 # Driver code
 if __name__ == "__main__":    
-    # with CodeBlock("Utility functions") as block:
-    #     from models import Query
+    with CodeBlock("Utility functions") as block:
+        from models import Query
                 
-    #     query = Query("popular_search_terms", seeds=2, limit=1)
-    #     print(f"{get_attributes(query) = }")       
-    #     print(f"{get_regular_methods(query) = }") 
+        query = Query("popular_search_terms", seeds=2, limit=1)
+        print(f"{get_attributes(query) = }")       
+        print(f"{get_regular_methods(query) = }") 
     
     
-    # with CodeBlock("Utility lambdas") as block:
-    #     print(f"{now() = }")
+    with CodeBlock("Utility lambdas") as block:
+        print(f"{now() = }")
     
     
-    # with CodeBlock("Utility classes") as block:
-    #     Print.log("log message using Print class")
-    #     Print.success("success message using Print class")
-    #     Print.warning("warning message using Print class")
-    #     Print.error("error message using Print class")
+    with CodeBlock("Utility classes") as block:
+        Print.log("log message using Print class")
+        Print.success("success message using Print class")
+        Print.warning("warning message using Print class")
+        Print.error("error message using Print class")
     
     with TimerBlock(force_record=True) as block:
         start = 1
@@ -228,10 +238,10 @@ if __name__ == "__main__":
         print(f"Generating list from {start:,} to {finish:,}")
         list_ = [i for i in range(start, finish+1)]
         
-    with TimerBlock("Long", force_record=True) as block:
+    with TimerBlock(force_record=True) as block:
         start = 1
         finish = 1_000
         print(f"Generating list from {start:,} to {finish:,}")
         list_ = [i for i in range(start, finish+1)]
     
-    TimerBlock.global_summary()
+    TimerBlock.timing_summary()
