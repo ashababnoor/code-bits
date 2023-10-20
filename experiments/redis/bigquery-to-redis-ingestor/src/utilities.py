@@ -105,6 +105,12 @@ class Timer():
         self.start_time = time.time()
         return self
 
+    def __exit__(self, exc_type, exc_value, traceback):
+        import time
+        self.end_time = time.time()
+        self.elapsed_time = self.end_time - self.start_time
+        print(f"Elapsed time: {self.elapsed_time} seconds")
+
 
 # Utility lambdas
 now: str = lambda: datetime.now().strftime('%H:%M:%S')
