@@ -32,8 +32,11 @@ class Query:
         return f"Query(query_name='{self.query_name}', seeds={self.seeds}, limit={self.limit})"
 
     def __set_query_string(self) -> None:
-        with open(self.__query_path, "r") as query_file:
-            self.__query_string = query_file.read()
+        try:
+            with open(self.__query_path, "r") as query_file:
+                self.__query_string = query_file.read()
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Query file not found in path: {self.__query_path}")
         return
 
     def __update_query_string(self, query_string: str) -> None:
