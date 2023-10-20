@@ -20,8 +20,9 @@ data_dir = "data/"
 
 
 # Defining query object configuration
-address_history = dict(query_name="address_history", seeds=1)
-popular_search_terms = dict(query_name="popular_search_terms", seeds=2)
+limit = 20000
+address_history = dict(query_name="address_history", seeds=1, limit=limit)
+popular_search_terms = dict(query_name="popular_search_terms", seeds=2, limit=limit)
 query = Query(**address_history)
 
 
@@ -50,7 +51,7 @@ except:
     sys.exit()
 
 
-rows_text, rows_json = tee(rows, 2)
+rows_text, rows_text2, rows_json = tee(rows, 3)
 
 
 
@@ -78,6 +79,20 @@ print(f"\tText write ended: {datetime.now().strftime('%H:%M:%S')}")
 text_conversion_end = time.time()
 print("Query output writing to text file successful.")
 
+
+#  DIRECT ----------------------
+print()
+print(f"Direct write to file start: {now()}")
+dir_s = time.time()
+
+with open(query_output_text_file_path+"2.txt", "w") as file:
+    for row in rows_text2:
+        file.write(str(dict(row))+"\n")
+
+dir_e = time.time()
+print(f"Direct write to file end: {now()}")
+print(f"Direct time (dict as string): {(dir_e - dir_s) :.2f} s")
+print()
 
 
 # Saving query file to json file
