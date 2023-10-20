@@ -59,11 +59,19 @@ class Print():
 class CodeBlock():
     declaration_message: str = "Inside CodeBlock"
     
-    def __init__(self, message: str, format: str=Color.bold, pretty: bool=True, declarative: bool=False):
+    def __init__(
+            self, 
+            message: str=None, 
+            format: str=Color.bold, 
+            pretty: bool=True, 
+            declarative: bool=False, 
+            separation: int=1
+        ):
         self.message = message
         self.format = format
         self.pretty = pretty
         self.declarative = declarative
+        self.separation = separation
     
     def __enter__(self):
         if self.declarative:
@@ -81,7 +89,7 @@ class CodeBlock():
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print()
+        print("\n" * (self.separation-1))
 
 
 # Utility lambdas
@@ -125,7 +133,8 @@ if __name__ == "__main__":
         print(f"{now() = }")
     
     
-    with CodeBlock("Utility classes") as block:
+    print("Hello")
+    with CodeBlock(declarative=True) as block:
         Print.log("log message using Print class")
         Print.success("success message using Print class")
         Print.warning("warning message using Print class")
