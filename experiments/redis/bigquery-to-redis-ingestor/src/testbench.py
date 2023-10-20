@@ -41,4 +41,5 @@ with TimerBlock("Bigquery.write_to_text_file()", pretty=False) as block:
         , verbose=True
     )
 
-TimerBlock.timing_summary()
+Print.bold("Execution Time Reocrds")
+TimerBlock.timing_summary(declarative=False)

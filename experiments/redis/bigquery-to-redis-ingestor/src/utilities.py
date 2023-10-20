@@ -53,6 +53,10 @@ class Print():
     @staticmethod
     def error(message: str):
         Print.__message_builder(Print.error_keyword, Print.error_keyword_color, message)
+    
+    @staticmethod
+    def bold(message: str):
+        print(Color.bold + message + Color.reset)
 
 class CodeBlock():
     declaration_message: str = "Inside CodeBlock"
@@ -154,22 +158,22 @@ class TimerBlock(CodeBlock):
         super().__exit__(exc_type, exc_value, traceback)
     
     @staticmethod
-    def timing_summary(*, pretty: bool=True, header: bool=True) -> None:
+    def timing_summary(*, declarative: bool=True, use_padding: bool=True, pretty: bool=False,) -> None:
         global global_code_execution_records
         if "global_code_execution_records" not in globals() or not type(global_code_execution_records) == dict:
             Print.error("No execution timing record found!")
             return
         
         padding = 0
-        if header:
+        if declarative:
             header = "Execution Time Reocrds"
             print(f"{Color.bold}{header}{Color.reset}")
-            
-        if pretty:
+        
+        if use_padding:
             padding += len(max(global_code_execution_records))
         
-        if header and pretty:
-            horizontal_line = "-" * len(header)
+        if declarative and pretty:
+            horizontal_line = "-" * len(declarative)
             print(f"{Color.bold}{horizontal_line}{Color.reset}")
         
         for message, elapsed_time in global_code_execution_records.items():
