@@ -1,6 +1,6 @@
 from google.cloud import bigquery
 from models import Query
-from utilities import Color, now
+from utilities import Color, Print, now
 
 
 class Bigquery:
@@ -31,17 +31,14 @@ class Bigquery:
             self, 
             query: Query, 
             save_path: str, 
-            benchmark: bool=False, 
             verbose: bool=False
         ):
-        import timeit
         
-        if verbose: print(f"{Color.light_blue}Log:{Color.reset} Writing to file started: {now()}")
+        if verbose: Print.log(f"Writing to file started: {now()}")
         
         with open(save_path, "w") as file:
             for row in self.execute(query.get_query_string()):
                 file.write(str(dict(row))+"\n")
         
-        if verbose: print(f"{Color.light_blue}Log:{Color.reset} Writing to file ended: {now()}")
-        print("Writing to file successful!")
-        if verbose: print("")
+        if verbose: Print.log(f"Writing to file ended: {now()}")
+        if verbose: Print.success("Writing to file completed!")

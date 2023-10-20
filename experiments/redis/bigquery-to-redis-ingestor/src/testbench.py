@@ -1,9 +1,5 @@
 import os
-import sys
 import json
-import time
-from itertools import tee
-from datetime import datetime
 import timeit
 from utilities import *
 from connector import *
@@ -16,7 +12,7 @@ data_dir = "data/"
 
 
 # Defining query object configuration
-limit = 20_000
+limit = 1_000
 address_history = dict(query_name="address_history", seeds=1, limit=limit)
 popular_search_terms = dict(query_name="popular_search_terms", seeds=2, limit=limit)
 query = Query(**address_history)
@@ -38,17 +34,11 @@ query_output_json_file_path = os.path.join(
 )
 
 
-start_time = timeit.default_timer()
-# bq.write_to_text_file_(
-#     query=query
-#     , save_path=query_output_text_file_path+"1.txt"
-#     , verbose=True
-# )
+with TimerBlock("Bigquery.write_to_text_file()", pretty=False) as block:
+    bq.write_to_text_file(
+        query=query
+        , save_path=query_output_text_file_path
+        , verbose=True
+    )
 
-bq.write_to_text_file(
-    query=query
-    , save_path=query_output_text_file_path+"2.txt"
-    , verbose=True
-)
-
-print(f"Time needed f1: {timeit.default_timer() - start_time}")
+TimerBlock.timing_summary()
