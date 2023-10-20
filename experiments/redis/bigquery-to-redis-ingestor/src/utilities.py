@@ -25,6 +25,37 @@ class Color:
     yellow_bold: str = '\033[1;33m'     # Bold Yellow
     purple_bold: str = '\033[1;35m'     # Bold Purple
 
+class Print():
+    log_keyword_color: str = Color.light_blue
+    success_keyword_color: str = Color.green
+    warning_keyword_color: str = Color.yellow
+    error_keyword_color: str = Color.red
+    
+    log_keyword: str = "Log"
+    success_keyword: str = "Success"
+    warning_keyword: str = "Warning"
+    error_keyword: str = "Error"
+    
+    @staticmethod
+    def __message_builder(keyword: str, keyword_color: str, message: str):
+        print(f"{keyword_color}{keyword}:{Color.reset} {message}")
+    
+    @staticmethod
+    def log(message: str):
+        Print.__message_builder(Print.log_keyword, Print.log_keyword_color, message)
+        
+    @staticmethod
+    def success(message: str):
+        Print.__message_builder(Print.success_keyword, Print.success_keyword_color, message)
+        
+    @staticmethod
+    def warning(message: str):
+        Print.__message_builder(Print.warning_keyword, Print.warning_keyword_color, message)
+        
+    @staticmethod
+    def error(message: str):
+        Print.__message_builder(Print.error_keyword, Print.error_keyword_color, message)
+
 
 # Utility lambdas
 now: str = lambda: datetime.now().strftime('%H:%M:%S')
@@ -55,21 +86,21 @@ def get_dunder_methods(object: any) -> list:
 
 # Driver code
 if __name__ == "__main__":
-    from connector import bq
     from models import Query
     
-    query = Query("popular_search_terms", seeds=2, limit=1)
-    query_string = query.get_query_string()
     
-    for row in bq.execute(query_string):
-        attributes = get_attributes(row)
-        regular_methods = get_regular_methods(row)
-        dunder_methods = get_dunder_methods(row)
-        
-        print(f"{attributes = }")       
-        print(f"{regular_methods = }") 
-        print(f"{dunder_methods = }")
-        break
+    print(f"{Color.green_bold}Utility functions{Color.reset}")
+    query = Query("popular_search_terms", seeds=2, limit=1)
+    print(f"{get_attributes(query) = }")       
+    print(f"{get_regular_methods(query) = }") 
+    print()
+    
+    print(f"{Color.green_bold}Utility lambdas{Color.reset}")
+    print(f"{now() = }")
     
     print()
-    print(f"{now() = }")
+    print(f"{Color.green_bold}Utility classes{Color.reset}")
+    Print.log("log message using Print class")
+    Print.success("success message using Print class")
+    Print.warning("warning message using Print class")
+    Print.error("error message using Print class")
