@@ -67,7 +67,7 @@ class CodeBlock():
             declarative: bool=False, 
             separation: int=1
         ):
-        message = message.strip()
+        message = str(message).strip()
         self.message = message if not message == "" else None
         self.format = format
         self.pretty = pretty
@@ -75,8 +75,12 @@ class CodeBlock():
         self.separation = separation
     
     def __enter__(self):
+        if self.message is None and not self.declarative:
+            return
+
         if self.declarative:
-            core_header = f"{self.declaration_message}: {self.message}"
+            core_header = f"{self.declaration_message}:"
+            if self.message is not None: core_header +=  f" {self.message}"
         else:
             core_header = f"{self.message}"
         
@@ -134,8 +138,7 @@ if __name__ == "__main__":
         print(f"{now() = }")
     
     
-    print("Hello")
-    with CodeBlock("Utility classes", declarative=True) as block:
+    with CodeBlock("Utility classes") as block:
         Print.log("log message using Print class")
         Print.success("success message using Print class")
         Print.warning("warning message using Print class")
