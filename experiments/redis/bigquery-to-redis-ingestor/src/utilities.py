@@ -1,9 +1,7 @@
 from datetime import datetime
-from dataclasses import dataclass
 
 
 # Utility classes
-@dataclass
 class Color:
     # Define bold text and reset color and formatting
     bold: str = '\033[1m'               # bold text
@@ -124,7 +122,9 @@ class TimerBlock(CodeBlock):
         import time
         self.end_time = time.time()
         self.elapsed_time = self.end_time - self.start_time
-        print(f"{Color.light_blue}Elapsed time:{Color.reset} {self.elapsed_time} seconds")
+        human_readable_time = to_human_readable_time(self.elapsed_time)
+        
+        print(f"{Color.light_blue}Elapsed time:{Color.reset} {human_readable_time}")
         super().__exit__(exc_type, exc_value, traceback)
 
 
@@ -152,7 +152,14 @@ def get_dunder_methods(object: any) -> list:
         method 
         for method in dir(object) 
         if callable(getattr(object, method)) and method.startswith('__')
-    ]    
+    ]
+    
+def to_human_readable_time(seconds: int) -> str:
+    import humanize
+    from datetime import timedelta
+
+    delta = timedelta(seconds=seconds)
+    return humanize.precisedelta(delta, minimum_unit="microseconds")
 
 
 # Driver code
