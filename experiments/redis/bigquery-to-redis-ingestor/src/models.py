@@ -49,8 +49,10 @@ class Query:
     def add_limit(self, limit: int, inplace: bool = False) -> Union["Query", None]:
         if type(limit) != int and type(limit) != str:
             raise Exception("Limit must be an integer or string.")
+        
+        # New lines must be added to avoid the limit clause falling into a comment.
         limit_added_query_string = (
-            f"select * from ({self.get_query_string()}) limit {limit}"
+            f"select * \nfrom (\n{self.get_query_string()}\n) \nlimit {limit}"
         )
 
         if inplace:
