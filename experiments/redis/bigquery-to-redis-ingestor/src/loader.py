@@ -1,4 +1,5 @@
 from google.cloud import bigquery
+import redis
 from models import Query
 from utilities import Color, Print, now
 
@@ -56,11 +57,42 @@ class Bigquery:
             json.dump(query_output_dict, json_file, default=str) 
 
         if verbose: Print.success("Writing to json file completed!")
-            
-    def generate_redis_protocol_file(
-        self, 
-        query: Query, 
-        save_path: str, 
+    
+    def store_in_redis(
+        self,
+        query: Query,
+        redis: redis.Redis,
         verbose: bool=False
     ):
-        pass
+        '''
+        Only works with simple data structures containing int, float, string, byte etc.
+        For complex data structures, code needs to be re-written.
+        RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
+        '''
+        pipe = redis.pipeline()
+        for row in self.execute(query.get_query_string()):
+            key = ", ".join([str(row.values()[i]) for i in range(query.seeds)])
+            pipe.hset(key, mapping=dict(row))
+        
+        output = len(pipe.execute())
+        if verbose: Print.log(f"Replies received = {output:,}")
+    
+    def store_in_redis_stack(
+        self,
+        query: Query,
+        redis: redis.Redis,
+        verbose: bool=False
+    ):
+        '''
+        Only works with simple data structures containing int, float, string, byte etc.
+        For complex data structures, code needs to be re-written.
+        RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
+        '''
+        pipe = redis.pipeline()
+        for row in self.execute(query.get_query_string()):
+            key = ", ".join([str(row.values()[i]) for i in range(query.seeds)])
+            pipe.hset(key, mapping=dict(row))
+        
+        output = len(pipe.execute())
+        if verbose: Print.log(f"Replies received = {output:,}")
+        
