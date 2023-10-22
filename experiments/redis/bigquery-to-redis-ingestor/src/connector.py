@@ -2,7 +2,7 @@ import redis
 from loader import Bigquery
 
 r = redis.Redis(host="localhost", port=6379, decode_responses=True)
-r_ah = redis.Redis(host="localhost", port=6380, decode_responses=True, db=0)
+r_ah = redis.Redis(host="localhost", port=6379, decode_responses=True)
 r_stack = redis.Redis(host="localhost", port=6381, decode_responses=True)
 
 bq = Bigquery(google_cred=None)

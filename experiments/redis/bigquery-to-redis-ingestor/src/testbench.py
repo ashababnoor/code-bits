@@ -40,7 +40,7 @@ query_output_json_file_path = os.path.join(
 #         , save_path=query_output_text_file_path
 #         , verbose=True
 #     )
-
+    
 # with TimerBlock("Bigquery.write_to_json_file()") as block:
 #     bq.write_to_json_file(
 #         query=query
@@ -75,52 +75,12 @@ resp_file_name = os.path.join(
 #     redis_commands_to_resp(redis_commands_file_path, resp_file_name)
 
 
-# with TimerBlock("Bigquery.store_in_redis()") as block:
-#     bq.store_in_redis(
-#         query=query
-#         , redis=r
-#         , verbose=True
-#     )
+with TimerBlock("Bigquery.store_in_redis()") as block:
+    bq.store_in_redis(
+        query=query
+        , redis=r
+        , verbose=True
+    )
 
-
-# r_ah.flushall()
-# with TimerBlock("Bigquery.store_in_redis_stack_as_json() -- limit 100") as block:
-#     bq.store_in_redis_stack_as_json(
-#         query=query.add_limit(100)
-#         , redis=r_ah
-#         , verbose=True
-#     )
-    
-# r_ah.flushall()
-# with TimerBlock("Bigquery.store_in_redis_stack_as_json() -- limit 1,000") as block:
-#     bq.store_in_redis_stack_as_json(
-#         query=query.add_limit(1000)
-#         , redis=r_ah
-#         , verbose=True
-#     )
-
-# r_ah.flushall()
-# with TimerBlock("Bigquery.store_in_redis_stack_as_json() -- limit 10,000") as block:
-#     bq.store_in_redis_stack_as_json(
-#         query=query.add_limit(10000)
-#         , redis=r_ah
-#         , verbose=True
-#     )
-
-# r_ah.flushall()
-# with TimerBlock("Bigquery.store_in_redis_stack_as_json() -- limit 100,000") as block:
-#     bq.store_in_redis_stack_as_json(
-#         query=query.add_limit(100000)
-#         , redis=r_ah
-#         , verbose=True
-#     )
-
-# r_ah.flushall()
-# with TimerBlock("Bigquery.store_in_redis_stack_as_json() -- limit 1,000,000") as block:
-#     bq.store_in_redis_stack_as_json(
-#         query=query.add_limit(1000000)
-#         , redis=r_ah
-#         , verbose=True
-#     )
 
 TimerBlock.timing_summary()

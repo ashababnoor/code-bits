@@ -1,8 +1,7 @@
 from google.cloud import bigquery
 import redis
 from models import Query
-from utilities import Print
-from tqdm import tqdm
+from utilities import Color, Print, now
 
 
 class Bigquery:
@@ -33,16 +32,11 @@ class Bigquery:
             self, 
             query: Query, 
             save_path: str, 
-            verbose: bool=False,
-            show_progress: bool=False,
-        ):
+            verbose: bool=False
+        ):        
         with open(save_path, "w") as file:
-            if show_progress:
-                for row in tqdm(self.execute(query.get_query_string())):
-                    file.write(str(dict(row))+"\n")
-            else:
-                for row in self.execute(query.get_query_string()):
-                    file.write(str(dict(row))+"\n")
+            for row in self.execute(query.get_query_string()):
+                file.write(str(dict(row))+"\n")
         
         if verbose: Print.success("Writing to text file completed!")
     
@@ -50,9 +44,7 @@ class Bigquery:
             self, 
             query: Query, 
             save_path: str, 
-            verbose: bool=False,
-            use_indent: bool=True,
-            show_progress: bool=False,
+            verbose: bool=False
         ):
         import json
         
@@ -62,10 +54,7 @@ class Bigquery:
         }
         
         with open(save_path, 'w') as json_file:
-            if use_indent:
-                json.dump(query_output_dict, json_file, indent=4, default=str)
-            else:
-                json.dump(query_output_dict, json_file, default=str)
+            json.dump(query_output_dict, json_file, default=str) 
 
         if verbose: Print.success("Writing to json file completed!")
     
@@ -73,7 +62,7 @@ class Bigquery:
         self,
         query: Query,
         redis: redis.Redis,
-        verbose: bool=False,
+        verbose: bool=False
     ):
         '''
         Only works with simple data structures containing int, float, string, byte etc.
@@ -88,25 +77,21 @@ class Bigquery:
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")
     
-    def store_in_redis_stack_as_json(
+    def store_in_redis_stack(
         self,
         query: Query,
         redis: redis.Redis,
-        verbose: bool=False,
+        verbose: bool=False
     ):
         '''
         Only works with simple data structures containing int, float, string, byte etc.
         For complex data structures, code needs to be re-written.
         RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
         '''
-        from redis.commands.json.path import Path
-        
         pipe = redis.pipeline()
         for row in self.execute(query.get_query_string()):
             key = ", ".join([str(row.values()[i]) for i in range(query.seeds)])
-            pipe.json().set(key, "$", dict(row))
-            # pipe.json().set(row["recipient_identifier"], "$", row["address_history"])
-            
+            pipe.hset(key, mapping=dict(row))
         
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")
