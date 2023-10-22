@@ -51,27 +51,6 @@ class Color:
     light_sea_green_bold: str = '\033[1;38;5;37m' # Bold Light Sea Green
     dodger_blue_bold: str = '\033[1;38;5;33m'     # Bold Dodger Blue
     
-    
-    # Define bold text and reset color and formatting
-    bold: str = '\033[1m'               # bold text
-    reset: str = '\033[0m'              # reset color and formatting
-
-    # Define non-bold color codes
-    blue: str = '\033[0;34m'            # Blue
-    light_blue: str = '\033[0;36m'      # Light Blue
-    green: str = '\033[0;32m'           # Green
-    red: str = '\033[0;31m'             # Red
-    yellow: str = '\033[0;33m'          # Yellow
-    purple: str = '\033[0;35m'          # Purple
-
-    # Define bold color codes
-    blue_bold: str = '\033[1;34m'       # Bold Blue
-    light_blue_bold: str = '\033[1;36m' # Bold Light Blue
-    green_bold: str = '\033[1;32m'      # Bold Green
-    red_bold: str = '\033[1;31m'        # Bold Red
-    yellow_bold: str = '\033[1;33m'     # Bold Yellow
-    purple_bold: str = '\033[1;35m'     # Bold Purple
-    
     @staticmethod
     def show_colors():
         color_object = Color()
@@ -81,11 +60,13 @@ class Color:
             print(f"{eval(f'Color.{color}')}{color = }{color_object.reset}")
 
 class Print():
-    log_keyword_color: str = Color.light_blue
+    info_keyword_color:str = Color.light_sea_green
+    log_keyword_color: str = Color.cyan
     success_keyword_color: str = Color.green
     warning_keyword_color: str = Color.yellow
     error_keyword_color: str = Color.red
     
+    info_keyword: str = "Info"
     log_keyword: str = "Log"
     success_keyword: str = "Success"
     warning_keyword: str = "Warning"
@@ -96,20 +77,28 @@ class Print():
         print(f"{keyword_color}{keyword}:{Color.reset} {message}")
     
     @staticmethod
+    def info(message: str):
+        Print.__message_builder(Print.info_keyword, Print.info_keyword_color, message)
+    
+    @staticmethod
     def log(message: str):
         Print.__message_builder(Print.log_keyword, Print.log_keyword_color, message)
-        
+    
     @staticmethod
     def success(message: str):
         Print.__message_builder(Print.success_keyword, Print.success_keyword_color, message)
-        
+    
     @staticmethod
     def warning(message: str):
         Print.__message_builder(Print.warning_keyword, Print.warning_keyword_color, message)
-        
+    
     @staticmethod
     def error(message: str):
         Print.__message_builder(Print.error_keyword, Print.error_keyword_color, message)
+    
+    @staticmethod
+    def keyword(keyword: str, message: str, keyword_color: str = log_keyword_color):
+        Print.__message_builder(keyword, keyword_color, message)
     
     @staticmethod
     def bold(message: str):
@@ -209,7 +198,7 @@ class TimerBlock(CodeBlock):
         self.elapsed_time = self.end_time - self.start_time
         
         human_readable_time = to_human_readable_time(self.elapsed_time)
-        print(f"{Color.light_blue}Elapsed time:{Color.reset} {human_readable_time}")
+        Print.keyword(keyword="Elapsed time", message=human_readable_time)
         
         self.__add_to_global_records()
         super().__exit__(exc_type, exc_value, traceback)
@@ -291,6 +280,7 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
     return human_readable_time
 
 
+
 # Driver code
 if __name__ == "__main__":    
     with CodeBlock("Utility functions") as block:
@@ -300,16 +290,16 @@ if __name__ == "__main__":
         print(f"{get_attributes(query) = }")       
         print(f"{get_regular_methods(query) = }") 
     
-    
     with CodeBlock("Utility lambdas") as block:
         print(f"{now() = }")
     
-    
     with CodeBlock("Utility classes") as block:
+        Print.info("Info message using Print class")
         Print.log("log message using Print class")
         Print.success("success message using Print class")
         Print.warning("warning message using Print class")
         Print.error("error message using Print class")
+        Print.keyword("Custom keyword", "Keyword message using Print class")
     
     with TimerBlock(force_record=True) as block:
         start = 1
