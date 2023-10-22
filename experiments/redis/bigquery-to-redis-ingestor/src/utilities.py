@@ -71,6 +71,14 @@ class Color:
     red_bold: str = '\033[1;31m'        # Bold Red
     yellow_bold: str = '\033[1;33m'     # Bold Yellow
     purple_bold: str = '\033[1;35m'     # Bold Purple
+    
+    @staticmethod
+    def show_colors():
+        color_object = Color()
+        colors = get_attributes(color_object)
+        
+        for color in colors:
+            print(f"{eval(f'Color.{color}')}{color = }{color_object.reset}")
 
 class Print():
     log_keyword_color: str = Color.light_blue
@@ -316,3 +324,7 @@ if __name__ == "__main__":
         list_ = [i for i in range(start, finish+1)]
     
     TimerBlock.timing_summary()
+    print()
+
+    with CodeBlock("Color Utility Class") as _:
+        Color.show_colors()
