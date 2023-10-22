@@ -55,6 +55,19 @@ dodger_blue_bold='\033[1;38;5;33m'     # Bold Dodger Blue
 #   2) https://www.ditig.com/256-colors-cheat-sheet 
 
 
+function check_if_valid_git_repo(){
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [ -d "$dir/.git" ]; then
+            echo "This is a Git repository."
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+    echo "This is not a Git repository."
+    return 1
+}
+
 function get_git_remote_url(){
     remote_url=$(git remote get-url origin)
     echo $remote_url
@@ -124,6 +137,14 @@ function git_add_commit_push() {
     local no_add=false
     local commit_message
     local command_running_message="${cyan}Command running:${reset}"
+
+    # Check if inside a git repo or not
+    git_repo_validity_message=$(check_if_valid_git_repo)
+
+    if [[ $git_repo_validity_message == "This is not a Git repository." ]]; then
+        echo "${red_bold}Fatal Error:${reset} Please provide a commit message."
+        return 1
+    fi
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
