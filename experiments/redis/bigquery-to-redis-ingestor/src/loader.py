@@ -1,7 +1,8 @@
 from google.cloud import bigquery
 import redis
 from models import Query
-from utilities import Color, Print, now
+from utilities import Print
+from tqdm import tqdm
 
 
 class Bigquery:
@@ -32,29 +33,43 @@ class Bigquery:
             self, 
             query: Query, 
             save_path: str, 
-            verbose: bool=False
-        ):        
-        with open(save_path, "w") as file:
-            for row in self.execute(query.get_query_string()):
-                file.write(str(dict(row))+"\n")
+            verbose: bool=False,
+            show_progress: bool=False,
+        ):
+        rows = self.execute(query.get_query_string())
+        if show_progress:
+            rows = tqdm(rows)
         
+        with open(save_path, "w") as file:
+            for row in rows:
+                file.write(str(dict(row))+"\n")
+
         if verbose: Print.success("Writing to text file completed!")
     
     def write_to_json_file(
             self, 
             query: Query, 
             save_path: str, 
-            verbose: bool=False
+            verbose: bool=False,
+            use_indent: bool=True,
+            show_progress: bool=False,
         ):
         import json
+
+        rows = self.execute(query.get_query_string())
+        if show_progress:
+            rows = tqdm(rows)
         
         query_output_dict = {
             ", ".join([str(row.values()[i]) for i in range(query.seeds)]): dict(row)
-            for row in self.execute(query.get_query_string())
+            for row in rows
         }
-        
+
         with open(save_path, 'w') as json_file:
-            json.dump(query_output_dict, json_file, default=str) 
+            if use_indent:
+                json.dump(query_output_dict, json_file, indent=4, default=str)
+            else:
+                json.dump(query_output_dict, json_file, default=str)
 
         if verbose: Print.success("Writing to json file completed!")
     
