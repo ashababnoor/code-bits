@@ -13,8 +13,8 @@ data_dir = "data/"
 
 # Defining query object configuration
 limit = None
-address_history = dict(query_name="address_history", seeds=1, limit=limit)
-popular_search_terms = dict(query_name="popular_search_terms", seeds=2, limit=limit)
+address_history = dict(query_name="address_history", grain=1, limit=limit)
+popular_search_terms = dict(query_name="popular_search_terms", grain=2, limit=limit)
 query = Query(**address_history)
 
 

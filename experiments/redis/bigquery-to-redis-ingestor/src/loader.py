@@ -61,7 +61,7 @@ class Bigquery:
             rows = tqdm(rows)
         
         query_output_dict = {
-            ", ".join([str(row.values()[i]) for i in range(query.seeds)]): dict(row)
+            ", ".join([str(row.values()[i]) for i in range(query.grain)]): dict(row)
             for row in rows
         }
 
@@ -77,7 +77,7 @@ class Bigquery:
         self,
         query: Query,
         redis: redis.Redis,
-        verbose: bool=False
+        verbose: bool=False,
     ):
         '''
         Only works with simple data structures containing int, float, string, byte etc.
@@ -86,27 +86,24 @@ class Bigquery:
         '''
         pipe = redis.pipeline()
         for row in self.execute(query.get_query_string()):
-            key = ", ".join([str(row.values()[i]) for i in range(query.seeds)])
+            key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
             pipe.hset(key, mapping=dict(row))
         
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")
     
-    def store_in_redis_stack(
+    def store_in_redis_stack_as_json(
         self,
         query: Query,
         redis: redis.Redis,
-        verbose: bool=False
+        verbose: bool=False,
     ):
-        '''
-        Only works with simple data structures containing int, float, string, byte etc.
-        For complex data structures, code needs to be re-written.
-        RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
-        '''
+        from redis.commands.json.path import Path
+        
         pipe = redis.pipeline()
         for row in self.execute(query.get_query_string()):
-            key = ", ".join([str(row.values()[i]) for i in range(query.seeds)])
-            pipe.hset(key, mapping=dict(row))
+            key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
+            pipe.json().set(key, "$", dict(row))
         
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")

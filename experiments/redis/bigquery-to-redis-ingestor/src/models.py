@@ -9,16 +9,16 @@ class Query:
         "__query_path",
         "__query_string",
         "query_name",
-        "seeds",
+        "grain",
         "limit",
     )
 
     __root_dir: str = os.path.dirname(os.path.dirname(__file__))
     __query_dir: str = "sql"
 
-    def __init__(self, query_name, seeds: int=1, limit: Union[int, str, None] = None) -> None:
+    def __init__(self, query_name, grain: int=1, limit: Union[int, str, None] = None) -> None:
         self.query_name = query_name
-        self.seeds = seeds
+        self.grain = grain
         self.__query_path = os.path.join(
             Query.__root_dir, Query.__query_dir, f"{self.query_name}.sql"
         )
@@ -29,7 +29,7 @@ class Query:
             self.add_limit(limit, inplace=True)
 
     def __repr__(self) -> str:
-        return f"Query(query_name='{self.query_name}', seeds={self.seeds}, limit={self.limit})"
+        return f"Query(query_name='{self.query_name}', grain={self.grain}, limit={self.limit})"
 
     def __set_query_string(self) -> None:
         try:

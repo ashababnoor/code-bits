@@ -239,7 +239,7 @@ if __name__ == "__main__":
     with CodeBlock("Utility functions") as block:
         from models import Query
                 
-        query = Query("popular_search_terms", seeds=2, limit=1)
+        query = Query("popular_search_terms", grain=2, limit=1)
         print(f"{get_attributes(query) = }")       
         print(f"{get_regular_methods(query) = }") 
     
