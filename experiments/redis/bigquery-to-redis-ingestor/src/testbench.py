@@ -16,37 +16,37 @@ popular_search_terms = dict(query_name="popular_search_terms", grain=2, limit=li
 query = Query(**address_history)
 
 
-# with CodeBlock(separation=0) as _:
-#     # Defining files names and paths
-#     query_output_text_file_name = f"query_output_{query.query_name}.txt"
-#     query_output_json_file_name = f"query_output_{query.query_name}.json"
+with CodeBlock(separation=0) as _:
+    # Defining files names and paths
+    query_output_text_file_name = f"query_output_{query.query_name}.txt"
+    query_output_json_file_name = f"query_output_{query.query_name}.json"
 
-#     query_output_text_file_path = os.path.join(
-#         root_dir,
-#         data_dir, 
-#         query_output_text_file_name
-#     )
-#     query_output_json_file_path = os.path.join(
-#         root_dir,
-#         data_dir, 
-#         query_output_json_file_name
-#     )
+    query_output_text_file_path = os.path.join(
+        root_dir,
+        data_dir, 
+        query_output_text_file_name
+    )
+    query_output_json_file_path = os.path.join(
+        root_dir,
+        data_dir, 
+        query_output_json_file_name
+    )
 
-#     with TimerBlock("Bigquery.write_to_text_file()") as block:
-#         bq.write_to_text_file(
-#             query=query.add_limit(10000)
-#             , save_path=query_output_text_file_path
-#             , verbose=True
-#             , show_progress=True
-#         )
+    with TimerBlock("Bigquery.write_to_text_file()") as block:
+        bq.write_to_text_file(
+            query=query.add_limit(10000)
+            , save_path=query_output_text_file_path
+            , verbose=True
+            , show_progress=True
+        )
         
-#     with TimerBlock("Bigquery.write_to_json_file()") as block:
-#         bq.write_to_json_file(
-#             query=query.add_limit(10000)
-#             , save_path=query_output_json_file_path
-#             , verbose=True
-#             , show_progress=True
-#         )
+    with TimerBlock("Bigquery.write_to_json_file()") as block:
+        bq.write_to_json_file(
+            query=query.add_limit(10000)
+            , save_path=query_output_json_file_path
+            , verbose=True
+            , show_progress=True
+        )
 
 
 # with CodeBlock(separation=0) as _:

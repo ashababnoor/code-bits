@@ -37,8 +37,8 @@ class Bigquery:
             show_progress: bool=False,
         ):
         rows = self.execute(query.get_query_string())
-        if show_progress:
-            rows = tqdm(rows)
+        if show_progress and query.limit is not None:
+            rows = tqdm(rows, total=query.limit)
         
         with open(save_path, "w") as file:
             for row in rows:
@@ -57,8 +57,8 @@ class Bigquery:
         import json
 
         rows = self.execute(query.get_query_string())
-        if show_progress:
-            rows = tqdm(rows)
+        if show_progress and query.limit is not None:
+            rows = tqdm(rows, total=query.limit)
         
         query_output_dict = {
             ", ".join([str(row.values()[i]) for i in range(query.grain)]): dict(row)

@@ -51,9 +51,7 @@ class Query:
             raise Exception("Limit must be an integer or string.")
         
         # New lines must be added to avoid the limit clause falling into a comment.
-        limit_added_query_string = (
-            f"select * \nfrom (\n{self.get_query_string()}\n) \nlimit {limit}"
-        )
+        limit_added_query_string = f"select * \nfrom (\n{self.get_query_string()}\n) \nlimit {limit}"
 
         if inplace:
             self.limit = limit
@@ -64,6 +62,11 @@ class Query:
         query.add_limit(limit, inplace=True)
         return query
 
+    def get_row_count_query(self) -> str:
+        if self.limit is not None:
+            return self.limit
+        row_count_query_string = f"select count(*) \nfrom (\n{self.get_query_string()}\n)"
+        return row_count_query_string
 
 if __name__ == "__main__":
     print(f"{Color.green_bold}Query class regular constructor:{Color.reset}")
