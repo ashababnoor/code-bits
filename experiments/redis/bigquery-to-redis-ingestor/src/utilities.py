@@ -147,6 +147,8 @@ class CodeBlock():
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if self.separation < 1:
+            return
         print("\n" * (self.separation-1))
         
 class TimerBlock(CodeBlock):

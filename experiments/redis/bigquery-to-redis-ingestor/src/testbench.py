@@ -1,8 +1,6 @@
 import os
-import json
-import timeit
 from utilities import *
-from connector import *
+from connector import bq
 from models import Query
 
 
@@ -18,69 +16,76 @@ popular_search_terms = dict(query_name="popular_search_terms", grain=2, limit=li
 query = Query(**address_history)
 
 
-# Defining output files names and paths
-query_output_text_file_name = f"query_output_{query.query_name}.txt"
-query_output_json_file_name = f"query_output_{query.query_name}.json"
+# with CodeBlock(separation=0) as _:
+#     # Defining files names and paths
+#     query_output_text_file_name = f"query_output_{query.query_name}.txt"
+#     query_output_json_file_name = f"query_output_{query.query_name}.json"
 
-query_output_text_file_path = os.path.join(
-    root_dir,
-    data_dir, 
-    query_output_text_file_name
-)
-query_output_json_file_path = os.path.join(
-    root_dir,
-    data_dir, 
-    query_output_json_file_name
-)
-
-
-# with TimerBlock("Bigquery.write_to_text_file()") as block:
-#     bq.write_to_text_file(
-#         query=query
-#         , save_path=query_output_text_file_path
-#         , verbose=True
+#     query_output_text_file_path = os.path.join(
+#         root_dir,
+#         data_dir, 
+#         query_output_text_file_name
 #     )
-    
-# with TimerBlock("Bigquery.write_to_json_file()") as block:
-#     bq.write_to_json_file(
-#         query=query
-#         , save_path=query_output_json_file_path
-#         , verbose=True
+#     query_output_json_file_path = os.path.join(
+#         root_dir,
+#         data_dir, 
+#         query_output_json_file_name
 #     )
 
-
-from redis_utils.json_to_redis import json_to_redis_commands
-from redis_utils.redis_to_resp import redis_commands_to_resp
-
-# Defining Redis files names and paths
-redis_commands_file_name = f"redis_commands_{query.query_name}.txt"
-resp_file_name = f"resp_{query.query_name}.txt"
-
-redis_commands_file_path = os.path.join(
-    root_dir,
-    data_dir, 
-    redis_commands_file_name
-)
-resp_file_name = os.path.join(
-    root_dir,
-    data_dir, 
-    resp_file_name
-)
+#     with TimerBlock("Bigquery.write_to_text_file()") as block:
+#         bq.write_to_text_file(
+#             query=query.add_limit(10000)
+#             , save_path=query_output_text_file_path
+#             , verbose=True
+#             , show_progress=True
+#         )
+        
+#     with TimerBlock("Bigquery.write_to_json_file()") as block:
+#         bq.write_to_json_file(
+#             query=query.add_limit(10000)
+#             , save_path=query_output_json_file_path
+#             , verbose=True
+#             , show_progress=True
+#         )
 
 
-# with TimerBlock("JSON to Redis commands") as block:
-#     json_to_redis_commands(query_output_json_file_path, redis_commands_file_path)
+# with CodeBlock(separation=0) as _:
+#     from redis_utils.json_to_redis import json_to_redis_commands
+#     from redis_utils.redis_to_resp import redis_commands_to_resp
+
+#     # Defining files names and paths
+#     redis_commands_file_name = f"redis_commands_{query.query_name}.txt"
+#     resp_file_name = f"resp_{query.query_name}.txt"
+
+#     redis_commands_file_path = os.path.join(
+#         root_dir,
+#         data_dir, 
+#         redis_commands_file_name
+#     )
+#     resp_file_name = os.path.join(
+#         root_dir,
+#         data_dir, 
+#         resp_file_name
+#     )
     
-# with TimerBlock("Redis to Resp commands") as block:
-#     redis_commands_to_resp(redis_commands_file_path, resp_file_name)
+#     with TimerBlock("JSON to Redis commands") as block:
+#         json_to_redis_commands(query_output_json_file_path, redis_commands_file_path)
+    
+#     with TimerBlock("Redis to Resp commands") as block:
+#         redis_commands_to_resp(redis_commands_file_path, resp_file_name)
 
 
-with TimerBlock("Bigquery.store_in_redis()") as block:
-    bq.store_in_redis(
-        query=query
-        , redis=r
-        , verbose=True
-    )
+# with CodeBlock(separation=0) as _:
+#     from connector import r_ah
+    
+#     # with TimerBlock("Bigquery.store_in_redis_stack_as_json()") as block:
+#     #     bq.store_in_redis_stack_as_json(
+#     #         query=query
+#     #         , redis=r_ah
+#     #         , verbose=True
+#     #     )
+    
+#     r_ah.connection_pool.close()    
 
 
 TimerBlock.timing_summary()
