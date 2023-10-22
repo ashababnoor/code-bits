@@ -12,3 +12,4 @@ services:
     container_name: redis-address-history
     ports:
       - "6380:6379"
+      - "13333:8001"
