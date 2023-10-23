@@ -37,8 +37,9 @@ class Bigquery:
             show_progress: bool=False,
         ):
         rows = self.execute(query.get_query_string())
-        if show_progress and query.limit is not None:
-            rows = tqdm(rows, total=query.limit)
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=self)
+            rows = tqdm(rows, total=row_count)
         
         with open(save_path, "w") as file:
             for row in rows:
@@ -57,8 +58,9 @@ class Bigquery:
         import json
 
         rows = self.execute(query.get_query_string())
-        if show_progress and query.limit is not None:
-            rows = tqdm(rows, total=query.limit)
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=self)
+            rows = tqdm(rows, total=row_count)
         
         query_output_dict = {
             ", ".join([str(row.values()[i]) for i in range(query.grain)]): dict(row)
@@ -78,14 +80,21 @@ class Bigquery:
         query: Query,
         redis: redis.Redis,
         verbose: bool=False,
+        show_progress: bool=False,
     ):
         '''
         Only works with simple data structures containing int, float, string, byte etc.
         For complex data structures, code needs to be re-written.
         RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
         '''
+        rows = self.execute(query.get_query_string())
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=self)
+            rows = tqdm(rows, total=row_count)
+        
         pipe = redis.pipeline()
-        for row in self.execute(query.get_query_string()):
+        
+        for row in rows:
             key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
             pipe.hset(key, mapping=dict(row))
         
@@ -97,11 +106,18 @@ class Bigquery:
         query: Query,
         redis: redis.Redis,
         verbose: bool=False,
+        show_progress: bool=False,
     ):
         from redis.commands.json.path import Path
         
+        rows = self.execute(query.get_query_string())
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=self)
+            rows = tqdm(rows, total=row_count)
+        
         pipe = redis.pipeline()
-        for row in self.execute(query.get_query_string()):
+        
+        for row in rows:
             key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
             pipe.json().set(key, "$", dict(row))
         
