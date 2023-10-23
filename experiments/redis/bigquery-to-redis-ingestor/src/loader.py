@@ -35,15 +35,24 @@ class Bigquery:
             save_path: str, 
             verbose: bool=False,
             show_progress: bool=False,
+            parallel_computation: bool=False,
+            parallel_job_count: int=2,
         ):
+        from joblib import Parallel, delayed
+                
         rows = self.execute(query.get_query_string())
         if show_progress:
             row_count = query.get_row_count(bigquery_client=self)
             rows = tqdm(rows, total=row_count)
         
         with open(save_path, "w") as file:
-            for row in rows:
-                file.write(str(dict(row))+"\n")
+            if parallel_computation:
+                Parallel(n_jobs=parallel_job_count)(
+                    delayed(file.write)(str(dict(row))+"\n") for row in rows
+                )
+            else:
+                for row in rows:
+                    file.write(str(dict(row))+"\n")
 
         if verbose: Print.success("Writing to text file completed!")
     
@@ -54,9 +63,11 @@ class Bigquery:
             verbose: bool=False,
             use_indent: bool=True,
             show_progress: bool=False,
+            parallel_computation: bool=False,
         ):
         import json
-
+        from joblib import Parallel, delayed
+        
         rows = self.execute(query.get_query_string())
         if show_progress:
             row_count = query.get_row_count(bigquery_client=self)
@@ -107,8 +118,11 @@ class Bigquery:
         redis: redis.Redis,
         verbose: bool=False,
         show_progress: bool=False,
+        parallel_computation: bool=False,
+        parallel_job_count: int=2,
     ):
         from redis.commands.json.path import Path
+        from joblib import Parallel, delayed
         
         rows = self.execute(query.get_query_string())
         if show_progress:
@@ -117,10 +131,20 @@ class Bigquery:
         
         pipe = redis.pipeline()
         
-        for row in rows:
-            key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
-            pipe.json().set(key, "$", dict(row))
+        def add_to_pipe(row, grain):
+            key = ", ".join([str(row.values()[i]) for i in range(grain)])
+            pipe.json().set(key, "$", dict(row))  
         
+        if parallel_computation:
+            Parallel(n_jobs=parallel_job_count)(
+                    delayed(add_to_pipe)(row, query.grain) for row in rows
+            )
+        else:
+            for row in rows:
+                key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
+                pipe.json().set(key, "$", dict(row))
+        
+        if verbose: Print.log("Pipeline generation complete. Executing pipeline")
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")
         
