@@ -62,30 +62,38 @@ class Query:
         query.add_limit(limit, inplace=True)
         return query
 
-    def get_row_count_query(self) -> str:
-        if self.limit is not None:
+    def get_row_count(self, bigquery_client, use_limit=True) -> str:
+        if use_limit and self.limit is not None:
             return self.limit
+        
         row_count_query_string = f"select count(*) \nfrom (\n{self.get_query_string()}\n)"
-        return row_count_query_string
+        
+        rows = bigquery_client.execute(row_count_query_string)
+        results = [row for row in rows]
+        return results[0].values()[0]
+
 
 if __name__ == "__main__":
-    print(f"{Color.green_bold}Query class regular constructor:{Color.reset}")
-    query = Query("popular_search_terms")
-    print(query)
-    print(f"{Color.light_blue}Original query string:{Color.reset}")
-    print(query.get_query_string())
+    with CodeBlock("Query class regular constructor", Color.light_sea_green_bold) as _:
+        query = Query("popular_search_terms")
+        print(query)
+        Print.keyword("Query string", "original")
+        print(query.get_query_string())
+
     
-    print("\n")
+    with CodeBlock("add_limit() with inplace=False", Color.light_sea_green_bold) as _:
+        print(query.add_limit(10))
+        Print.keyword("Query string", "modified using add_limit()")
+        print(query.add_limit(10).get_query_string())
 
-    print(f"{Color.green_bold}'add_limit()' with inplace=False:{Color.reset}")
-    print(query.add_limit(10))
-    print(f"{Color.light_blue}Modified query string:{Color.reset}")
-    print(query.add_limit(10).get_query_string())
 
-    print("\n")
-
-    print(f"{Color.green_bold}Query class constructor with limit:{Color.reset}")
-    query = Query("address_history", limit=25)
-    print(query)
-    print(f"{Color.light_blue}Original query:{Color.reset}")
-    print(query.get_query_string())
+    with CodeBlock("Query class constructor with limit", Color.light_sea_green_bold) as _:
+        query = Query("address_history", limit=25)
+        print(query)
+        Print.keyword("Query string", "original")
+        print(query.get_query_string())
+    
+    
+    with CodeBlock("Query object get_row_count_query()", Color.light_sea_green_bold) as _:
+        from connector import bq
+        print(query.get_row_count(bigquery_client=bq, use_limit=False))
