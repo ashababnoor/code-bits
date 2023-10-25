@@ -104,7 +104,7 @@ class Print():
     def bold(message: str):
         print(Color.bold + message + Color.reset)
 
-class CodeBlock():
+class CodeBlock:
     declaration_message: str = "Inside CodeBlock"
     
     def __init__(
@@ -150,7 +150,7 @@ class CodeBlock():
         if self.separation < 1:
             return
         print("\n" * (self.separation-1))
-        
+
 class TimerBlock(CodeBlock):
     declaration_message: str = "Inside TimerBlock"
     force_record_counter: int = 0
@@ -287,7 +287,7 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
 if __name__ == "__main__":    
     with CodeBlock("Utility functions") as block:
         from models import Query
-                
+        
         query = Query("popular_search_terms", grain=2, limit=1)
         print(f"{get_attributes(query) = }")       
         print(f"{get_regular_methods(query) = }") 
@@ -308,7 +308,7 @@ if __name__ == "__main__":
         finish = 1_000
         print(f"Generating list from {start:,} to {finish:,}")
         list_ = [i for i in range(start, finish+1)]
-        
+    
     with TimerBlock(force_record=True) as block:
         start = 1
         finish = 1_000
