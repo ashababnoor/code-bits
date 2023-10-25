@@ -147,4 +147,13 @@ class Bigquery:
         if verbose: Print.log("Pipeline generation complete. Executing pipeline")
         output = len(pipe.execute())
         if verbose: Print.log(f"Replies received = {output:,}")
+    
+    def parallel_store_in_redis_stack(
+        self,
+        query: Query,
+        redis: redis.Redis,
+        verbose: bool=False,
+        show_progress: bool=False,
+    ):
+        pass
         
