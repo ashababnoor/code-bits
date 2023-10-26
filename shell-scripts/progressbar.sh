@@ -12,7 +12,7 @@ draw_progress_bar() {
     printf "[%-${total_width}s] %d%%" "$bar" "$current_progress"
 }
 
-progress_bar_total_width_default_value=50
+progress_bar_total_width_default_value=$(( $(tput cols) - 10 ))
 progress_bar_total_width=${1-$progress_bar_total_width_default_value}
 
 # Loop to simulate progress
