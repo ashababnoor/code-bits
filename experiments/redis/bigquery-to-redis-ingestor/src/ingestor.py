@@ -19,7 +19,7 @@ class RedisIngestor:
         redis_value_columns: list[Union[str, int]]=None,
         verbose: bool=False,
         show_progress: bool=False,
-        parallel_computation: bool=False,        
+        parallel_computation: bool=False,
     ):
         from redis.commands.json.path import Path
         
@@ -28,7 +28,7 @@ class RedisIngestor:
         
         def get_redis_value(row, redis_value_columns, grain):
             pass
-        
+            
         rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
             row_count = query.get_row_count(bigquery_client=bigquery_client)
@@ -43,10 +43,10 @@ class RedisIngestor:
         if parallel_computation:
             Print.warning("Parallel computation is not yet supported. Please run with parallel_computation=False")
             return
-        else:
-            for row in rows:
-                key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
-                pipe.json().set(key, Path.root_path(), dict(row))
+        
+        for row in rows:
+            key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
+            pipe.json().set(key, Path.root_path(), dict(row))
         
         if verbose: Print.log("Pipeline generation complete. Executing pipeline")
         output = len(pipe.execute())
