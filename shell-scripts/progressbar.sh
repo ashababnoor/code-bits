@@ -13,12 +13,15 @@ draw_progress_bar() {
     printf "[%-${progress_bar_width}s] %d%%" "$progress_bar" "$percentage"
 }
 
-progress_bar_total_width_default_value=$(( $(tput cols) - 10 ))
-progress_bar_total_width=${1-$progress_bar_total_width_default_value}
+default_total_iterations=100
+total_iterations=${1-$default_total_iterations}
+
+default_progress_bar_width=$(( $(tput cols) - 20 ))
+progress_bar_width=${2-$default_progress_bar_width}
 
 # Loop to simulate progress
-for (( i = 0; i <= $progress_bar_total_width; i++ )); do
-    draw_progress_bar $i $progress_bar_total_width
+for (( iteration = 0; iteration <= $progress_bar_total_width; iteration++ )); do
+    draw_progress_bar $iteration $total_iterations $progress_bar_width
     sleep 0.05     # Simulate some work being done
     printf "\r"    # Move the cursor back to the beginning of the line
 done
