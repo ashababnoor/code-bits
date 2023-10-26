@@ -1,16 +1,19 @@
 # Function to draw the progress bar
 draw_progress_bar() {
-    local current_progress=$1
-    local progress_bar_width=$2
-    local percentage=$(( ($current_progress * 100) / $progress_bar_width ))
+    local current_iteration=$1
+    local total_iterations=$2
+    local progress_bar_width=$3
+
+    local progress_bar_percentage=$(( ($current_iteration * 100) / $total_iterations ))
     local progress_bar=""
 
     # Create the progress bar
+    local current_progress=$(( ($progress_bar_width * $progress_bar_percentage) / 100 ))
     for (( i = 0; i < $current_progress; i++ )); do
         progress_bar+="="
     done
 
-    printf "[%-${progress_bar_width}s] %d%%" "$progress_bar" "$percentage"
+    printf "[%-${progress_bar_width}s] %d%%" "$progress_bar" "$progress_bar_percentage"
 }
 
 default_total_iterations=100
