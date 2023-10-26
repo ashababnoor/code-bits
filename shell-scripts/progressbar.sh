@@ -23,8 +23,9 @@ default_progress_bar_width=$(( $(tput cols) - 20 ))
 progress_bar_width=${2-$default_progress_bar_width}
 
 # Loop to simulate progress
-for (( iteration = 0; iteration <= $progress_bar_total_width; iteration++ )); do
+for (( iteration = 0; iteration <= $total_iterations; iteration++ )); do
     draw_progress_bar $iteration $total_iterations $progress_bar_width
+
     sleep 0.05     # Simulate some work being done
     printf "\r"    # Move the cursor back to the beginning of the line
 done
