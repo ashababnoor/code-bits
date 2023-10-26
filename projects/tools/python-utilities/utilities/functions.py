@@ -43,3 +43,16 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
     if use_short_names:
         for name, short_name in short_names.items(): human_readable_time = human_readable_time.replace(name, short_name)
     return human_readable_time
+
+def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True) -> str:
+    time_unit_to_seconds_mapping = dict(
+        microsecond=0.000001,
+        millisecond=0.001,
+        second=1,
+        minute=60,
+        hour=3600,
+        day=86400,
+        month=2592000,
+        year=31536000,
+    )
+    pass
