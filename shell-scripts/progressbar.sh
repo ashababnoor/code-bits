@@ -1,15 +1,16 @@
 # Function to draw the progress bar
 draw_progress_bar() {
-    local current_progress=$(( $1 * 1 ))
-    local total_width=$2
-    local bar=""
+    local current_progress=$1
+    local progress_bar_width=$2
+    local percentage=$(( ($current_progress * 100) / $progress_bar_width ))
+    local progress_bar=""
 
     # Create the progress bar
     for (( i = 0; i < $current_progress; i++ )); do
-        bar+="="
+        progress_bar+="="
     done
 
-    printf "[%-${total_width}s] %d%%" "$bar" "$current_progress"
+    printf "[%-${progress_bar_width}s] %d%%" "$progress_bar" "$percentage"
 }
 
 progress_bar_total_width_default_value=$(( $(tput cols) - 10 ))
