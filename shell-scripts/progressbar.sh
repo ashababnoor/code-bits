@@ -1,11 +1,10 @@
 # Function to draw the progress bar
 draw_progress_bar() {
-    local progress_bar_width=$(( $1 * 1 ))  # Scale the progress to fit the bar width
+    local current_progress=$(( $1 * 1 ))  # Scale the progress to fit the bar width
     local bar=""
-    local current_progress=$1
 
     # Create the progress bar
-    for (( i = 0; i < $progress_bar_width; i++ )); do
+    for (( i = 0; i < $current_progress; i++ )); do
         bar+="="
     done
 
