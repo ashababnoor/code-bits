@@ -3,6 +3,7 @@ from models import Query
 from loader import Bigquery
 from utilities import Print
 from tqdm import tqdm
+from typing import Union
 
 
 class RedisIngestor:
@@ -16,15 +17,13 @@ class RedisIngestor:
         bigquery_client: Bigquery,
         verbose: bool=False,
         show_progress: bool=False,
-        parallel_computation: bool=False,
-        parallel_job_count: int=2,
+        parallel_computation: bool=False,        
     ):
         from redis.commands.json.path import Path
-        from joblib import Parallel, delayed
         
         rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self)
+            row_count = query.get_row_count(bigquery_client=bigquery_client)
             rows = tqdm(rows, total=row_count)
         
         pipe = redis_client.pipeline()
@@ -34,14 +33,13 @@ class RedisIngestor:
             pipe.json().set(key, "$", dict(row))  
         
         if parallel_computation:
-            Parallel(n_jobs=parallel_job_count)(
-                    delayed(add_to_pipe)(row, query.grain) for row in rows
-            )
+            Print.warning("Parallel computation is not yet supported. Please run with parallel_computation=False")
+            return
         else:
             for row in rows:
                 key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
-                pipe.json().set(key, "$", dict(row))
+                pipe.json().set(key, Path.root_path(), dict(row))
         
         if verbose: Print.log("Pipeline generation complete. Executing pipeline")
         output = len(pipe.execute())
-        if verbose: Print.log(f"Replies received = {output:,}")
+        if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
