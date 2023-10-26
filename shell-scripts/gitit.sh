@@ -142,7 +142,7 @@ function git_add_commit_push() {
     git_repo_validity_message=$(check_if_valid_git_repo)
 
     if [[ $git_repo_validity_message == "This is not a Git repository." ]]; then
-        echo "${red_bold}Fatal Error:${reset} Please provide a commit message."
+        echo "${red_bold}Fatal:${reset} not a git repository (or any of the parent directories)"
         return 1
     fi
 
@@ -161,7 +161,7 @@ function git_add_commit_push() {
 
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
-        echo "${red_bold}Error:${reset} Please provide a commit message."
+        echo "${red_bold}Error:${reset} Please provide a commit message"
         return 1
     fi
 
