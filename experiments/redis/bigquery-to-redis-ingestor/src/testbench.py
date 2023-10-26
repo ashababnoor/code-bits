@@ -2,6 +2,7 @@ import os
 from utilities import *
 from connector import bq
 from models import Query
+from ingestor import RedisIngestor
 
 
 # Defining root dir and data dir 
@@ -75,27 +76,43 @@ query = Query(**address_history)
 #         redis_commands_to_resp(redis_commands_file_path, resp_file_name)
 
 
+# with CodeBlock(separation=0) as _:
+#     from connector import r_ah
+    
+#     with TimerBlock("Bigquery.store_in_redis_stack_as_json()") as block:
+#         bq.store_in_redis_stack_as_json(
+#             query=query.add_limit(10000)
+#             , redis=r_ah
+#             , verbose=True
+#             , show_progress=True
+#         )
+    
+#     with TimerBlock("Bigquery.store_in_redis_stack_as_json()") as block:
+#         bq.store_in_redis_stack_as_json(
+#             query=query.add_limit(10000)
+#             , redis=r_ah
+#             , verbose=True
+#             , show_progress=True
+#             , parallel_computation=True
+#         )
+    
+#     r_ah.connection_pool.close()    
+
+
 with CodeBlock(separation=0) as _:
     from connector import r_ah
+    ri = RedisIngestor()
     
-    with TimerBlock("Bigquery.store_in_redis_stack_as_json()") as block:
-        bq.store_in_redis_stack_as_json(
+    with TimerBlock("RedisIngestor class store_in_redis_stack_as_json()"):
+        ri.store_in_redis_stack_as_json(
             query=query.add_limit(10000)
-            , redis=r_ah
+            , redis_client=r_ah
+            , bigquery_client=bq
             , verbose=True
             , show_progress=True
         )
     
-    with TimerBlock("Bigquery.store_in_redis_stack_as_json()") as block:
-        bq.store_in_redis_stack_as_json(
-            query=query.add_limit(10000)
-            , redis=r_ah
-            , verbose=True
-            , show_progress=True
-            , parallel_computation=True
-        )
-    
-    r_ah.connection_pool.close()    
+    r_ah.close()
 
 
 TimerBlock.timing_summary()

@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 class RedisIngestor:
-    def __init__():
+    def __init__(self):
         pass
     
     def store_in_redis_stack_as_json(
@@ -22,7 +22,7 @@ class RedisIngestor:
         from redis.commands.json.path import Path
         from joblib import Parallel, delayed
         
-        rows = Bigquery.execute(query.get_query_string())
+        rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
             row_count = query.get_row_count(bigquery_client=self)
             rows = tqdm(rows, total=row_count)
