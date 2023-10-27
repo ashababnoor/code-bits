@@ -28,7 +28,12 @@ class Bigquery:
             project=os.environ.get("BIGQUERY_PROJECT_ID")
         )
         return True if datasets else False
-        
+
+    
+class BigqueryLoader:
+    def __init__(self, bigquery_client) -> None:
+        self.client = bigquery_client
+    
     def write_to_text_file(
             self, 
             query: Query, 
@@ -39,10 +44,10 @@ class Bigquery:
             parallel_job_count: int=2,
         ):
         from joblib import Parallel, delayed
-                
-        rows = self.execute(query.get_query_string())
+        
+        rows = self.client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self)
+            row_count = query.get_row_count(bigquery_client=self.client)
             rows = tqdm(rows, total=row_count)
         
         with open(save_path, "w") as file:
@@ -68,9 +73,9 @@ class Bigquery:
         import json
         from joblib import Parallel, delayed
         
-        rows = self.execute(query.get_query_string())
+        rows = self.client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self)
+            row_count = query.get_row_count(bigquery_client=self.client)
             rows = tqdm(rows, total=row_count)
         
         query_output_dict = {
@@ -98,9 +103,9 @@ class Bigquery:
         For complex data structures, code needs to be re-written.
         RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
         '''
-        rows = self.execute(query.get_query_string())
+        rows = self.client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self)
+            row_count = query.get_row_count(bigquery_client=self.client)
             rows = tqdm(rows, total=row_count)
         
         pipe = redis.pipeline()
@@ -124,9 +129,9 @@ class Bigquery:
         from redis.commands.json.path import Path
         from joblib import Parallel, delayed
         
-        rows = self.execute(query.get_query_string())
+        rows = self.client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self)
+            row_count = query.get_row_count(bigquery_client=self.client)
             rows = tqdm(rows, total=row_count)
         
         pipe = redis.pipeline()
