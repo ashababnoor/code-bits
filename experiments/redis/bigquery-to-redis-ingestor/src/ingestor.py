@@ -27,12 +27,8 @@ class RedisIngestor:
             pass
         
         def get_redis_value(row, redis_value_columns, grain):
-            pass
-            
-        rows = bigquery_client.execute(query.get_query_string())
-        if show_progress:
-            row_count = query.get_row_count(bigquery_client=bigquery_client)
-            rows = tqdm(rows, total=row_count)
+            pass            
+        
         
         pipe = redis_client.pipeline()
         
@@ -44,6 +40,11 @@ class RedisIngestor:
             Print.warning("Parallel computation is not yet supported. Please run with parallel_computation=False")
             return
         
+        rows = bigquery_client.execute(query.get_query_string())
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=bigquery_client)
+            rows = tqdm(rows, total=row_count)
+            
         for row in rows:
             key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
             pipe.json().set(key, Path.root_path(), dict(row))
