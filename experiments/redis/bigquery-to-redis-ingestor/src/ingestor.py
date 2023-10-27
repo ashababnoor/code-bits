@@ -1,9 +1,9 @@
 import redis
 from models import Query
 from loader import Bigquery
-from utilities import Print
 from tqdm import tqdm
 from typing import Union
+from utilities.classes.print import Print
 
 
 class RedisIngestor:

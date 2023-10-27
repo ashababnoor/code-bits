@@ -1,7 +1,6 @@
 import os
 from copy import copy
 from typing import Union
-from utilities import *
 
 
 class Query:
@@ -74,6 +73,11 @@ class Query:
 
 
 if __name__ == "__main__":
+    from utilities.classes.color import Color
+    from utilities.classes.print import Print
+    from utilities.classes.codeblock import CodeBlock
+
+
     with CodeBlock("Query class regular constructor", Color.light_sea_green_bold) as _:
         query = Query("popular_search_terms")
         print(query)

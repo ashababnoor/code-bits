@@ -1,8 +1,8 @@
 from google.cloud import bigquery
 import redis
 from models import Query
-from utilities import Print
 from tqdm import tqdm
+from utilities.classes.print import Print
 
 
 class Bigquery:
