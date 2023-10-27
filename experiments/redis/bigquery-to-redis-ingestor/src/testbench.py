@@ -1,5 +1,9 @@
 import os
-from utilities import *
+from utilities.classes.color import Color
+from utilities.classes.print import Print
+from utilities.classes.codeblock import CodeBlock
+from utilities.classes.timerblock import TimerBlock
+
 from connector import bq
 from models import Query
 from ingestor import RedisIngestor
@@ -105,7 +109,7 @@ with CodeBlock(separation=0) as _:
     
     with TimerBlock("RedisIngestor class store_in_redis_stack_as_json()"):
         ri.store_in_redis_stack_as_json(
-            query=query #.add_limit(10000)
+            query=query.add_limit(10000)
             , redis_client=r_ah
             , bigquery_client=bq
             , verbose=True
