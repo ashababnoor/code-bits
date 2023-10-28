@@ -13,7 +13,8 @@ class RedisIngestor:
     def store_in_redis(
         self,
         query: Query,
-        redis: redis.Redis,
+        redis_client: redis.Redis,
+        bigquery_client: Bigquery,
         verbose: bool=False,
         show_progress: bool=False,
     ):
@@ -22,9 +23,9 @@ class RedisIngestor:
         For complex data structures, code needs to be re-written.
         RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
         '''
-        rows = self.client.execute(query.get_query_string())
+        rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
-            row_count = query.get_row_count(bigquery_client=self.client)
+            row_count = query.get_row_count(bigquery_client=bigquery_client)
             rows = tqdm(rows, total=row_count)
         
         pipe = redis.pipeline()
