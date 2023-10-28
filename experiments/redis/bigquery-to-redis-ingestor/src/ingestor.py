@@ -10,6 +10,32 @@ class RedisIngestor:
     def __init__(self):
         pass
     
+    def store_in_redis(
+        self,
+        query: Query,
+        redis: redis.Redis,
+        verbose: bool=False,
+        show_progress: bool=False,
+    ):
+        '''
+        Only works with simple data structures containing int, float, string, byte etc.
+        For complex data structures, code needs to be re-written.
+        RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
+        '''
+        rows = self.client.execute(query.get_query_string())
+        if show_progress:
+            row_count = query.get_row_count(bigquery_client=self.client)
+            rows = tqdm(rows, total=row_count)
+        
+        pipe = redis.pipeline()
+        
+        for row in rows:
+            key = ", ".join([str(row.values()[i]) for i in range(query.grain)])
+            pipe.hset(key, mapping=dict(row))
+        
+        output = len(pipe.execute())
+        if verbose: Print.log(f"Replies received = {output:,}")
+    
     def store_in_redis_stack_as_json(
         self,
         query: Query,
