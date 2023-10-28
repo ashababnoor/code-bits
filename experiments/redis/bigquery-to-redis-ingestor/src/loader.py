@@ -29,7 +29,7 @@ class Bigquery:
         )
         return True if datasets else False
 
-    
+
 class BigqueryLoader:
     def __init__(self, bigquery_client) -> None:
         self.client = bigquery_client
