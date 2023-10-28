@@ -7,8 +7,32 @@ from utilities.classes.print import Print
 
 
 class RedisIngestor:
-    def __init__(self):
-        pass
+    def __init__(self, redis_client, bigquery_client):
+        self.redis_client = redis_client
+        self.bigquery_client = bigquery_client
+    
+    def __get_redis_key_from_grain(row, grain: int, separator: str=";;") -> str:
+        columns = list(row.keys())[:grain]
+        key = separator.join([f"{column}:{row[column]}" for column in columns])
+        return key
+    
+    def __get_redis_key_from_list(row, redis_key_columns: list, separator: str=";;") -> str:
+        columns = list(set(redis_key_columns) & set(row.keys()))
+        key = separator.join([f"{column}:{row[column]}" for column in columns])
+        return key
+    
+    def __get_redis_value_from_list_as_dict(row, redis_value_columns: list) -> dict:
+        columns = list(set(redis_value_columns) & set(row.keys()))
+        value = {column: row[column] for column in columns}
+        return value
+    
+    def __get_redis_value_as_dict(row, columns_to_exclude: Union[list, None]=None):
+        if columns_to_exclude is not None:
+            columns = list(set(row.keys()) - set(columns_to_exclude))
+            value = {column: row[column] for column in columns}
+            return value
+        value = dict(row)
+        return value
     
     def store_in_redis(
         self,
@@ -49,19 +73,6 @@ class RedisIngestor:
         parallel_computation: bool=False,
     ):
         from redis.commands.json.path import Path
-        
-        def get_redis_key_from_list(row, redis_key_columns, separator=";;"):
-            key = separator.join([f"{column}:{row[column]}" for column in redis_key_columns if column in row.keys()])
-            return key
-        
-        def get_redis_value_as_dict_from_list(row, redis_value_columns):
-            value = {column: row[column] for column in redis_value_columns if column in row.keys()}
-            return value
-        
-        def get_redis_key_from_grain(row, grain, separator=";;"):
-            key = separator.join([f"{column}:{row[column]}" for column in list(row.keys())[:grain]])
-            return key
-        
         
         pipe = redis_client.pipeline()
         
