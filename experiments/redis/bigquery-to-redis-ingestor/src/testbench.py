@@ -105,11 +105,11 @@ query = Query(**address_history)
 
 with CodeBlock(separation=0) as _:
     from connector import r_ah
-    ri = RedisIngestor()
+    ri = RedisIngestor(redis_client=r_ah, bigquery_client=bq)
     
     with TimerBlock("RedisIngestor class store_in_redis_stack_as_json()"):
         ri.store_in_redis_stack_as_json(
-            query=query.add_limit(10000)
+            query=query.add_limit(100)
             , redis_client=r_ah
             , bigquery_client=bq
             , verbose=True

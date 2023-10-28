@@ -4,7 +4,7 @@ from loader import Bigquery
 from tqdm import tqdm
 from typing import Union
 from utilities.classes.print import Print
-
+from logger import logger
 
 class RedisIngestor:
     def __init__(self, redis_client, bigquery_client):
@@ -37,8 +37,8 @@ class RedisIngestor:
     def store_in_redis(
         self,
         query: Query,
-        redis_client: redis.Redis,
-        bigquery_client: Bigquery,
+        redis_client: redis.Redis=None,
+        bigquery_client: Bigquery=None,
         verbose: bool=False,
         show_progress: bool=False,
     ):
@@ -49,6 +49,7 @@ class RedisIngestor:
         '''
         rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
+            logger.info("Progress will be shown")
             row_count = query.get_row_count(bigquery_client=bigquery_client)
             rows = tqdm(rows, total=row_count)
         
@@ -64,15 +65,20 @@ class RedisIngestor:
     def store_in_redis_stack_as_json(
         self,
         query: Query,
-        redis_client: redis.Redis,
-        bigquery_client: Bigquery,
-        redis_key_columns: list[Union[str, int]]=None,
-        redis_value_columns: list[Union[str, int]]=None,
+        redis_client: redis.Redis=None,
+        bigquery_client: Bigquery=None,
+        redis_key_columns: list[str]=None,
+        redis_value_columns: list[str]=None,
         verbose: bool=False,
         show_progress: bool=False,
         parallel_computation: bool=False,
     ):
         from redis.commands.json.path import Path
+        
+        if redis_client is None: 
+            redis_client = self.redis_client
+        if bigquery_client is None:
+            bigquery_client = self.bigquery_client
         
         pipe = redis_client.pipeline()
         
