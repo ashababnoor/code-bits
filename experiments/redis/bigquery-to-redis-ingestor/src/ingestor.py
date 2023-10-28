@@ -50,11 +50,17 @@ class RedisIngestor:
     ):
         from redis.commands.json.path import Path
         
-        def get_redis_key(row, redis_key_columns, grain):
-            pass
+        def get_redis_key_from_list(row, redis_key_columns, separator=";;"):
+            key = separator.join([f"{column}:{row[column]}" for column in redis_key_columns if column in row.keys()])
+            return key
         
-        def get_redis_value(row, redis_value_columns, grain):
-            pass            
+        def get_redis_value_as_dict_from_list(row, redis_value_columns):
+            value = {column: row[column] for column in redis_value_columns if column in row.keys()}
+            return value
+        
+        def get_redis_key_from_grain(row, grain, separator=";;"):
+            key = separator.join([f"{column}:{row[column]}" for column in list(row.keys())[:grain]])
+            return key
         
         
         pipe = redis_client.pipeline()
