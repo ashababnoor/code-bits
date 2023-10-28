@@ -1,5 +1,5 @@
 import redis
-from models import Query
+from helper import Query
 from loader import Bigquery
 from tqdm import tqdm
 from typing import Union

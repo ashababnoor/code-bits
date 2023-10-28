@@ -5,7 +5,7 @@ from utilities.classes.codeblock import CodeBlock
 from utilities.classes.timerblock import TimerBlock
 
 from connector import bq
-from models import Query
+from helper import Query
 from ingestor import RedisIngestor
 
 
