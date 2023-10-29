@@ -19,6 +19,9 @@ def get_dunder_methods(object: any) -> list:
         if callable(getattr(object, method)) and method.startswith('__')
     ]
 
+def check_iterable_datatype(iterable, datatype):
+    return all(isinstance(item, datatype) for item in iterable)
+
 def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True) -> str:
     import humanize
     from datetime import timedelta
