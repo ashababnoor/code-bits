@@ -114,7 +114,7 @@ with CodeBlock(separation=0) as _:
             , bigquery_client=bq
             , verbose=True
             , show_progress=True
-            , parallel_computation=False
+            , parallel_computation=True
         )
     
     r_ah.close()

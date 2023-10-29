@@ -21,6 +21,9 @@ class Bigquery:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred
         return bigquery.Client()
     
+    def get_client(self):
+        return self.__cnn
+    
     def test_connection(self):
         import os
 

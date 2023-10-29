@@ -109,6 +109,7 @@ class RedisIngestor:
         verbose: bool=False,
         show_progress: bool=False,
         parallel_computation: bool=False,
+        worker_count: int=10,
     ):
         from redis.commands.json.path import Path
         
@@ -136,27 +137,66 @@ class RedisIngestor:
         pipe = redis_client.pipeline()
         
         if parallel_computation:
-            Print.warning("Parallel computation is not yet supported. Please run with parallel_computation=False")
-            return
-        
-        rows = bigquery_client.execute(query.get_query_string())
-        if show_progress:
-            row_count = query.get_row_count(bigquery_client=bigquery_client)
-            rows = tqdm(rows, total=row_count)
-        
-        for row in rows:
-            key = get_redis_key(
-                row=row,
-                redis_key_columns=redis_key_columns,
-                grain=query.grain, 
-            )
-            value = get_redis_value(
-                row=row,
-                redis_value_columns=redis_value_columns,
-                columns_to_exclude=redis_columns_to_exclude
-            )
-            pipe.json().set(key, Path.root_path(), value)
-        
-        if verbose: Print.log("Pipeline generation complete. Executing pipeline")
-        output = len(pipe.execute())
-        if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
+            import multiprocessing
+            from copy import copy
+            
+            def ingest_data(worker_number, query_string, bigquery_client, redis_client):
+                rows = bigquery_client.execute(query_string)
+                pipe = redis_client.pipeline()
+                for row in rows():
+                    key = get_redis_key(
+                        row=row,
+                        redis_key_columns=redis_key_columns,
+                        grain=query.grain, 
+                    )
+                    value = get_redis_value(
+                        row=row,
+                        redis_value_columns=redis_value_columns,
+                        columns_to_exclude=redis_columns_to_exclude
+                    )
+                    pipe.json().set(key, Path.root_path(), value)
+                if verbose: Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
+                output = len(pipe.execute())
+                if verbose: Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
+                
+                redis_client.close()
+                bigquery_client.get_client().close()
+                
+
+            worker_numbers = [i for i in range(worker_count)]
+            query_strings = query.get_windowed_query_strings(bigquery_client=bigquery_client, window_number=worker_count)
+            bigquery_clients = [copy(bigquery_client) for _ in range(worker_count)]
+            redis_clients = [copy(redis_client) for _ in range(worker_count)]
+            
+            arguments = list(zip(worker_numbers, query_strings, bigquery_clients, redis_clients))
+            
+            # Create a pool of worker processes
+            pool = multiprocessing.Pool()
+
+            # Distribute data to workers for processing
+            pool.map(ingest_data, arguments)
+            pool.close()
+            pool.join()
+
+        else:
+            rows = bigquery_client.execute(query.get_query_string())
+            if show_progress:
+                row_count = query.get_row_count(bigquery_client=bigquery_client)
+                rows = tqdm(rows, total=row_count)
+            
+            for row in rows:
+                key = get_redis_key(
+                    row=row,
+                    redis_key_columns=redis_key_columns,
+                    grain=query.grain, 
+                )
+                value = get_redis_value(
+                    row=row,
+                    redis_value_columns=redis_value_columns,
+                    columns_to_exclude=redis_columns_to_exclude
+                )
+                pipe.json().set(key, Path.root_path(), value)
+            
+            if verbose: Print.log("Pipeline generation complete. Executing pipeline")
+            output = len(pipe.execute())
+            if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
