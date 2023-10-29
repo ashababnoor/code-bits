@@ -108,7 +108,7 @@ with CodeBlock(separation=0) as _:
     ri = RedisIngestor(redis_client=r_ah, bigquery_client=bq)
     
     with TimerBlock("RedisIngestor class store_in_redis_stack_as_json()"):
-        ri.store_in_redis_stack_as_json(
+        ri.store_in_redis_as_json(
             query=query.add_limit(100)
             , redis_client=r_ah
             , bigquery_client=bq

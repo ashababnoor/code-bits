@@ -50,7 +50,7 @@ class Query:
             raise Exception("Limit must be an integer or string.")
         
         # New lines must be added to avoid the limit clause falling into a comment.
-        limit_added_query_string = f"select * \nfrom (\n{self.get_query_string()}\n) \nlimit {limit}"
+        limit_added_query_string = f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nLIMIT {limit}"
 
         if inplace:
             self.limit = limit
@@ -65,11 +65,25 @@ class Query:
         if use_limit and self.limit is not None:
             return self.limit
         
-        row_count_query_string = f"select count(*) \nfrom (\n{self.get_query_string()}\n)"
+        row_count_query_string = f"SELECT COUNT(*) \nFROM (\n{self.get_query_string()}\n)"
         
         rows = bigquery_client.execute(row_count_query_string)
         results = [row for row in rows]
         return results[0].values()[0]
+    
+    def get_windowed_queries(self, bigquery_client, use_limit=True, window_number: int=10) -> list[str]:
+        row_count = self.get_row_count(bigquery_client=bigquery_client, use_limit=use_limit)
+        
+        limit = (row_count // window_number) + 1
+        offset = 0
+        queries = []
+        
+        for _ in range(window_number):
+            queries.append(
+                 f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nLIMIT {limit} OFFSET {offset}"
+            )
+            offset += limit
+        return queries
 
 
 if __name__ == "__main__":
