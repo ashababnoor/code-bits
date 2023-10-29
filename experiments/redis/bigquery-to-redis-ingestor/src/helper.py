@@ -71,19 +71,19 @@ class Query:
         results = [row for row in rows]
         return results[0].values()[0]
     
-    def get_windowed_queries(self, bigquery_client, use_limit=True, window_number: int=10) -> list[str]:
+    def get_windowed_query_strings(self, bigquery_client, use_limit=True, window_number: int=10) -> list[str]:
         row_count = self.get_row_count(bigquery_client=bigquery_client, use_limit=use_limit)
         
         limit = (row_count // window_number) + 1
         offset = 0
-        queries = []
+        query_strings = []
         
         for _ in range(window_number):
-            queries.append(
+            query_strings.append(
                  f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nLIMIT {limit} OFFSET {offset}"
             )
             offset += limit
-        return queries
+        return query_strings
 
 
 if __name__ == "__main__":
