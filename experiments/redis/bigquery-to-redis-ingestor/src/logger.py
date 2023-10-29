@@ -1,7 +1,7 @@
 from utilities.classes.color import Color
 import logging
 
-logging_level = logging.DEBUG
+logging_level = logging.INFO
 logging_file = ".log"
 
 class CustomFormatter(logging.Formatter):

@@ -80,7 +80,7 @@ class Query:
         
         for _ in range(window_number):
             query_strings.append(
-                 f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nLIMIT {limit} OFFSET {offset}"
+                f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nLIMIT {limit} OFFSET {offset}"
             )
             offset += limit
         return query_strings

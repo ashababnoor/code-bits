@@ -1,4 +1,3 @@
-import sys
 import redis
 from helper import Query
 from loader import Bigquery
@@ -101,18 +100,41 @@ class RedisIngestor:
         output = len(pipe.execute())
         if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
     
-    def ingest_data(self, worker_number, query_string):
-        rows = copy(self.bigquery_client).execute(query_string)
-        pipe = copy(self.redis_client).pipeline()
-        Print.log(f"{worker_number = }, {query_string = }")
-        
-        # redis_client = redis.Redis(host="localhost", port=6380, decode_responses=True)
-        # bigquery_client = Bigquery(google_cred=None)
+    # def ingest_data_(self, worker_number, query_string):#, bigquery_client, redis_client):
+    #     # rows = self.bigquery_client.execute(query_string)
+    #     # pipe = self.redis_client.pipeline()
+    #     redis_client = redis.Redis(host="localhost", port=6380, decode_responses=True)
+    #     bigquery_client = Bigquery(google_cred=None)
 
-        # rows = bigquery_client.execute(query_string)
-        # pipe = redis_client.pipeline()
+    #     rows = bigquery_client.execute(query_string)
+    #     pipe = redis_client.pipeline()
+    #     for row in rows():
+    #         key = self.__get_redis_key_from_list(
+    #             row=row,
+    #             redis_key_columns=['recipient_identifier'],
+    #             grain=1,
+    #         )
+    #         value = self.__get_redis_value_from_list_as_dict(
+    #             row=row,
+    #             redis_value_columns=['address_history'],
+    #             columns_to_exclude=None
+    #         )
+    #         pipe.json().set(key, "$", value)
+            
+    #     Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
+    #     output = len(pipe.execute())
+    #     Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
+    
+    def ingest_data(self, worker_number, query_string):#, bigquery_client, redis_client):
+        # rows = copy(self.bigquery_client).execute(query_string)
+        # pipe = copy(self.redis_client).pipeline()
         
-        for row in rows:
+        redis_client = redis.Redis(host="localhost", port=6380, decode_responses=True)
+        bigquery_client = Bigquery(google_cred=None)
+
+        rows = bigquery_client.execute(query_string)
+        pipe = redis_client.pipeline()
+        for row in rows():
             key = self.__get_redis_key_from_list(
                 row=row,
                 redis_key_columns=['recipient_identifier'],
@@ -128,7 +150,6 @@ class RedisIngestor:
         Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
         output = len(pipe.execute())
         Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
-        return f"{worker_number=}: Pipeline executed. Replies received = {output:,}"
     
     
     def store_in_redis_as_json(
@@ -167,78 +188,52 @@ class RedisIngestor:
         logger.debug(f"Using {get_redis_key.__name__}() for generating redis key")
         logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
         
+        pipe = redis_client.pipeline()
         
         if parallel_computation:
             import multiprocessing
-            from multiprocessing import freeze_support
-            from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
             from copy import copy
             
-            def ingest_data_(worker_number, query_string):
-                redis_client_ = copy(redis_client)
-                bigquery_client_ = copy(bigquery_client)
+            # def ingest_data(worker_number, query_string, bigquery_client, redis_client):
+            #     rows = bigquery_client.execute(query_string)
+            #     pipe = redis_client.pipeline()
+            #     for row in rows():
+            #         key = get_redis_key(
+            #             row=row,
+            #             redis_key_columns=redis_key_columns,
+            #             grain=query.grain, 
+            #         )
+            #         value = get_redis_value(
+            #             row=row,
+            #             redis_value_columns=redis_value_columns,
+            #             columns_to_exclude=redis_columns_to_exclude
+            #         )
+            #         pipe.json().set(key, Path.root_path(), value)
+                    
+            #     if verbose: Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
+            #     output = len(pipe.execute())
+            #     if verbose: Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
                 
-                Print.log(f"{worker_number = }, {query_string.splitlines()[-1] = }")
+                # redis_client.close()
+                # bigquery_client.get_client().close()
                 
-                rows = bigquery_client_.execute(query_string)
-                pipe = redis_client_.pipeline()
-                for row in rows:
-                    key = get_redis_key(
-                        row=row,
-                        redis_key_columns=redis_key_columns,
-                        grain=query.grain, 
-                    )
-                    value = get_redis_value(
-                        row=row,
-                        redis_value_columns=redis_value_columns,
-                        columns_to_exclude=redis_columns_to_exclude
-                    )
-                    pipe.json().set(key, Path.root_path(), value)
-                
-                if verbose: Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
-                output = len(pipe.execute())
-                if verbose: Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
-                
-                # redis_client_.close()
-                bigquery_client_.get_client().close()
-                return f"{worker_number=}: Pipeline executed. Replies received = {output:,}"
-            
 
             worker_numbers = list(range(worker_count))
-            query_strings = query.get_windowed_query_strings(
-                bigquery_client=bigquery_client
-                , window_number=worker_count
-            )
+            query_strings = query.get_windowed_query_strings(bigquery_client=bigquery_client, window_number=worker_count)
+            bigquery_clients = [copy(bigquery_client) for _ in range(worker_count)]
+            redis_clients = [copy(redis_client) for _ in range(worker_count)]
             
-            arguments = list(zip(worker_numbers, query_strings))
-            # for argument in arguments:
-            #     # print(argument[0], argument[1]+"\n\n") 
-            #     print(f"{len(argument) = }")
-            # sys.exit()
+            arguments = list(zip(worker_numbers, query_strings))#, bigquery_clients, redis_clients))
             
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                futures = [
-                    executor.submit(ingest_data_, *argument)
-                    for argument in arguments
-                ]
-                
-                results = [
-                    future.result()
-                    for future in futures
-                ]
-                
-                logger.info(results)
-                
-                # for argument in arguments:
-                #     executor.submit(self.ingest_data, argument)
-                
-                # for argument in arguments:
-                
-                # executor.shutdown(wait=True)
+            # Create a pool of worker processes
+            pool = multiprocessing.Pool()
+
+            # Distribute data to workers for processing
+            pool.map(self.ingest_data, arguments)
+            pool.close()
+            pool.join()
 
         else:
-            pipe = redis_client.pipeline()
-            
             rows = bigquery_client.execute(query.get_query_string())
             if show_progress:
                 row_count = query.get_row_count(bigquery_client=bigquery_client)

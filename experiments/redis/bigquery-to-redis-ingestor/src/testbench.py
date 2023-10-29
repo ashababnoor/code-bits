@@ -106,16 +106,31 @@ query = Query(**address_history)
 with CodeBlock(separation=0) as _:
     from connector import r_ah
     ri = RedisIngestor(redis_client=r_ah, bigquery_client=bq)
+    limit_ = 2_000
     
-    with TimerBlock("RedisIngestor class store_in_redis_stack_as_json()"):
+    with TimerBlock("store_in_redis_as_json() -- Parallel_computation=True"):
         ri.store_in_redis_as_json(
-            query=query.add_limit(100)
+            query=query.add_limit(limit_)
             , redis_client=r_ah
             , bigquery_client=bq
             , verbose=True
             , show_progress=True
             , parallel_computation=True
+            , worker_count=15
         )
+    
+    # r_ah.flushall()
+    
+    # with TimerBlock("store_in_redis_as_json() -- Parallel_computation=False"):
+    #     ri.store_in_redis_as_json(
+    #         query=query.add_limit(limit_)
+    #         , redis_client=r_ah
+    #         , bigquery_client=bq
+    #         , verbose=True
+    #         , show_progress=True
+    #         , parallel_computation=True
+    #         , worker_count=30
+    #     )
     
     r_ah.close()
 
