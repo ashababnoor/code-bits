@@ -10,6 +10,7 @@ class RedisIngestor:
     def __init__(self, redis_client, bigquery_client):
         self.redis_client = redis_client
         self.bigquery_client = bigquery_client
+        logger.debug("RedisIngestor object created")
     
     def __get_redis_key_from_grain(row, grain: int, separator: str=";;") -> str:
         columns = list(row.keys())[:grain]
@@ -49,7 +50,6 @@ class RedisIngestor:
         '''
         rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
-            logger.info("Progress will be shown")
             row_count = query.get_row_count(bigquery_client=bigquery_client)
             rows = tqdm(rows, total=row_count)
         
@@ -92,6 +92,7 @@ class RedisIngestor:
         
         rows = bigquery_client.execute(query.get_query_string())
         if show_progress:
+            logger.debug("Progress will be shown")
             row_count = query.get_row_count(bigquery_client=bigquery_client)
             rows = tqdm(rows, total=row_count)
             
