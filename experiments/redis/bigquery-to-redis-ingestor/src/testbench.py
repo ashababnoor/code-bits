@@ -117,7 +117,7 @@ if run_this:
     redis_local_apt.close()
 
 
-run_this = True
+run_this = False
 if run_this:
     from connector import redis_local_apt
     ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
@@ -137,9 +137,7 @@ if run_this:
             , worker_count=8
             , redis_data_type=RedisIngestor.JSON
         )
-    
-    # redis_local_apt.flushall()
-    
+        
     with TimerBlock("RedisIngestor ingest_data() -- type=HSET; Parallel_computation=True; worker=8"):
         ri.ingest_data(
             query=query_st.add_limit(limit_)
@@ -150,6 +148,22 @@ if run_this:
         )
     
     redis_local_apt.close()
+
+
+run_this = True
+if run_this:
+    from connector import redis_local_apt
+    ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
+    
+    limit_ = 1000
+    
+    redis_local_apt.flushall()
+    
+    with TimerBlock("RedisIngestor ingest_address_history()"):
+        ri.ingest_address_history(
+            limit=limit_
+            , verbose=True
+        )
 
 
 TimerBlock.timing_summary()
