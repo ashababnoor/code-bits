@@ -1,8 +1,6 @@
 from utilities.classes.color import Color
 import logging
 
-logging_level = logging.INFO
-logging_file = ".log"
 
 class CustomFormatter(logging.Formatter):
     TEMPLATE = "{asctime} [{level_color}{levelname}{reset}]: {message} ({filename}:{lineno})"
@@ -22,20 +20,27 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
+# Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+logging_level = logging.DEBUG
+logging_file = ".log"
+
 logging.basicConfig(
-    level=logging_level,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='{asctime} [{levelname}]: {message} ({filename}:{lineno})',
     style="{",
     datefmt="%a %Y-%m-%d %H:%M:%S %z",
     handlers=[
         logging.FileHandler(logging_file),  # Save log messages to a file
-        # logging.StreamHandler()             # Print log messages to the console
+        logging.StreamHandler()             # Print log messages to the console
     ]
 )
 
 logger = logging.getLogger()
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)  # Set the level for this handler
-console_handler.setFormatter(CustomFormatter())
+console_handler.setLevel(logging.DEBUG)
+# console_handler.setFormatter(CustomFormatter())
+
+file_handler = logging.FileHandler(filename=logging_file)
+
 logger.addHandler(console_handler)
+logger.addHandler(file_handler)
