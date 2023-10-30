@@ -37,6 +37,16 @@ class RedisIngestor:
         value = dict(row)
         return value
     
+    def __redis_set(pipe, key, value):
+        pipe.set(key, value)
+    
+    def __redis_hset(pipe, key, value):
+        pipe.hset(key, mapping=value)
+    
+    def __redis_json_set(pipe, key, value):
+        from redis.commands.json.path import Path
+        pipe.json().set(key, Path.root_path(), value)
+    
     def store_in_redis_as_hash(
         self,
         query: Query,
