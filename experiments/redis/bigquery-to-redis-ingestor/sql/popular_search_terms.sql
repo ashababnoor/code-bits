@@ -1,31 +1,31 @@
-with base_intl_top_terms as (
-  select *
-  from `bigquery-public-data.google_trends.international_top_terms`
-  qualify 
+WITH base_intl_top_terms AS (
+  SELECT *
+  FROM `bigquery-public-data.google_trends.international_top_terms`
+  QUALIFY 
     row_number() 
   over( 
-    partition by 
+    PARTITION BY 
       country_code
       , week
       , rank
-    order by 
+    ORDER BY 
       refresh_date
   ) = 1
 )
 
-select
+SELECT
   country_code
   , week
   , array_agg(
-    struct(
-      term as term
-      , rank as rank
-      , score as score
+    STRUCT(
+      term AS term
+      , rank AS rank
+      , score AS score
     )
-    ignore nulls order by rank asc
-  ) as popular_terms
-from base_intl_top_terms
-group by
+    IGNORE NULLS ORDER BY rank ASC
+  ) AS popular_terms
+FROM base_intl_top_terms
+GROUP BY
   country_code
   , week
-order by country_code, week desc
+ORDER BY country_code, week desc
