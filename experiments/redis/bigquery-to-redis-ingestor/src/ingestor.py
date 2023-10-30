@@ -100,11 +100,9 @@ class RedisIngestor:
         if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
     
     
-    def store_in_redis_as_json(
+    def ingest_data(
         self,
         query: Query,
-        redis_client: redis.Redis=None,
-        bigquery_client: Bigquery=None,
         redis_key_columns: list[str]=None,
         redis_value_columns: list[str]=None,
         redis_columns_to_exclude: list[str]=None,
@@ -115,10 +113,8 @@ class RedisIngestor:
     ):
         from redis.commands.json.path import Path
         
-        if redis_client is None: 
-            redis_client = self.redis_client
-        if bigquery_client is None:
-            bigquery_client = self.bigquery_client
+        redis_client = self.redis_client
+        bigquery_client = self.bigquery_client
         
         get_redis_key = None
         get_redis_value = None
@@ -141,11 +137,11 @@ class RedisIngestor:
             from concurrent.futures import ThreadPoolExecutor
             from copy import copy
             
-            def ingest_data_(worker_number, query_string):
+            def _ingest_data(worker_number, query_string):
                 redis_client_ = redis_client                
                 bigquery_client_ = copy(bigquery_client)
                 
-                Print.log(f"{worker_number = }, {query_string.splitlines()[-1] = }")
+                Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
                 
                 rows = bigquery_client_.execute(query_string)
                 pipe = redis_client_.pipeline()
@@ -162,12 +158,12 @@ class RedisIngestor:
                     )
                     pipe.json().set(key, Path.root_path(), value)
                 
-                if verbose: Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
+                if verbose: Print.log(f"{worker_number = }: Redis pipeline generation complete. Executing pipeline")
                 output = len(pipe.execute())
-                if verbose: Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
+                if verbose: Print.success(f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}")
                 
                 bigquery_client_.get_client().close()
-                return f"{worker_number=}: Pipeline executed. Replies received = {output:,}"
+                return f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}"
             
 
             worker_numbers = list(range(worker_count))
@@ -179,7 +175,7 @@ class RedisIngestor:
             
             with ThreadPoolExecutor() as executor:
                 futures = [
-                    executor.submit(ingest_data_, *argument)
+                    executor.submit(_ingest_data, *argument)
                     for argument in arguments
                 ]
                 
@@ -209,6 +205,6 @@ class RedisIngestor:
                 )
                 pipe.json().set(key, Path.root_path(), value)
             
-            if verbose: Print.log("Pipeline generation complete. Executing pipeline")
+            if verbose: Print.log(f"Redis pipeline generation complete. Executing pipeline")
             output = len(pipe.execute())
-            if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
+            if verbose: Print.success(f"Redis pipeline executed. Replies received = {output:,}")
