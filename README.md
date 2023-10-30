@@ -35,7 +35,3 @@ Generated directory tree using the following command
 ```bash
 tree -L 3 -I venv -d
 ```
-
-### To-Do
-- Move following sub-repos to different repo
- - redis/bigquery-to-redis-ingestor
