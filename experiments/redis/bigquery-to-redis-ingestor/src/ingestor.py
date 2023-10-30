@@ -48,74 +48,13 @@ class RedisIngestor:
         value = dict(row)
         return value
     
+    
     def __redis_hset(self, pipe, key, value):
         pipe.hset(key, mapping=value)
     
     def __redis_json_set(self, pipe, key, value):
         from redis.commands.json.path import Path
         pipe.json().set(key, Path.root_path(), value)
-    
-    def store_in_redis_as_hash(
-        self,
-        query: Query,
-        redis_client: redis.Redis=None,
-        bigquery_client: Bigquery=None,
-        redis_key_columns: list[str]=None,
-        redis_value_columns: list[str]=None,
-        redis_columns_to_exclude: list[str]=None,
-        verbose: bool=False,
-        show_progress: bool=False,
-    ):
-        '''
-        Only works with simple data structures containing int, float, string, byte etc.
-        For complex data structures, code needs to be re-written.
-        RedisJSON is a possible solution for JSON objects or complex objects/dictionaries
-        '''
-        
-        if redis_client is None: 
-            redis_client = self.redis_client
-        if bigquery_client is None:
-            bigquery_client = self.bigquery_client
-        
-        get_redis_key = None
-        get_redis_value = None
-        
-        if redis_key_columns is not None and check_iterable_datatype(redis_key_columns, int) and redis_key_columns:
-            get_redis_key = self.__get_redis_key_from_list
-        else:
-            get_redis_key = self.__get_redis_key_from_grain
-        
-        if redis_value_columns is not None and check_iterable_datatype(redis_value_columns, str) and redis_value_columns:
-            get_redis_value = self.__get_redis_value_from_list_as_dict
-        else:
-            get_redis_value = self.__get_redis_value_as_dict
-        
-        logger.debug(f"Using {get_redis_key.__name__}() for generating redis key")
-        logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
-        
-        rows = bigquery_client.execute(query.get_query_string())
-        if show_progress:
-            row_count = query.get_row_count(bigquery_client=bigquery_client)
-            rows = tqdm(rows, total=row_count)
-        
-        pipe = redis_client.pipeline()
-        
-        for row in rows:
-            key = get_redis_key(
-                row=row,
-                redis_key_columns=redis_key_columns,
-                grain=query.grain, 
-            )
-            value = get_redis_value(
-                row=row,
-                redis_value_columns=redis_value_columns,
-                columns_to_exclude=redis_columns_to_exclude
-            )
-            pipe.hset(key, mapping=value)
-        
-        if verbose: Print.log("Pipeline generation complete. Executing pipeline")
-        output = len(pipe.execute())
-        if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
     
     
     def ingest_data(

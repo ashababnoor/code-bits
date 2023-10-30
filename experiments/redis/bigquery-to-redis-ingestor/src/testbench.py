@@ -135,7 +135,7 @@ if run_this:
             , show_progress=True
             , parallel_computation=True
             , worker_count=8
-            , redis_data_type="SET"
+            , redis_data_type=RedisIngestor.JSON
         )
     
     # redis_local_apt.flushall()
