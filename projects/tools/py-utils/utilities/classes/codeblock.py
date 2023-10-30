@@ -10,20 +10,27 @@ class CodeBlock():
             declarative: bool=False,
             *, # Rest are kwargs 
             pretty: bool=False, 
-            separation: int=1
+            add_separation: bool=True,
+            top_separation: int=1,
+            bottom_separation: int=1
         ):
         if message is not None:
             message = str(message).strip()
             self.message = message if not message == "" else None
         else:
             self.message = message
-                                
+                           
         self.format = format
         self.pretty = pretty
         self.declarative = declarative
-        self.separation = separation
+        self.add_separation = add_separation
+        self.top_separation = top_separation
+        self.bottom_separation = bottom_separation
     
     def __enter__(self):
+        if self.add_separation and isinstance(self.top_separation, int) and self.top_separation > 0:
+            print("\n" * (self.top_separation), end='')
+        
         if self.message is None and not self.declarative:
             return
 
@@ -43,6 +50,7 @@ class CodeBlock():
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if self.separation < 1:
+        if self.add_separation and isinstance(self.bottom_separation, int) and self.bottom_separation > 0:
+            print("\n" * (self.bottom_separation), end='')
+        else:
             return
-        print("\n" * (self.separation-1))
