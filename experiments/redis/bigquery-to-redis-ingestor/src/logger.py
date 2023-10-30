@@ -25,6 +25,7 @@ logging_level = logging.DEBUG
 logging_file = ".log"
 
 logging.basicConfig(
+    level=logging_level,
     format='{asctime} [{levelname}]: {message} ({filename}:{lineno})',
     style="{",
     datefmt="%a %Y-%m-%d %H:%M:%S %z",
@@ -37,10 +38,10 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
+console_handler.setLevel(logging_level)
 # console_handler.setFormatter(CustomFormatter())
 
 file_handler = logging.FileHandler(filename=logging_file)
 
-logger.addHandler(console_handler)
-logger.addHandler(file_handler)
+# logger.addHandler(console_handler)
+# logger.addHandler(file_handler)

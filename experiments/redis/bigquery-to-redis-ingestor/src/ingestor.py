@@ -1,11 +1,12 @@
 import redis
 from helper import Query
 from loader import Bigquery
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 from typing import Union
 from utilities.classes.print import Print
 from utilities.functions import check_iterable_datatype
 from logger import logger
+from tqdm.contrib.logging import logging_redirect_tqdm
 
 
 class RedisIngestor:
@@ -193,27 +194,29 @@ class RedisIngestor:
                     future.result()
                     for future in futures
                 ]
-                
+        
         else:
             pipe = redis_client.pipeline()
             
             rows = bigquery_client.execute(query.get_query_string())
             if show_progress:
                 row_count = query.get_row_count(bigquery_client=bigquery_client)
-                rows = tqdm(rows, total=row_count)
+                rows = tqdm(rows, total=row_count, position=0)
             
-            for row in rows:
-                key = get_redis_key(
-                    row=row,
-                    redis_key_columns=redis_key_columns,
-                    grain=query.grain, 
-                )
-                value = get_redis_value(
-                    row=row,
-                    redis_value_columns=redis_value_columns,
-                    columns_to_exclude=redis_columns_to_exclude
-                )
-                pipe.json().set(key, Path.root_path(), value)
+            with logging_redirect_tqdm():
+                for row in rows:
+                    key = get_redis_key(
+                        row=row,
+                        redis_key_columns=redis_key_columns,
+                        grain=query.grain, 
+                    )
+                    value = get_redis_value(
+                        row=row,
+                        redis_value_columns=redis_value_columns,
+                        columns_to_exclude=redis_columns_to_exclude
+                    )
+                    pipe.json().set(key, Path.root_path(), value)
+                    logger.info(f"added {key = }")
             
             if verbose: Print.log(f"Redis pipeline generation complete. Executing pipeline")
             output = len(pipe.execute())

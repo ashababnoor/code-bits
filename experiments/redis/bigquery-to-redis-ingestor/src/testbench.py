@@ -106,29 +106,29 @@ query = Query(**address_history)
 with CodeBlock(separation=0) as _:
     from connector import redis_local_apt
     ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
-    limit_ = 1_000
+    limit_ = 10
     
-    redis_local_apt.flushall()
+    # redis_local_apt.flushall()
     
-    with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=10"):
-        ri.ingest_data(
-            query=query.add_limit(limit_)
-            , verbose=True
-            , show_progress=True
-            , parallel_computation=True
-            , worker_count=10
-        )
+    # with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=10"):
+    #     ri.ingest_data(
+    #         query=query.add_limit(limit_)
+    #         , verbose=True
+    #         , show_progress=True
+    #         , parallel_computation=True
+    #         , worker_count=5
+    #     )
     
-    redis_local_apt.flushall()
+    # redis_local_apt.flushall()
     
-    with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=1"):
-        ri.ingest_data(
-            query=query.add_limit(limit_)
-            , verbose=True
-            , show_progress=True
-            , parallel_computation=True
-            , worker_count=1
-        )
+    # with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=1"):
+    #     ri.ingest_data(
+    #         query=query.add_limit(limit_)
+    #         , verbose=True
+    #         , show_progress=True
+    #         , parallel_computation=True
+    #         , worker_count=1
+    #     )
     
     redis_local_apt.flushall()
     
