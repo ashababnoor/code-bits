@@ -144,8 +144,3 @@ with CodeBlock(separation=0) as _:
 
 
 TimerBlock.timing_summary()
-
-try:
-    redis_local_apt.close()
-except:
-    pass

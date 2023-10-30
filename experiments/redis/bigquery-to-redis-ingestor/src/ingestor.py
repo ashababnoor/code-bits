@@ -10,7 +10,11 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 
 
 class RedisIngestor:
-    def __init__(self, redis_client, bigquery_client):
+    def __init__(
+            self, 
+            redis_client: redis.Redis,
+            bigquery_client: Bigquery,
+        ):
         self.redis_client = redis_client
         self.bigquery_client = bigquery_client
         logger.debug("RedisIngestor object created")
@@ -144,13 +148,12 @@ class RedisIngestor:
         logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
         
         
-        def _ingest_data_core(worker_number, query_string):
-            from copy import copy
-            
-            Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
-            
-            rows = bigquery_client.execute(query_string)
+        def _ingest_data_core(worker_number, query_string):            
+            if verbose: Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
+
             pipe = redis_client.pipeline()
+              
+            rows = bigquery_client.execute(query_string)
             
             for row in rows:
                 key = get_redis_key(
@@ -169,10 +172,13 @@ class RedisIngestor:
             output = len(pipe.execute())
             if verbose: Print.success(f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}")
             
-            return True
+            return output
         
         
-        if parallel_computation:
+        if not parallel_computation:
+            result = _ingest_data_core(worker_number=0, query_string=query.get_query_string())
+            results = [result]
+        else:
             from concurrent.futures import ThreadPoolExecutor
             
             worker_numbers = list(range(worker_count))
@@ -192,33 +198,5 @@ class RedisIngestor:
                     future.result()
                     for future in futures
                 ]
-        
-        else:
-            # result = _ingest_data_core(worker_number=0, query_string=query.get_query_string())
-            pipe = redis_client.pipeline()
-            
-            rows = bigquery_client.execute(query.get_query_string())
-            if show_progress:
-                row_count = query.get_row_count(bigquery_client=bigquery_client)
-                rows = tqdm(rows, total=row_count)
-            
-            with logging_redirect_tqdm():
-            
-                for row in rows:
-                    key = get_redis_key(
-                        row=row,
-                        redis_key_columns=redis_key_columns,
-                        grain=query.grain, 
-                    )
-                    value = get_redis_value(
-                        row=row,
-                        redis_value_columns=redis_value_columns,
-                        columns_to_exclude=redis_columns_to_exclude
-                    )
-                    pipe.json().set(key, Path.root_path(), value)
-            
-            if verbose: Print.log(f"Redis pipeline generation complete. Executing pipeline")
-            logger.info(f"Redis pipeline generation complete. Executing pipeline")
-            output = len(pipe.execute())
-            if verbose: Print.success(f"Redis pipeline executed. Replies received = {output:,}")
-            logger.info(f"Redis pipeline executed. Replies received = {output:,}")
+                
+        if verbose: Print.success(f"Data ingestion complete. Total {sum(results):,} rows ingested.")
