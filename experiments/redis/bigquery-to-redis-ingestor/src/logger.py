@@ -21,7 +21,7 @@ class CustomFormatter(logging.Formatter):
 
 
 # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-logging_level = logging.DEBUG
+logging_level = logging.INFO
 logging_file = ".log"
 
 logging.basicConfig(

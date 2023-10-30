@@ -106,18 +106,18 @@ query = Query(**address_history)
 with CodeBlock(separation=0) as _:
     from connector import redis_local_apt
     ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
-    limit_ = 10
+    limit_ = 1000
     
-    # redis_local_apt.flushall()
+    redis_local_apt.flushall()
     
-    # with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=10"):
-    #     ri.ingest_data(
-    #         query=query.add_limit(limit_)
-    #         , verbose=True
-    #         , show_progress=True
-    #         , parallel_computation=True
-    #         , worker_count=5
-    #     )
+    with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=8"):
+        ri.ingest_data(
+            query=query.add_limit(limit_)
+            , verbose=True
+            , show_progress=True
+            , parallel_computation=True
+            , worker_count=8
+        )
     
     # redis_local_apt.flushall()
     
@@ -144,3 +144,8 @@ with CodeBlock(separation=0) as _:
 
 
 TimerBlock.timing_summary()
+
+try:
+    redis_local_apt.close()
+except:
+    pass

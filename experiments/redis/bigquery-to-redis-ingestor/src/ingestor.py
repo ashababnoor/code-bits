@@ -144,39 +144,37 @@ class RedisIngestor:
         logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
         
         
-        if parallel_computation:
-            from concurrent.futures import ThreadPoolExecutor
+        def _ingest_data_core(worker_number, query_string):
             from copy import copy
             
-            def _ingest_data(worker_number, query_string):
-                redis_client_ = redis_client                
-                bigquery_client_ = copy(bigquery_client)
-                
-                Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
-                
-                rows = bigquery_client_.execute(query_string)
-                pipe = redis_client_.pipeline()
-                for row in rows:
-                    key = get_redis_key(
-                        row=row,
-                        redis_key_columns=redis_key_columns,
-                        grain=query.grain, 
-                    )
-                    value = get_redis_value(
-                        row=row,
-                        redis_value_columns=redis_value_columns,
-                        columns_to_exclude=redis_columns_to_exclude
-                    )
-                    pipe.json().set(key, Path.root_path(), value)
-                
-                if verbose: Print.log(f"{worker_number = }: Redis pipeline generation complete. Executing pipeline")
-                output = len(pipe.execute())
-                if verbose: Print.success(f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}")
-                
-                bigquery_client_.get_client().close()
-                return f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}"
+            Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
             
-
+            rows = bigquery_client.execute(query_string)
+            pipe = redis_client.pipeline()
+            
+            for row in rows:
+                key = get_redis_key(
+                    row=row,
+                    redis_key_columns=redis_key_columns,
+                    grain=query.grain, 
+                )
+                value = get_redis_value(
+                    row=row,
+                    redis_value_columns=redis_value_columns,
+                    columns_to_exclude=redis_columns_to_exclude
+                )
+                pipe.json().set(key, Path.root_path(), value)
+            
+            if verbose: Print.info(f"{worker_number = }: Redis pipeline generation complete. Executing pipeline")
+            output = len(pipe.execute())
+            if verbose: Print.success(f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}")
+            
+            return True
+        
+        
+        if parallel_computation:
+            from concurrent.futures import ThreadPoolExecutor
+            
             worker_numbers = list(range(worker_count))
             query_strings = query.get_windowed_query_strings(
                 bigquery_client=bigquery_client
@@ -186,7 +184,7 @@ class RedisIngestor:
             
             with ThreadPoolExecutor() as executor:
                 futures = [
-                    executor.submit(_ingest_data, *argument)
+                    executor.submit(_ingest_data_core, *argument)
                     for argument in arguments
                 ]
                 
@@ -196,14 +194,16 @@ class RedisIngestor:
                 ]
         
         else:
+            # result = _ingest_data_core(worker_number=0, query_string=query.get_query_string())
             pipe = redis_client.pipeline()
             
             rows = bigquery_client.execute(query.get_query_string())
             if show_progress:
                 row_count = query.get_row_count(bigquery_client=bigquery_client)
-                rows = tqdm(rows, total=row_count, position=0)
+                rows = tqdm(rows, total=row_count)
             
             with logging_redirect_tqdm():
+            
                 for row in rows:
                     key = get_redis_key(
                         row=row,
@@ -216,8 +216,9 @@ class RedisIngestor:
                         columns_to_exclude=redis_columns_to_exclude
                     )
                     pipe.json().set(key, Path.root_path(), value)
-                    logger.info(f"added {key = }")
             
             if verbose: Print.log(f"Redis pipeline generation complete. Executing pipeline")
+            logger.info(f"Redis pipeline generation complete. Executing pipeline")
             output = len(pipe.execute())
             if verbose: Print.success(f"Redis pipeline executed. Replies received = {output:,}")
+            logger.info(f"Redis pipeline executed. Replies received = {output:,}")
