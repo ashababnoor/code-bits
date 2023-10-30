@@ -1,13 +1,12 @@
 import redis
 from helper import Query
 from loader import Bigquery
-from tqdm.autonotebook import tqdm
 from typing import Union
+from logger import logger
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
 from utilities.classes.print import Print
 from utilities.functions import check_iterable_datatype
-from logger import logger
-from tqdm.contrib.logging import logging_redirect_tqdm
-
 
 class RedisIngestor:
     def __init__(
@@ -148,12 +147,12 @@ class RedisIngestor:
         logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
         
         
-        def _ingest_data_core(worker_number, query_string):            
+        def _ingest_data_core(worker_number, query_string, show_progress=False):
             if verbose: Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
 
             pipe = redis_client.pipeline()
-              
-            rows = bigquery_client.execute(query_string)
+            
+            rows = bigquery_client.execute(query_string)                
             
             for row in rows:
                 key = get_redis_key(
@@ -176,7 +175,11 @@ class RedisIngestor:
         
         
         if not parallel_computation:
-            result = _ingest_data_core(worker_number=0, query_string=query.get_query_string())
+            result = _ingest_data_core(
+                worker_number=0, 
+                query_string=query.get_query_string(),
+                show_progress=show_progress
+            )
             results = [result]
         else:
             from concurrent.futures import ThreadPoolExecutor
