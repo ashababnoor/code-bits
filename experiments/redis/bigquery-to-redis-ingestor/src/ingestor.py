@@ -1,4 +1,3 @@
-import sys
 import redis
 from helper import Query
 from loader import Bigquery
@@ -7,7 +6,6 @@ from typing import Union
 from utilities.classes.print import Print
 from utilities.functions import check_iterable_datatype
 from logger import logger
-from copy import copy
 
 
 class RedisIngestor:
@@ -101,35 +99,6 @@ class RedisIngestor:
         output = len(pipe.execute())
         if verbose: Print.log(f"Pipeline executed. Replies received = {output:,}")
     
-    def ingest_data(self, worker_number, query_string):
-        rows = copy(self.bigquery_client).execute(query_string)
-        pipe = copy(self.redis_client).pipeline()
-        Print.log(f"{worker_number = }, {query_string = }")
-        
-        # redis_client = redis.Redis(host="localhost", port=6380, decode_responses=True)
-        # bigquery_client = Bigquery(google_cred=None)
-
-        # rows = bigquery_client.execute(query_string)
-        # pipe = redis_client.pipeline()
-        
-        for row in rows:
-            key = self.__get_redis_key_from_list(
-                row=row,
-                redis_key_columns=['recipient_identifier'],
-                grain=1,
-            )
-            value = self.__get_redis_value_from_list_as_dict(
-                row=row,
-                redis_value_columns=['address_history'],
-                columns_to_exclude=None
-            )
-            pipe.json().set(key, "$", value)
-        
-        Print.log(f"{worker_number=}: Pipeline generation complete. Executing pipeline")
-        output = len(pipe.execute())
-        Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
-        return f"{worker_number=}: Pipeline executed. Replies received = {output:,}"
-    
     
     def store_in_redis_as_json(
         self,
@@ -169,15 +138,11 @@ class RedisIngestor:
         
         
         if parallel_computation:
-            import multiprocessing
-            from multiprocessing import freeze_support
-            from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor
             from copy import copy
             
             def ingest_data_(worker_number, query_string):
-                # redis_client_ = copy(redis_client)
-                redis_client_ = redis_client
-                
+                redis_client_ = redis_client                
                 bigquery_client_ = copy(bigquery_client)
                 
                 Print.log(f"{worker_number = }, {query_string.splitlines()[-1] = }")
@@ -201,7 +166,6 @@ class RedisIngestor:
                 output = len(pipe.execute())
                 if verbose: Print.log(f"{worker_number=}: Pipeline executed. Replies received = {output:,}")
                 
-                # redis_client_.close()
                 bigquery_client_.get_client().close()
                 return f"{worker_number=}: Pipeline executed. Replies received = {output:,}"
             
@@ -211,12 +175,7 @@ class RedisIngestor:
                 bigquery_client=bigquery_client
                 , window_number=worker_count
             )
-            
             arguments = list(zip(worker_numbers, query_strings))
-            # for argument in arguments:
-            #     # print(argument[0], argument[1]+"\n\n") 
-            #     print(f"{len(argument) = }")
-            # sys.exit()
             
             with ThreadPoolExecutor() as executor:
                 futures = [
@@ -229,15 +188,6 @@ class RedisIngestor:
                     for future in futures
                 ]
                 
-                logger.info(results)
-                
-                # for argument in arguments:
-                #     executor.submit(self.ingest_data, argument)
-                
-                # for argument in arguments:
-                
-                # executor.shutdown(wait=True)
-
         else:
             pipe = redis_client.pipeline()
             

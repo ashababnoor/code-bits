@@ -119,18 +119,18 @@ with CodeBlock(separation=0) as _:
             , worker_count=10
         )
     
-    # r_ah.flushall()
+    redis_local_apt.flushall()
     
-    # with TimerBlock("store_in_redis_as_json() -- Parallel_computation=False"):
-    #     ri.store_in_redis_as_json(
-    #         query=query.add_limit(limit_)
-    #         , redis_client=r_ah
-    #         , bigquery_client=bq
-    #         , verbose=True
-    #         , show_progress=True
-    #         , parallel_computation=True
-    #         , worker_count=30
-    #     )
+    with TimerBlock("store_in_redis_as_json() -- Parallel_computation=False"):
+        ri.store_in_redis_as_json(
+            query=query.add_limit(limit_)
+            , redis_client=redis_local_apt
+            , bigquery_client=bq
+            , verbose=True
+            , show_progress=True
+            , parallel_computation=True
+            , worker_count=30
+        )
     
     redis_local_apt.close()
 
