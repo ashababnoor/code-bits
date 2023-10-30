@@ -1,7 +1,7 @@
 from .color import Color
 
 class Print():
-    info_keyword_color:str = Color.blue
+    info_keyword_color:str = Color.dodger_blue
     log_keyword_color: str = Color.cyan
     success_keyword_color: str = Color.green
     warning_keyword_color: str = Color.yellow
