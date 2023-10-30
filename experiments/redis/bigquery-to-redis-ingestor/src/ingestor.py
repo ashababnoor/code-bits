@@ -175,7 +175,9 @@ class RedisIngestor:
             from copy import copy
             
             def ingest_data_(worker_number, query_string):
-                redis_client_ = copy(redis_client)
+                # redis_client_ = copy(redis_client)
+                redis_client_ = redis_client
+                
                 bigquery_client_ = copy(bigquery_client)
                 
                 Print.log(f"{worker_number = }, {query_string.splitlines()[-1] = }")
@@ -216,7 +218,7 @@ class RedisIngestor:
             #     print(f"{len(argument) = }")
             # sys.exit()
             
-            with ThreadPoolExecutor(max_workers=1) as executor:
+            with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(ingest_data_, *argument)
                     for argument in arguments
