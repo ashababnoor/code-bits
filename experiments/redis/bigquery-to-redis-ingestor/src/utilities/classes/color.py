@@ -39,6 +39,7 @@ class Color:
     orange_red: str = '\033[38;5;202m'            # Orange Red
     light_sea_green: str = '\033[38;5;37m'        # Light Sea Green
     dodger_blue: str = '\033[38;5;33m'            # Dodger Blue
+    chartreuse: str = '\033[38;5;76m'             # Chartreuse
 
     # Define 8-bit color bold codes
     orage_bold: str = '\033[1;38;5;214m'          # Bold Orange
