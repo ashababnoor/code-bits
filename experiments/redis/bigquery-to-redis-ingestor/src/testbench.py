@@ -19,6 +19,8 @@ data_dir = "data/"
 limit = None
 address_history = dict(query_name="address_history", grain=1, limit=limit)
 popular_search_terms = dict(query_name="popular_search_terms", grain=2, limit=limit)
+latest_popular_search_terms = dict(query_name="latest_popular_search_terms", grain=1, limit=limit)
+
 query = Query(**address_history)
 
 
@@ -85,7 +87,7 @@ if run_this:
         redis_commands_to_resp(redis_commands_file_path, resp_file_name)
 
 
-run_this = True
+run_this = False
 if run_this:
     from connector import redis_local_apt
     ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
@@ -110,6 +112,41 @@ if run_this:
             , verbose=True
             , show_progress=True
             , parallel_computation=False
+        )
+    
+    redis_local_apt.close()
+
+
+run_this = True
+if run_this:
+    from connector import redis_local_apt
+    ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
+    
+    limit_ = 10
+    query_ah = Query(**address_history)
+    query_st = Query(**latest_popular_search_terms)
+    
+    redis_local_apt.flushall()
+    
+    with TimerBlock("RedisIngestor ingest_data() -- type=JSON; Parallel_computation=True; worker=8"):
+        ri.ingest_data(
+            query=query_ah.add_limit(limit_)
+            , verbose=True
+            , show_progress=True
+            , parallel_computation=True
+            , worker_count=8
+            , redis_data_type="SET"
+        )
+    
+    # redis_local_apt.flushall()
+    
+    with TimerBlock("RedisIngestor ingest_data() -- type=HSET; Parallel_computation=True; worker=8"):
+        ri.ingest_data(
+            query=query_st.add_limit(limit_)
+            , verbose=True
+            , show_progress=True
+            , parallel_computation=True
+            , redis_data_type=RedisIngestor.HSET
         )
     
     redis_local_apt.close()

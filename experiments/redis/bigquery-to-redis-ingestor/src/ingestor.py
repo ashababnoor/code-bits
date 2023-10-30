@@ -8,7 +8,14 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 from utilities.classes.print import Print
 from utilities.functions import check_iterable_datatype
 
+
 class RedisIngestor:
+    JSON: str = "JSON"
+    HSET: str = "HSET"
+    
+    DEFAULT_DATA_TYPE: str = JSON
+    SUPPORTED_DATA_TYPES: list[str] = [JSON, HSET]
+    
     def __init__(
             self, 
             redis_client: redis.Redis,
@@ -41,13 +48,10 @@ class RedisIngestor:
         value = dict(row)
         return value
     
-    def __redis_set(pipe, key, value):
-        pipe.set(key, value)
-    
-    def __redis_hset(pipe, key, value):
+    def __redis_hset(self, pipe, key, value):
         pipe.hset(key, mapping=value)
     
-    def __redis_json_set(pipe, key, value):
+    def __redis_json_set(self, pipe, key, value):
         from redis.commands.json.path import Path
         pipe.json().set(key, Path.root_path(), value)
     
@@ -124,14 +128,14 @@ class RedisIngestor:
         show_progress: bool=False,
         parallel_computation: bool=False,
         worker_count: int=10,
-    ):
-        from redis.commands.json.path import Path
-        
+        redis_data_type: str=JSON
+    ):        
         redis_client = self.redis_client
         bigquery_client = self.bigquery_client
         
         get_redis_key = None
         get_redis_value = None
+        redis_setter_function = None
         
         if redis_key_columns is not None and check_iterable_datatype(redis_key_columns, int) and redis_key_columns:
             get_redis_key = self.__get_redis_key_from_list
@@ -143,8 +147,17 @@ class RedisIngestor:
         else:
             get_redis_value = self.__get_redis_value_as_dict
         
+        if redis_data_type not in RedisIngestor.SUPPORTED_DATA_TYPES:
+            if verbose: Print.warning(f"Provided redis data type {redis_data_type} is currently not supported. Using default data type {RedisIngestor.DEFAULT_DATA_TYPE}")
+            redis_setter_function = self.__redis_json_set
+        elif redis_data_type == RedisIngestor.JSON:
+            redis_setter_function = self.__redis_json_set
+        elif redis_data_type == RedisIngestor.HSET:
+            redis_setter_function = self.__redis_hset
+        
         logger.debug(f"Using {get_redis_key.__name__}() for generating redis key")
         logger.debug(f"Using {get_redis_value.__name__}() for generating redis value")
+        logger.debug(f"Using {redis_setter_function.__name__}() as redis setter function")
         
         
         def _ingest_data_core(worker_number, query_string, show_progress=False):
@@ -165,7 +178,7 @@ class RedisIngestor:
                     redis_value_columns=redis_value_columns,
                     columns_to_exclude=redis_columns_to_exclude
                 )
-                pipe.json().set(key, Path.root_path(), value)
+                redis_setter_function(pipe, key, value)
             
             if verbose: Print.info(f"{worker_number = }: Redis pipeline generation complete. Executing pipeline")
             output = len(pipe.execute())
