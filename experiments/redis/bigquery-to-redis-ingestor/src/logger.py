@@ -25,7 +25,7 @@ def record_factory(*args, **kwargs):
 logging.setLogRecordFactory(record_factory)
 
 class CustomFormatter(logging.Formatter):
-    BASE_TEMPLATE = "{asctime} [{levelname}]: {message} ({filename}:{lineno})"
+    FORMAT = "{asctime} [{levelname}]: {message} ({filename}:{lineno})"
     STYLE = "{"
     DATEFMT = "%a %Y-%m-%d %H:%M:%S %z"
     
@@ -62,9 +62,9 @@ console_handler.setFormatter(CustomFormatter())
 file_handler = logging.FileHandler(filename=logging_file)
 file_handler.setLevel(logging_level)
 _formatter = logging.Formatter(
-    CustomFormatter.BASE_TEMPLATE,
+    fmt=CustomFormatter.FORMAT,
+    datefmt=CustomFormatter.DATEFMT,
     style=CustomFormatter.STYLE,
-    datefmt=CustomFormatter.DATEFMT
 )
 file_handler.setFormatter(_formatter)
 
