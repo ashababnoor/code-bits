@@ -8,6 +8,7 @@ def record_factory(*args, **kwargs):
     record = old_factory(*args, **kwargs)
     
     record.accent_color=Color.chartreuse
+    record.file_name_color=Color.dark_violet
     record.text_color=Color.white
     record.background_color=Color.black_bg
     record.reset=Color.reset
@@ -27,11 +28,11 @@ class CustomFormatter(logging.Formatter):
     DATEFMT = "%a %Y-%m-%d %H:%M:%S %z"
     
     FORMATS = {
-        logging.DEBUG: "{accent_color}{asctime}{reset} [{debug_color}{levelname}{reset}]: {message} ({filename}:{accent_color}{lineno}{reset})",
-        logging.INFO:"{accent_color}{asctime}{reset} [{info_color}{levelname}{reset}]: {message} ({filename}:{accent_color}{lineno}{reset})",
-        logging.WARNING: "{accent_color}{asctime}{reset} [{warning_color}{levelname}{reset}]: {message} ({filename}:{accent_color}{lineno}{reset})",
-        logging.ERROR: "{accent_color}{asctime}{reset} [{error_color}{levelname}{reset}]: {message} ({filename}:{accent_color}{lineno}{reset})",
-        logging.CRITICAL: "{accent_color}{asctime}{reset} [{critical_color}{levelname}{reset}]: {message} ({filename}:{accent_color}{lineno}{reset})",
+        logging.DEBUG: "{accent_color}{asctime}{reset} [{debug_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
+        logging.INFO:"{accent_color}{asctime}{reset} [{info_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
+        logging.WARNING: "{accent_color}{asctime}{reset} [{warning_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
+        logging.ERROR: "{accent_color}{asctime}{reset} [{error_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
+        logging.CRITICAL: "{accent_color}{asctime}{reset} [{critical_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
     }
 
     def format(self, record):
