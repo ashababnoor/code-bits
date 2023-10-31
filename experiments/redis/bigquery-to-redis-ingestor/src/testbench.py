@@ -163,6 +163,7 @@ if run_this:
         ri.ingest_address_history(
             limit=limit_
             , verbose=True
+            , parallel_computation=False
         )
 
 
