@@ -13,6 +13,7 @@ def record_factory(*args, **kwargs):
     record.text_color=Color.white
     record.background_color=Color.black_bg
     record.reset=Color.reset
+    
     record.debug_color=Color.cyan
     record.info_color=Color.dodger_blue
     record.warning_color=Color.yellow
@@ -28,15 +29,17 @@ class CustomFormatter(logging.Formatter):
     STYLE = "{"
     DATEFMT = "%a %Y-%m-%d %H:%M:%S %z"
     
-    _ASCTIME = "{datetime_color}{asctime}{reset}"
+    _ASCTIME = "{datetime_color}{asctime}{reset} "
+    _LEVELNAME = "[{_color}{{levelname}}{{reset}}]: "
+    _MESSAGE = "{message} "
     _FILEINFO = "({file_name_color}{filename}{reset}:{file_number_color}{lineno}{reset})"
     
     FORMATS = {
-        logging.DEBUG:    _ASCTIME + " [{debug_color}{levelname}{reset}]: {message} "    + _FILEINFO,
-        logging.INFO:     _ASCTIME + " [{info_color}{levelname}{reset}]: {message} "     + _FILEINFO,
-        logging.WARNING:  _ASCTIME + " [{warning_color}{levelname}{reset}]: {message} "  + _FILEINFO,
-        logging.ERROR:    _ASCTIME + " [{error_color}{levelname}{reset}]: {message} "    + _FILEINFO,
-        logging.CRITICAL: _ASCTIME + " [{critical_color}{levelname}{reset}]: {message} " + _FILEINFO,
+        logging.DEBUG:    _ASCTIME + _LEVELNAME.format(_color="{debug_color}")    + _MESSAGE + _FILEINFO,
+        logging.INFO:     _ASCTIME + _LEVELNAME.format(_color="{info_color}")     + _MESSAGE + _FILEINFO,
+        logging.WARNING:  _ASCTIME + _LEVELNAME.format(_color="{warning_color}")  + _MESSAGE + _FILEINFO,
+        logging.ERROR:    _ASCTIME + _LEVELNAME.format(_color="{error_color}")    + _MESSAGE + _FILEINFO,
+        logging.CRITICAL: _ASCTIME + _LEVELNAME.format(_color="{critical_color}") + _MESSAGE + _FILEINFO,
     }
 
     def format(self, record):
@@ -44,7 +47,7 @@ class CustomFormatter(logging.Formatter):
         formatter = logging.Formatter(
             fmt=log_format, 
             datefmt=CustomFormatter.DATEFMT,
-            style='{', 
+            style=CustomFormatter.STYLE,
         )
         return formatter.format(record)
 
@@ -68,7 +71,6 @@ file_handler.setFormatter(_formatter)
 
 logging.basicConfig(
     level=logging_level,
-    datefmt="%a %Y-%m-%d %H:%M:%S %z",
     handlers=[
         console_handler,
         file_handler
