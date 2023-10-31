@@ -7,8 +7,9 @@ old_factory = logging.getLogRecordFactory()
 def record_factory(*args, **kwargs):
     record = old_factory(*args, **kwargs)
     
-    record.accent_color=Color.chartreuse
-    record.file_name_color=Color.dark_violet
+    record.datetime_color=Color.chartreuse
+    record.file_name_color=Color.grey
+    record.file_number_color=Color.grey_bold
     record.text_color=Color.white
     record.background_color=Color.black_bg
     record.reset=Color.reset
@@ -23,16 +24,19 @@ def record_factory(*args, **kwargs):
 logging.setLogRecordFactory(record_factory)
 
 class CustomFormatter(logging.Formatter):
-    TEMPLATE = "{asctime} [{levelname}]: {message} ({filename}:{lineno})"
+    BASE_TEMPLATE = "{asctime} [{levelname}]: {message} ({filename}:{lineno})"
     STYLE = "{"
     DATEFMT = "%a %Y-%m-%d %H:%M:%S %z"
     
+    _ASCTIME = "{datetime_color}{asctime}{reset}"
+    _FILEINFO = "({file_name_color}{filename}{reset}:{file_number_color}{lineno}{reset})"
+    
     FORMATS = {
-        logging.DEBUG: "{accent_color}{asctime}{reset} [{debug_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
-        logging.INFO:"{accent_color}{asctime}{reset} [{info_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
-        logging.WARNING: "{accent_color}{asctime}{reset} [{warning_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
-        logging.ERROR: "{accent_color}{asctime}{reset} [{error_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
-        logging.CRITICAL: "{accent_color}{asctime}{reset} [{critical_color}{levelname}{reset}]: {message} ({file_name_color}{filename}{reset}:{accent_color}{lineno}{reset})",
+        logging.DEBUG:    _ASCTIME + " [{debug_color}{levelname}{reset}]: {message} "    + _FILEINFO,
+        logging.INFO:     _ASCTIME + " [{info_color}{levelname}{reset}]: {message} "     + _FILEINFO,
+        logging.WARNING:  _ASCTIME + " [{warning_color}{levelname}{reset}]: {message} "  + _FILEINFO,
+        logging.ERROR:    _ASCTIME + " [{error_color}{levelname}{reset}]: {message} "    + _FILEINFO,
+        logging.CRITICAL: _ASCTIME + " [{critical_color}{levelname}{reset}]: {message} " + _FILEINFO,
     }
 
     def format(self, record):
@@ -55,7 +59,7 @@ console_handler.setFormatter(CustomFormatter())
 file_handler = logging.FileHandler(filename=logging_file)
 file_handler.setLevel(logging_level)
 _formatter = logging.Formatter(
-    CustomFormatter.TEMPLATE,
+    CustomFormatter.BASE_TEMPLATE,
     style=CustomFormatter.STYLE,
     datefmt=CustomFormatter.DATEFMT
 )
