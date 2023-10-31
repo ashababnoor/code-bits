@@ -42,6 +42,7 @@ class Color:
     chartreuse: str = '\033[38;5;76m'             # Chartreuse
     violet: str = '\033[38;5;177m'                # Violet
     dark_violet: str = '\033[38;5;92m'            # Dark Violet
+    grey: str = '\033[38;5;244m'                  # Grey
     
     # Define 8-bit color bold codes
     orage_bold: str = '\033[1;38;5;214m'          # Bold Orange
@@ -52,6 +53,7 @@ class Color:
     chartreuse_bold: str = '\033[1;38;5;76m'      # Bold Chartreuse
     violet_bold: str = '\033[1;38;5;177m'         # Violet
     dark_violet_bold: str = '\033[1;38;5;92m'     # Dark Violet
+    grey_bold: str = '\033[1;38;5;244m'           # Grey
     
     @staticmethod
     def show_colors():
