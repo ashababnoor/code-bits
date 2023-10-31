@@ -36,8 +36,7 @@ if __name__ == "__main__":
         print(f"Generating list from {start:,} to {finish:,}")
         list_ = [i for i in range(start, finish+1)]
     
-    # TimerBlock.timing_summary()
-    # print()
+    TimerBlock.timing_summary()
 
-    # with CodeBlock("Color Utility Class") as _:
-        # Color.show_colors()
+    with CodeBlock("Color Utility Class", collapse_separation=False) as _:
+        Color.show_colors()

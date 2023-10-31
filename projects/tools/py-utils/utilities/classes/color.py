@@ -40,7 +40,9 @@ class Color:
     light_sea_green: str = '\033[38;5;37m'        # Light Sea Green
     dodger_blue: str = '\033[38;5;33m'            # Dodger Blue
     chartreuse: str = '\033[38;5;76m'             # Chartreuse
-
+    violet: str = '\033[38;5;177m'                # Violet
+    dark_violet: str = '\033[38;5;92m'            # Dark Violet
+    
     # Define 8-bit color bold codes
     orage_bold: str = '\033[1;38;5;214m'          # Bold Orange
     dark_orange_bold: str = '\033[1;38;5;208m'    # Bold Dark Orange
@@ -48,6 +50,8 @@ class Color:
     light_sea_green_bold: str = '\033[1;38;5;37m' # Bold Light Sea Green
     dodger_blue_bold: str = '\033[1;38;5;33m'     # Bold Dodger Blue
     chartreuse_bold: str = '\033[1;38;5;76m'      # Bold Chartreuse
+    violet_bold: str = '\033[1;38;5;177m'         # Violet
+    dark_violet_bold: str = '\033[1;38;5;92m'     # Dark Violet
     
     @staticmethod
     def show_colors():
