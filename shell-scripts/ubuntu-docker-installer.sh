@@ -10,7 +10,13 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 sudo apt update
 apt-cache policy docker-ce
 sudo apt install docker-ce -y
-sudo systemctl status docker
 sudo usermod -aG docker ${USER}
 echo $password | su - ${USER}
 sudo apt install docker-compose -y
+
+echo -e "\n"
+echo "Successfully installed Docker and Docker-Compose"
+echo "Run the following command to check docker service status"
+echo -e "\n"
+echo -e "\t sudo systemctl status docker"
+echo -e "\n
