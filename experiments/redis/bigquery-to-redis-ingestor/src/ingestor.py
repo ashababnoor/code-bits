@@ -103,9 +103,7 @@ class RedisIngestor:
             if verbose: Print.info(f"{worker_number = }, Query window = {query_string.splitlines()[-1]}")
 
             pipe = redis_client.pipeline()
-            
-            rows = bigquery_client.execute(query_string)                
-            
+            rows = bigquery_client.execute(query_string)
             for row in rows:
                 key = get_redis_key(
                     row=row,
@@ -122,9 +120,7 @@ class RedisIngestor:
             if verbose: Print.info(f"{worker_number = }: Redis pipeline generation complete. Executing pipeline")
             output = len(pipe.execute())
             if verbose: Print.success(f"{worker_number = }: Redis pipeline executed. Replies received = {output:,}")
-            
             return output
-        
         
         if not parallel_computation:
             result = _ingest_data_core(
@@ -141,19 +137,18 @@ class RedisIngestor:
                 bigquery_client=bigquery_client
                 , window_number=worker_count
             )
-            arguments = list(zip(worker_numbers, query_strings))
             
+            arguments = list(zip(worker_numbers, query_strings))
             with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(_ingest_data_core, *argument)
                     for argument in arguments
                 ]
-                
                 results = [
                     future.result()
                     for future in futures
                 ]
-                
+        
         if verbose: Print.success(f"Data ingestion complete. Total {sum(results):,} rows ingested.")
     
     
