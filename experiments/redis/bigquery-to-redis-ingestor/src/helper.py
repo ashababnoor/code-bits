@@ -1,6 +1,6 @@
 import os
 from copy import copy
-from typing import Union
+from typing import Union, Literal
 
 
 class Query:
@@ -85,18 +85,37 @@ class Query:
             offset += limit
         return query_strings
     
-    def get_windowed_query_strings_for_address_history_using_string_prefix(self, bigquery_client) -> list[str]:
-        string_prefix_query = Query(
+    def get_windowed_query_strings_for_address_history_using_substring(self, bigquery_client, direction: Literal[1, -1] =-1, substring_length: Union[int, str]=None) -> list[str]:
+        if direction not in [1, -1]:
+            direction = -1
+        
+        if direction == 1:
+            '''Prefix'''
+            default_substring_length = 4
+            position_length_pattern = "0, {}"
+            like_pattern = "{}%"
+        elif direction == -1:
+            '''Suffix'''
+            default_substring_length = 2
+            position_length_pattern = "-{}"
+            like_pattern = "%{}"
+        
+        if substring_length is None: 
+            position_length = position_length_pattern.format(default_substring_length)
+        else:
+            position_length = position_length_pattern.format(substring_length)
+        
+        substring_query = Query(
             "address_history_windowing_template"
-        ).get_query_string().format(base_query=self.get_query_string())
-
-        string_prefixes_generator = bigquery_client.get_client().query(string_prefix_query).result()
-        string_prefixes = [string_prefix.values()[0] for string_prefix in string_prefixes_generator]
+        ).get_query_string().format(base_query=self.get_query_string(), position_length=position_length)
+        
+        substrings_generator = bigquery_client.get_client().query(substring_query).result()
+        substrings = [substrings.values()[0] for substrings in substrings_generator]
         
         query_strings = []
-        for string_prefix in string_prefixes:
+        for substring in substrings:            
             query_strings.append(
-                f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nWHERE recipient_identifier LIKE '{string_prefix}%'"
+                f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nWHERE recipient_identifier LIKE '{like_pattern.format(substring)}'"
             )
         return query_strings
 
@@ -131,11 +150,12 @@ if __name__ == "__main__":
     with CodeBlock("Query object get_row_count_query()", Color.light_sea_green_bold) as _:
         from connector import bq
         print(query.get_row_count(bigquery_client=bq, use_limit=True))
-        
-    with CodeBlock("Query object get_windowed_query_strings_for_address_history_using_string_prefix()", Color.light_sea_green_bold) as _:
+    
+    
+    with CodeBlock("Query object get_windowed_query_strings_for_address_history_using_substring()", Color.light_sea_green_bold) as _:
         from connector import bq
         
         query = Query("address_history", limit=10)
         with TimerBlock():
-            query_strings = query.get_windowed_query_strings_for_address_history_using_string_prefix(bigquery_client=bq)
+            query_strings = query.get_windowed_query_strings_for_address_history_using_substring(bigquery_client=bq)
             print(query_strings[0])
