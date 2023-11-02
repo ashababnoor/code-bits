@@ -2,7 +2,7 @@ import redis
 from helper import Query
 from loader import Bigquery
 from typing import Literal, Union
-from logger import logger
+from utilities.logger import logger
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 from utilities.classes.print import Print
