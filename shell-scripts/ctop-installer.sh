@@ -6,6 +6,14 @@ function install_ctop_on_linux_gnu() {
 }
 
 function install_ctop_on_macos() {
+    local brew_installed=$(command -v brew)
+    
+    if [[ -z $brew_installed ]]; then
+        echo "brew is not installed"
+        echo "brew is required to installed ctop on MacOS"
+        echo "exiting..."
+        exit 1
+    fi
     brew install ctop
 }
 
