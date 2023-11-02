@@ -19,4 +19,4 @@ echo "Successfully installed Docker and Docker-Compose"
 echo "Run the following command to check docker service status"
 echo -e "\n"
 echo -e "\t sudo systemctl status docker"
-echo -e "\n
+echo -e "\n"
