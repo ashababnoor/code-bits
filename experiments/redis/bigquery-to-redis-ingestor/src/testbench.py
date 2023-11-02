@@ -159,11 +159,11 @@ if run_this:
     
     redis_local_apt.flushall()
     
-    with TimerBlock("RedisIngestor ingest_address_history()"):
+    with TimerBlock("RedisIngestor ingest_address_history() -- using special windowing method"):
         ri.ingest_address_history(
             limit=limit_
             , verbose=True
-            , parallel_computation=False
+            , parallel_computation=True
         )
 
 

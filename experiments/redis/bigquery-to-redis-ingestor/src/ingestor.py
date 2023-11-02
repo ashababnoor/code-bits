@@ -1,7 +1,7 @@
 import redis
 from helper import Query
 from loader import Bigquery
-from typing import Union
+from typing import Literal, Union
 from logger import logger
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
@@ -67,8 +67,11 @@ class RedisIngestor:
         show_progress: bool=False,
         parallel_computation: bool=False,
         worker_count: int=10,
-        redis_data_type: str=JSON
-    ):        
+        redis_data_type: str=JSON,
+        use_special_windowing_method: bool=False,
+        special_windowing_method_direction: Literal[1, -1]=-1,
+        special_windowing_method_substring_length: int=None
+    ):
         redis_client = self.redis_client
         bigquery_client = self.bigquery_client
         
@@ -133,10 +136,19 @@ class RedisIngestor:
             from concurrent.futures import ThreadPoolExecutor
             
             worker_numbers = list(range(worker_count))
-            query_strings = query.get_windowed_query_strings(
-                bigquery_client=bigquery_client
-                , window_number=worker_count
-            )
+            if query.query_name == "address_history" and use_special_windowing_method:
+                if verbose: print("Address History query passed; using special method for getting windowed queries")
+                query_strings = query.get_windowed_query_strings_for_address_history_using_substring(
+                    bigquery_client=bigquery_client,
+                    direction=special_windowing_method_direction,
+                    substring_length=special_windowing_method_substring_length
+                )
+                worker_numbers = list(range(len(query_strings)))
+            else:
+                query_strings = query.get_windowed_query_strings(
+                    bigquery_client=bigquery_client
+                    , window_number=worker_count
+                )
             
             arguments = list(zip(worker_numbers, query_strings))
             with ThreadPoolExecutor() as executor:
@@ -159,6 +171,9 @@ class RedisIngestor:
             show_progress: bool=False,
             parallel_computation: bool=True,
             worker_count: int=10,
+            use_special_windowing_method: bool=True,
+            special_windowing_method_direction: Literal[1, -1]=-1,
+            special_windowing_method_substring_length: int=None
         ):
         query = Query(
             query_name="address_history",
@@ -177,5 +192,8 @@ class RedisIngestor:
             show_progress=show_progress,
             parallel_computation=parallel_computation,
             worker_count=worker_count,
-            redis_data_type=redis_data_type
+            redis_data_type=redis_data_type,
+            use_special_windowing_method=use_special_windowing_method,
+            special_windowing_method_direction=special_windowing_method_direction,
+            special_windowing_method_substring_length=special_windowing_method_substring_length
         )

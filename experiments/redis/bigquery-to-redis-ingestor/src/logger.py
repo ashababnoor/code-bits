@@ -52,7 +52,7 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-logging_level = logging.DEBUG
+logging_level = logging.INFO
 logging_file = ".log"
 
 console_handler = logging.StreamHandler()
