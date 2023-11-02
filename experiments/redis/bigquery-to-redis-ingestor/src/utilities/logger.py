@@ -1,5 +1,6 @@
 from classes.color import Color
 import logging
+import sys
 
 
 old_factory = logging.getLogRecordFactory()
@@ -52,36 +53,38 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-logging_level = logging.DEBUG
-logging_file = ".log"
+LOG_LEVEL = logging.INFO
+LOG_FILE = ".log"
 
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging_level)
-console_handler.setFormatter(CustomFormatter())
+def get_console_handler():
+   console_handler = logging.StreamHandler(sys.stdout)
+   console_handler.setFormatter(CustomFormatter())
+   return console_handler
 
-file_handler = logging.FileHandler(filename=logging_file)
-file_handler.setLevel(logging_level)
-_formatter = logging.Formatter(
-    fmt=CustomFormatter.FORMAT,
-    datefmt=CustomFormatter.DATEFMT,
-    style=CustomFormatter.STYLE,
-)
-file_handler.setFormatter(_formatter)
+def get_file_handler():
+   file_handler = logging.FileHandler(filename=LOG_FILE)
+   _formatter = logging.Formatter(
+      fmt=CustomFormatter.FORMAT,
+      datefmt=CustomFormatter.DATEFMT,
+      style=CustomFormatter.STYLE,
+   )
+   file_handler.setFormatter(_formatter)
+   return file_handler
+
+def get_logger(logger_name: str=None):
+   logger = logging.getLogger(logger_name)
+   logger.setLevel(LOG_LEVEL)
+   
+   logger.addHandler(get_console_handler())
+   logger.addHandler(get_file_handler())
+   
+   logger.propagate = False
+   return logger
 
 
-logging.basicConfig(
-    level=logging_level,
-    handlers=[
-        console_handler,
-        file_handler
-    ]
-)
-
-logger = logging.getLogger()
-
+logger = get_logger()
 
 def main():
-    logger = logging.getLogger()
     logger.debug("Logger debug message")
     logger.info("Logger info message")
     logger.warning("Logger warning message")
