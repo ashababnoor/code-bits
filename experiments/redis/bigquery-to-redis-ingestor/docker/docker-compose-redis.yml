@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis/latest
+    container_name: test-redis
+    ports:
+      - "6380:6379"
+
+  redis-stack:
+    image: redis/redis-stack-server:latest
+    container_name: test-redis-stack
+    ports:
+      - "6381:6379"
+      - "13333:8001"
