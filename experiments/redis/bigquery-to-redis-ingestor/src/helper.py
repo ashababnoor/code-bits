@@ -11,7 +11,7 @@ class Query:
         "grain",
         "limit",
     )
-
+    
     __root_dir: str = os.path.dirname(os.path.dirname(__file__))
     __query_dir: str = "sql"
 
@@ -118,6 +118,13 @@ class Query:
                 f"SELECT * \nFROM (\n{self.get_query_string()}\n) \nWHERE recipient_identifier LIKE '{like_pattern.format(substring)}'"
             )
         return query_strings
+
+
+class Configuration:
+    JSON = "JSON"
+    YAML = "YAML"
+    YML = "YML"
+    
 
 
 if __name__ == "__main__":
