@@ -1,8 +1,8 @@
 import redis
 from loader import Bigquery
 
-redis_local = redis.Redis(host="localhost", port=6379, decode_responses=True)
-redis_local_apt = redis.Redis(host="localhost", port=6380, decode_responses=True)
+redis_local = redis.Redis(host="localhost", port=6380, decode_responses=True)
+redis_local_apt = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
 bq = Bigquery(google_cred=None)
 
