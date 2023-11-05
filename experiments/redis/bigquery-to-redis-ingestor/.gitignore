@@ -2,3 +2,5 @@
 !/sql/popular_search_terms.sql
 !/sql/latest_popular_search_terms.sql
 init.sh
+*secrets*
+secrets/
