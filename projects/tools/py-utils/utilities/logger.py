@@ -1,4 +1,4 @@
-from classes.color import Color
+from .classes.color import Color
 import logging
 import sys
 
@@ -53,35 +53,41 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-LOG_LEVEL = logging.INFO
-LOG_FILE = ".log"
-
 def get_console_handler():
    console_handler = logging.StreamHandler(sys.stdout)
    console_handler.setFormatter(CustomFormatter())
    return console_handler
 
-def get_file_handler():
-   file_handler = logging.FileHandler(filename=LOG_FILE)
-   _formatter = logging.Formatter(
-      fmt=CustomFormatter.FORMAT,
-      datefmt=CustomFormatter.DATEFMT,
-      style=CustomFormatter.STYLE,
-   )
-   file_handler.setFormatter(_formatter)
-   return file_handler
+def get_file_handler(filename):
+    if filename is None:
+        filename = ".log"
+    file_handler = logging.FileHandler(filename=filename)
+    
+    _formatter = logging.Formatter(
+        fmt=CustomFormatter.FORMAT,
+        datefmt=CustomFormatter.DATEFMT,
+        style=CustomFormatter.STYLE,
+    )
+    file_handler.setFormatter(_formatter)
+    return file_handler
 
-def get_logger(logger_name: str=None, add_console_handler :bool=True, add_file_handler :bool=True):
-   logger = logging.getLogger(logger_name)
-   logger.setLevel(LOG_LEVEL)
-   
-   if add_console_handler:
-       logger.addHandler(get_console_handler())
-   if add_file_handler:
-       logger.addHandler(get_file_handler())
-   
-   logger.propagate = False
-   return logger
+def get_logger(
+        logger_name: str=None,
+        log_level: int=logging.INFO,
+        add_console_handler: bool=True, 
+        add_file_handler: bool=True,
+        filename: str=None,
+    ):
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(log_level)
+
+    if add_console_handler:
+        logger.addHandler(get_console_handler())
+    if add_file_handler:
+        logger.addHandler(get_file_handler(filename=filename))
+
+    logger.propagate = False
+    return logger
 
 
 def main():
