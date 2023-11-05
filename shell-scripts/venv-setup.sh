@@ -1,3 +1,5 @@
+ROOT_PROJECT_DIR=$(pwd)
+
 function log() {
     echo -e "$(date +"%Y-%m-%d %H:%M:%S %z") ${blue}INFO${reset} $@"
 }
