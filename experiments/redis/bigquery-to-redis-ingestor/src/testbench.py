@@ -89,11 +89,11 @@ if run_this:
 
 run_this = False
 if run_this:
-    from connector import redis_local_apt
-    ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
+    from connector import redis_local
+    ri = RedisIngestor(redis_client=redis_local, bigquery_client=bq)
     limit_ = 1000
     
-    redis_local_apt.flushall()
+    redis_local.flushall()
     
     with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=True; worker=8"):
         ri.ingest_data(
@@ -104,7 +104,7 @@ if run_this:
             , worker_count=8
         )
     
-    redis_local_apt.flushall()
+    redis_local.flushall()
     
     with TimerBlock("RedisIngestor ingest_data() -- Parallel_computation=False"):
         ri.ingest_data(
@@ -114,19 +114,19 @@ if run_this:
             , parallel_computation=False
         )
     
-    redis_local_apt.close()
+    redis_local.close()
 
 
 run_this = False
 if run_this:
-    from connector import redis_local_apt
-    ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
+    from connector import redis_local
+    ri = RedisIngestor(redis_client=redis_local, bigquery_client=bq)
     
     limit_ = 10
     query_ah = Query(**address_history)
     query_st = Query(**latest_popular_search_terms)
     
-    redis_local_apt.flushall()
+    redis_local.flushall()
     
     with TimerBlock("RedisIngestor ingest_data() -- type=JSON; Parallel_computation=True; worker=8"):
         ri.ingest_data(
@@ -147,17 +147,17 @@ if run_this:
             , redis_data_type=RedisIngestor.HSET
         )
     
-    redis_local_apt.close()
+    redis_local.close()
 
 
 run_this = True
 if run_this:
-    from connector import redis_local_apt
-    ri = RedisIngestor(redis_client=redis_local_apt, bigquery_client=bq)
+    from connector import redis_local
+    ri = RedisIngestor(redis_client=redis_local, bigquery_client=bq)
     
     limit_ = 1000
     
-    redis_local_apt.flushall()
+    redis_local.flushall()
     
     with TimerBlock("RedisIngestor ingest_address_history() -- using special windowing method"):
         ri.ingest_address_history(
