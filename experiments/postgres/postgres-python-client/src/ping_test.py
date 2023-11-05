@@ -1,18 +1,9 @@
 import psycopg2
 
-def ping_postgres(host, port, user, password, database):
+def ping_postgres(pg_connection):
     try:
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database
-        )
-
         # Create a cursor object
-        cur = conn.cursor()
+        cur = pg_connection.cursor()
 
         # Execute a simple query (in this case, we'll use SELECT 1)
         cur.execute('SELECT 1')
@@ -28,16 +19,15 @@ def ping_postgres(host, port, user, password, database):
 
         # Close the cursor and connection
         cur.close()
-        conn.close()
+        pg_connection.close()
 
     except Exception as e:
         print(f"Error: {e}")
 
-# Usage
-ping_postgres(
-    host='localhost',
-    port='5432',
-    user='postgres',
-    password='anypass',
-    database='data_cloud'
-)
+
+def main():
+    from postgres_connector import pg_connection
+    ping_postgres(pg_connection)
+
+if __name__ == "__main__":
+    main()
