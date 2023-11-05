@@ -71,20 +71,25 @@ def get_file_handler():
    file_handler.setFormatter(_formatter)
    return file_handler
 
-def get_logger(logger_name: str=None):
+def get_logger(logger_name: str=None, add_console_handler :bool=True, add_file_handler :bool=True):
    logger = logging.getLogger(logger_name)
    logger.setLevel(LOG_LEVEL)
    
-   logger.addHandler(get_console_handler())
-   logger.addHandler(get_file_handler())
+   if add_console_handler:
+       logger.addHandler(get_console_handler())
+   if add_file_handler:
+       logger.addHandler(get_file_handler())
    
    logger.propagate = False
    return logger
 
 
-logger = get_logger()
-
 def main():
+    logger = get_logger(
+        logger_name="Logger",
+        add_console_handler=True,
+        add_file_handler=False
+    )
     logger.debug("Logger debug message")
     logger.info("Logger info message")
     logger.warning("Logger warning message")
@@ -93,4 +98,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
