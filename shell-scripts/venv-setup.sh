@@ -49,6 +49,9 @@ function create_python_venv() {
     # pip install --upgrade pip
 
     log "Virtual environment activated successfully, Now installing requirements..."
+}
+
+function install_venv_requirements() {
     if [[ -f "requirements.txt" ]]; then
         pip install --upgrade pip
         pip install -r requirements.txt
