@@ -1,5 +1,5 @@
 from google.cloud import bigquery
-from schema import Table
+from helper import Table
 
 class Bigquery:
     def __init__(self, google_cred):
@@ -29,7 +29,7 @@ class Bigquery:
         
         # Get the table object
         table_object = self._client.get_table(table_reference)
-        
+
         # Get the schema in JSON format
         schema_json = table_object.schema
         return schema_json
