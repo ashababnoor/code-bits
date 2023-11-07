@@ -9,8 +9,14 @@ class Table:
     project_id: str
     dataset_id: str
     table_id: str
-    schema: Dict[str, Any]
+    schema: Dict[str, Any] = None
     
+    def __post_init__(self):
+        self.get_schema_from_loader()
+
+    def get_schema_from_loader(self):
+        pass
+
 
 class Config:
     YAML_EXTENSION: str = "yaml"
@@ -43,6 +49,15 @@ class Config:
 
     def get(self, key):
         return self.config_data.get(key)
+    
+    def get_table_identifiers(self, key):
+        table_pair = self.get(key)
+        table1 = table_pair.get('table1')
+        table2 = table_pair.get('table2')
+        if table1 is None or table2 is None:
+            raise Exception("Key for table information not found! Check demo_config.yml for format.")
+        
+        return Table(**table1), Table(**table2)
 
     def set(self, key, value):
         self.config_data[key] = value
@@ -64,5 +79,5 @@ config = Config()
 
 schema1 = config.get('Compare')
 schema2 = config.get('schema2')
-print(schema1)
-print(schema2)
+
+print(config.get_table_identifiers("compare_food_super_table"))
