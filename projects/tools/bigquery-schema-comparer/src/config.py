@@ -1,30 +1,32 @@
 import yaml
-
+import os
 
 class Config:
     YAML_EXTENSION: str = "yaml"
     YML_EXTENSION: str = "yml"
-    DEFAULT_FILE_PATH: str = "config.yml"
+    
+    _ROOT_DIR: str = os.path.dirname(os.path.dirname(__file__))
+    DEFAULT_FILE_PATH: str = os.path.join(_ROOT_DIR, "config.yml")
     
     def __init__(self, file_path=None):
         if file_path is None:
             self.file_path = Config.DEFAULT_FILE_PATH
         else:
             self.file_path = file_path
-        self.config_data = self.load_config(file_path)
+        self.config_data = self.load_config()
 
-    def load_config(self, file_path):
+    def load_config(self):
         if (
-            not self.check_extension(Config.YAML_EXTENSION) or 
+            not self.check_extension(Config.YAML_EXTENSION) and 
             not self.check_extension(Config.YML_EXTENSION)
         ):
-            raise Exception(f"Not a yaml file: {file_path}")
+            raise Exception(f"Not a yaml file: {self.file_path}")
         
         try:
-            with open(file_path, 'r') as file:
+            with open(self.file_path, 'r') as file:
                 return yaml.safe_load(file)
         except FileNotFoundError:
-            raise FileNotFoundError(f'Config file not found at: {file_path}')
+            raise FileNotFoundError(f'Config file not found at: {self.file_path}')
         except yaml.YAMLError as e:
             raise ValueError(f'Error while parsing YAML file: {e}')
 
@@ -47,7 +49,9 @@ class Config:
         return actual_extension == expected_extension
 
 
-config = Config('config.yaml')
+config = Config()
 
-api_key = config.get('api_key')
-base_url = config.get('base_url')
+schema1 = config.get('Compare')
+schema2 = config.get('schema2')
+print(schema1)
+print(schema2)
