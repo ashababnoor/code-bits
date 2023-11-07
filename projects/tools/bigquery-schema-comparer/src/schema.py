@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, Any
 
 @dataclass
-class Schema:
+class Table:
     project_id: str
     dataset_id: str
     table_id: str
