@@ -1,7 +1,7 @@
 import yaml
 import os
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 
 
 @dataclass
@@ -9,13 +9,11 @@ class Table:
     project_id: str
     dataset_id: str
     table_id: str
-    schema: Dict[str, Any] = None
     
-    def __post_init__(self):
-        self.get_schema_from_loader()
-
-    def get_schema_from_loader(self):
-        pass
+    @staticmethod
+    def get_tables_from_config(config_key: str, config_file_path: str = None) -> Tuple['Table']:
+        config = Config(file_path=config_file_path)
+        return config.get_tables(config_key)
 
 
 class Config:
@@ -25,7 +23,7 @@ class Config:
     _ROOT_DIR: str = os.path.dirname(os.path.dirname(__file__))
     DEFAULT_FILE_PATH: str = os.path.join(_ROOT_DIR, "config.yml")
     
-    def __init__(self, file_path=None):
+    def __init__(self, file_path: str = None):
         if file_path is None:
             self.file_path = Config.DEFAULT_FILE_PATH
         else:
@@ -47,10 +45,10 @@ class Config:
         except yaml.YAMLError as e:
             raise ValueError(f'Error while parsing YAML file: {e}')
 
-    def get(self, key):
+    def get(self, key: str):
         return self.config_data.get(key)
     
-    def get_table_identifiers(self, key):
+    def get_tables(self, key: str) -> Tuple[Table]:
         table_pair = self.get(key)
         table1 = table_pair.get('table1')
         table2 = table_pair.get('table2')
@@ -59,15 +57,15 @@ class Config:
         
         return Table(**table1), Table(**table2)
 
-    def set(self, key, value):
+    def set(self, key: str, value: Any) -> None:
         self.config_data[key] = value
         self.save_to_file(self.file_path)
 
-    def save_to_file(self, file_path):
+    def save_to_file(self, file_path) -> None:
         with open(file_path, 'w') as file:
             yaml.dump(self.config_data, file, default_flow_style=False)
 
-    def check_extension(self, expected_extension):
+    def check_extension(self, expected_extension: str) -> bool:
         if not isinstance(expected_extension, str):
             raise ValueError("Expected extension must be a string.")
         
@@ -75,9 +73,12 @@ class Config:
         return actual_extension == expected_extension
 
 
-config = Config()
-
-schema1 = config.get('Compare')
-schema2 = config.get('schema2')
-
-print(config.get_table_identifiers("compare_food_super_table"))
+def main():
+    config_key = "food_tables"
+    table1, table2 = Table.get_tables_from_config(config_key)
+    
+    print(f"{table1 = }")
+    print(f"{table2 = }")
+    
+if __name__ == "__main__":
+    main()
