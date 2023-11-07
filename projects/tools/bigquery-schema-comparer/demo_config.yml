@@ -1,0 +1,9 @@
+demo-compare:
+  schema1:
+    project_id: 'your-project-id-1'
+    dataset_id: 'your-dataset-id-1'
+    table_id: 'your-table-id-1'
+  schema2:
+    project_id: 'your-project-id-2'
+    dataset_id: 'your-dataset-id-2'
+    table_id: 'your-table-id-2'
