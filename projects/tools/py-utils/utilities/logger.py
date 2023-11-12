@@ -10,7 +10,17 @@ def success(self, message, *args, **kwargs):
 
 logging.addLevelName(SUCCESS, "SUCCESS")
 logging.Logger.success = success
-logging.SUCCESS: int = 25
+logging.SUCCESS: int = SUCCESS
+
+CAUTION = 32
+def caution(self, message, *args, **kwargs):
+    if self.isEnabledFor(CAUTION):
+        self._log(CAUTION, message, args, **kwargs)
+
+logging.addLevelName(CAUTION, "CAUTION")
+logging.Logger.caution = caution
+logging.CAUTION: int = CAUTION
+
 
 old_factory = logging.getLogRecordFactory()
 
@@ -27,6 +37,7 @@ def record_factory(*args, **kwargs):
     record.debug_color=Color.cyan
     record.info_color=Color.dodger_blue
     record.success_color=Color.green
+    record.caution_color=Color.orange
     record.warning_color=Color.yellow
     record.error_color=Color.red
     record.critical_color=Color.orange_red
@@ -52,6 +63,7 @@ class CustomFormatter(logging.Formatter):
         logging.ERROR:    _ASCTIME + _LEVELNAME.format(_color="{error_color}")    + _MESSAGE + _FILEINFO,
         logging.CRITICAL: _ASCTIME + _LEVELNAME.format(_color="{critical_color}") + _MESSAGE + _FILEINFO,
         logging.SUCCESS:  _ASCTIME + _LEVELNAME.format(_color="{success_color}")  + _MESSAGE + _FILEINFO,
+        logging.CAUTION:  _ASCTIME + _LEVELNAME.format(_color="{caution_color}")  + _MESSAGE + _FILEINFO,
     }
 
     def format(self, record):
@@ -112,6 +124,7 @@ def main():
     logger.info("Logger info message")
     logger.success("Logger success message")
     logger.warning("Logger warning message")
+    logger.caution("Logger caution message")
     logger.error("Logger error message")
     logger.critical("Logger critical message")
 
