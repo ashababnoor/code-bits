@@ -34,7 +34,7 @@ class Color:
     white_bold: str = '\033[1;37m'    # Bold White
 
     # Define 8-bit color non-bold codes
-    orage: str = '\033[38;5;214m'                 # Orange
+    orange: str = '\033[38;5;214m'                 # Orange
     dark_orange: str = '\033[38;5;208m'           # Dark Orange
     orange_red: str = '\033[38;5;202m'            # Orange Red
     light_sea_green: str = '\033[38;5;37m'        # Light Sea Green
@@ -45,7 +45,7 @@ class Color:
     grey: str = '\033[38;5;244m'                  # Grey
     
     # Define 8-bit color bold codes
-    orage_bold: str = '\033[1;38;5;214m'          # Bold Orange
+    orange_bold: str = '\033[1;38;5;214m'          # Bold Orange
     dark_orange_bold: str = '\033[1;38;5;208m'    # Bold Dark Orange
     orange_red_bold: str = '\033[1;38;5;202m'     # Bold Orange Red
     light_sea_green_bold: str = '\033[1;38;5;37m' # Bold Light Sea Green
