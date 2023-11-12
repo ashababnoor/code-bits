@@ -3,20 +3,30 @@ import logging
 import sys
 
 
+SUCCESS = 25
+def success(self, message, *args, **kwargs):
+    if self.isEnabledFor(SUCCESS):
+        self._log(SUCCESS, message, args, **kwargs)
+
+logging.addLevelName(SUCCESS, "SUCCESS")
+logging.Logger.success = success
+logging.SUCCESS: int = 25
+
 old_factory = logging.getLogRecordFactory()
 
 def record_factory(*args, **kwargs):
     record = old_factory(*args, **kwargs)
     
-    record.datetime_color=Color.chartreuse
-    record.file_name_color=Color.grey
-    record.file_number_color=Color.grey_bold
-    record.text_color=Color.white
-    record.background_color=Color.black_bg
+    record.datetime_color=""
+    record.file_name_color=""
+    record.file_number_color=""
+    record.text_color=""
+    record.background_color=""
     record.reset=Color.reset
     
     record.debug_color=Color.cyan
     record.info_color=Color.dodger_blue
+    record.success_color=Color.green
     record.warning_color=Color.yellow
     record.error_color=Color.red
     record.critical_color=Color.orange_red
@@ -41,6 +51,7 @@ class CustomFormatter(logging.Formatter):
         logging.WARNING:  _ASCTIME + _LEVELNAME.format(_color="{warning_color}")  + _MESSAGE + _FILEINFO,
         logging.ERROR:    _ASCTIME + _LEVELNAME.format(_color="{error_color}")    + _MESSAGE + _FILEINFO,
         logging.CRITICAL: _ASCTIME + _LEVELNAME.format(_color="{critical_color}") + _MESSAGE + _FILEINFO,
+        logging.SUCCESS:  _ASCTIME + _LEVELNAME.format(_color="{success_color}")  + _MESSAGE + _FILEINFO,
     }
 
     def format(self, record):
@@ -93,11 +104,13 @@ def get_logger(
 def main():
     logger = get_logger(
         logger_name="Logger",
+        log_level=logging.DEBUG,
         add_console_handler=True,
         add_file_handler=False
     )
     logger.debug("Logger debug message")
     logger.info("Logger info message")
+    logger.success("Logger success message")
     logger.warning("Logger warning message")
     logger.error("Logger error message")
     logger.critical("Logger critical message")
