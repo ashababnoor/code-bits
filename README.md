@@ -15,7 +15,6 @@ Once a project gets too big they will be moved to their own repository.
 │   ├── postgres
 │   │   └── postgres-python-client
 │   ├── redis
-│   │   ├── bigquery-to-redis-ingestor
 │   │   └── redis-python-client
 │   └── sass
 │       └── sass-portfolio
@@ -27,6 +26,7 @@ Once a project gets too big they will be moved to their own repository.
 │   │   └── math-quiz
 │   └── tools
 │       ├── bigquery-schema-comparer
+│       ├── bigquery-to-redis-ingestor
 │       ├── json-to-markdown-converter
 │       ├── mysql-postgres-etl
 │       ├── py-utils
