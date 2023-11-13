@@ -29,7 +29,8 @@ Once a project gets too big they will be moved to their own repository.
 │       ├── bigquery-schema-comparer
 │       ├── json-to-markdown-converter
 │       ├── mysql-postgres-etl
-│       └── py-utils
+│       ├── py-utils
+│       └── string-cleaner
 ├── shell-scripts
 └── simulations
 ```
