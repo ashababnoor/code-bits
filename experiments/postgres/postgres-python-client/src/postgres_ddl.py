@@ -2,10 +2,9 @@ from postgres_connector import pg_connection
 
 def create_table(pg_connection, table_name: str, columns: list[str], data_types: dict[str]={}, properties: dict[str]={}):
         # Create a cursor object
-        cur = pg_connection.cursor()
+        cursor = pg_connection.cursor()
 
         # Define the SQL statement to create the table
-        
         create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} "
         
         create_table_query += "(\n"
@@ -20,13 +19,13 @@ def create_table(pg_connection, table_name: str, columns: list[str], data_types:
         print(create_table_query)
         
         # Execute the SQL statement
-        cur.execute(create_table_query)
+        cursor.execute(create_table_query)
 
         # Commit the transaction
         pg_connection.commit()
 
         # Close the cursor and connection
-        cur.close()
+        cursor.close()
         pg_connection.close()
 
         print("Table created successfully!")
