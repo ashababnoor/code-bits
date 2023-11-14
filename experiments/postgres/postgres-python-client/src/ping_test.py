@@ -1,6 +1,6 @@
 import psycopg2
 
-def ping_postgres(pg_connection):
+def ping_postgres(pg_connection: psycopg2.connection) -> None:
     try:
         # Create a cursor object
         cur = pg_connection.cursor()
