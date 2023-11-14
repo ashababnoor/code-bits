@@ -1,6 +1,6 @@
 from postgres_connector import pg_connection
 
-def create_table(pg_connection, table_name: str, columns: list[str], data_types: dict[str]={}, properties: dict[str]={}):
+def create_table(pg_connection, table_name: str, columns: list[str], data_types: dict[str]={}, properties: dict[str]={}) -> None:
         # Create a cursor object
         cursor = pg_connection.cursor()
 
