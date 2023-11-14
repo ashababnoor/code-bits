@@ -1,19 +1,24 @@
 from postgres_connector import pg_connection
 
+def _table_create_ddl(table_name: str, columns: list[str], data_types: dict[str]={}, properties: dict[str]={}) -> str:
+    create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} "
+    
+    create_table_query += "(\n"
+    for column in columns:
+        if column == columns[-1]:
+            create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')} \n"
+        else:
+            create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')}, \n"
+    create_table_query += ")"
+    
+    return create_table_query
+
 def create_table(pg_connection, table_name: str, columns: list[str], data_types: dict[str]={}, properties: dict[str]={}) -> None:
         # Create a cursor object
         cursor = pg_connection.cursor()
 
         # Define the SQL statement to create the table
-        create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} "
-        
-        create_table_query += "(\n"
-        for column in columns:
-            if column == columns[-1]:
-                create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')} \n"
-            else:
-                create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')}, \n"
-        create_table_query += ")"
+        create_table_query = _table_create_ddl(table_name, columns, data_types, properties)
         
         print("Query:")
         print(create_table_query)
