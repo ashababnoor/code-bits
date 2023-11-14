@@ -1,6 +1,7 @@
 import psycopg2
 
-def ping_postgres(pg_connection: psycopg2.connection) -> None:
+def ping_postgres(pg_connection: psycopg2.connection) -> bool:
+    successful = False
     try:
         # Create a cursor object
         cur = pg_connection.cursor()
@@ -14,6 +15,7 @@ def ping_postgres(pg_connection: psycopg2.connection) -> None:
         # Check if the result is as expected
         if result[0] == 1:
             print("Ping successful!")
+            successful = True
         else:
             print("Ping failed. Unexpected result.")
 
@@ -23,6 +25,8 @@ def ping_postgres(pg_connection: psycopg2.connection) -> None:
 
     except Exception as e:
         print(f"Error: {e}")
+    
+    return successful
 
 
 def main():
