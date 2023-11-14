@@ -11,9 +11,9 @@ def create_table(pg_connection, table_name: str, columns: list[str], data_types:
         create_table_query += "(\n"
         for column in columns:
             if column == columns[-1]:
-                create_table_query += f"\t {column} {data_types.get(column, '')} \n"
+                create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')} \n"
             else:
-                create_table_query += f"\t {column} {data_types.get(column, '')}, \n"
+                create_table_query += f"\t {column} {data_types.get(column, '')} {properties.get(column, '')}, \n"
         create_table_query += ")"
         
         print("Query:")
