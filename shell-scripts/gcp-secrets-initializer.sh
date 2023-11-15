@@ -2,9 +2,14 @@
 
 # Use this script to export GOOGLE_APPLICATION_CREDENTIALS path in your project
 # Inside your project create a secrets directory that looks like this
+#
 # secrets
 # ├── service_account.json
 # └── gcp-secrets-initializer.sh
+#
+# Then run the script using the following command from project's root directory
+#
+# source secrets/gcp-secrets-initializer.sh
 
 
 service_account_file_name=""
