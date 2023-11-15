@@ -51,14 +51,14 @@ function send_repo_zip_to_gcp_vm_and_unzip() {
     echo "Moved to $(pwd)"
 
     echo "Sending $repository_name.zip to GCP VM repo-vm"
-    gcloud compute scp --project="gcp-project" --zone="us-central1-a" $repository_name.zip repo-vm:~/
+    gcloud compute scp --project=$gcp_project_id --zone=$gcp_project_zone $repository_name.zip repo-vm:~/
     echo "File sent successfully"
 
     cd $current_dir
     echo "Moved back to $(pwd)"
 
     echo "Attempting to unzip $repository_name.zip in VM"
-    gcloud compute ssh --project="gcp-project" --zone="us-central1-a" repo-vm --command="unzip -u $repository_name.zip" -- -t
+    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone repo-vm --command="unzip -u $repository_name.zip" -- -t
     echo "Unzipping $repository_name.zip in VM completed successfully."
 }
 
