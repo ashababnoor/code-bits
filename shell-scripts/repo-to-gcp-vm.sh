@@ -1,10 +1,17 @@
 #!/bin/bash
 
+# Add values here as needed
+default_gcp_project_id=""    # Google cloud platform porject ID
+default_gcp_project_zone=""  # Google cloud platform porject zone
+default_gcp_vm_name=""       # Google cloud platform virtual machine name
+default_gcp_vm_path="~/"     # Google cloud platform virtual machine path where contents will be sent
+
 repository_name=$(basename "$(pwd)")
-gcp_project_id=""
-gcp_project_zone=""
-gcp_vm_name=""
-gcp_vm_path="~/"
+gcp_project_id=${1-$default_gcp_project_id}
+gcp_project_zone=${2-$default_gcp_project_zone}
+gcp_vm_name=${3-default_gcp_vm_name}
+gcp_vm_path=${4-default_gcp_vm_path}
+
 
 function create_repo_zip() {
     current_dir=$(pwd)
