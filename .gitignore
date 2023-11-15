@@ -121,5 +121,5 @@ GitHub.sublime-settings
 .DS_Store
 
 # Project Specific
-foo*
+*foo*
 data/
