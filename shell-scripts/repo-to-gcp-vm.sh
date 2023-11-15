@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repository_name=""
+repository_name=$(basename "$(pwd)")
 gcp_project_id=""
 gcp_project_zone=""
 gcp_vm_name=""
