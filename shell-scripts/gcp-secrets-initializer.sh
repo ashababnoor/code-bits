@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Use this script to export GOOGLE_APPLICATION_CREDENTIALS path in your project
+# Inside your project create a secrets directory that looks like this
+# secrets
+# ├── service_account.json
+# └── gcp-secrets-initializer.sh
+
+
 service_account_file_name=""
 
 function set_google_app_cred() {
