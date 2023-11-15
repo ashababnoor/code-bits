@@ -3,7 +3,7 @@
 Random code bits that I've written for various purposes that don't deserve their own repo.  
 Once a project gets too big they will be moved to their own repository.
 
-**Repository Structure:**
+**Repository Structure**
 ```
 .
 ├── data-science
@@ -35,7 +35,7 @@ Once a project gets too big they will be moved to their own repository.
 └── simulations
 ```
 
-Note: Marked with * indicates move to different repository
+*Note:* Marked with `*` indicates moved to or being maintained in different repository
 
 Generated directory tree using the following command
 ```bash
