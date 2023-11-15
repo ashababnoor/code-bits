@@ -25,15 +25,17 @@ Once a project gets too big they will be moved to their own repository.
 │   │   ├── connect-four
 │   │   └── math-quiz
 │   └── tools
-│       ├── bigquery-schema-comparer
+│       ├── bigquery-schema-comparer *
 │       ├── bigquery-to-redis-ingestor
-│       ├── json-to-markdown-converter
+│       ├── json-to-markdown-converter *
 │       ├── mysql-postgres-etl
 │       ├── py-utils
 │       └── string-cleaner
 ├── shell-scripts
 └── simulations
 ```
+
+Note: Marked with * indicates move to different repository
 
 Generated directory tree using the following command
 ```bash
