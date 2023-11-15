@@ -12,10 +12,10 @@ function set_google_app_cred() {
 function main() {
     local default_service_account_file_path="$(pwd)/secrets/$service_account_file_name"
 
-    if [[ -f $default_service_account_file_name ]]; then
+    if [[ -f $default_service_account_file_path ]]; then
         echo "Service account json file found in secrets directory."
         
-        local path=$default_service_account_file_name
+        local path=$default_service_account_file_path
         set_google_app_cred $path
     else
         echo "Service account json file NOT found in secrets directory."
