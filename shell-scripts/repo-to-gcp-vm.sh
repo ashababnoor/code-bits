@@ -59,7 +59,7 @@ function send_repo_zip_to_gcp_vm_and_unzip() {
     echo "Moved back to $(pwd)"
 
     echo "Attempting to unzip $repository_name.zip in VM"
-    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_name --command="unzip -u $repository_name.zip" -- -t
+    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_name --command="unzip -uo $repository_name.zip" -- -t
     echo "Unzipping $repository_name.zip in VM completed successfully."
 }
 
