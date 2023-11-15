@@ -4,6 +4,7 @@ repository_name=""
 gcp_project_id=""
 gcp_project_zone=""
 gcp_vm_name=""
+gcp_vm_path="~/"
 
 function create_repo_zip() {
     current_dir=$(pwd)
@@ -50,15 +51,15 @@ function send_repo_zip_to_gcp_vm_and_unzip() {
     cd //home/user/projects
     echo "Moved to $(pwd)"
 
-    echo "Sending $repository_name.zip to GCP VM repo-vm"
-    gcloud compute scp --project=$gcp_project_id --zone=$gcp_project_zone $repository_name.zip repo-vm:~/
+    echo "Sending $repository_name.zip to GCP VM $gcp_vm_name"
+    gcloud compute scp --project=$gcp_project_id --zone=$gcp_project_zone $repository_name.zip $gcp_vm_name:$gcp_vm_path
     echo "File sent successfully"
 
     cd $current_dir
     echo "Moved back to $(pwd)"
 
     echo "Attempting to unzip $repository_name.zip in VM"
-    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone repo-vm --command="unzip -u $repository_name.zip" -- -t
+    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_name --command="unzip -u $repository_name.zip" -- -t
     echo "Unzipping $repository_name.zip in VM completed successfully."
 }
 
