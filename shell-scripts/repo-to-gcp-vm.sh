@@ -10,7 +10,7 @@ function create_repo_zip() {
     current_dir=$(pwd)
     echo "Currently inside ${current_dir}"
 
-    cd //home/user/projects
+    cd ..
     echo "Moved to $(pwd)"
 
     echo -n "Creating tmp directory and copying contents of repository... "
@@ -29,11 +29,11 @@ function create_repo_zip() {
     find . -type f -name "*.csv" -delete
     echo "Done"
 
-    echo "Creating repo.zip file"
+    echo "Creating $repository_name.zip file"
     zip -r $repository_name.zip repository
     echo "Zip file created successfully"
 
-    mv repo.zip ..
+    mv $repository_name.zip ..
     cd ..
 
     echo -n "Cleaning up tmp directory... "
@@ -48,7 +48,7 @@ function send_repo_zip_to_gcp_vm_and_unzip() {
     current_dir=$(pwd)
     echo "Currently inside ${current_dir}"
 
-    cd //home/user/projects
+    cd ..
     echo "Moved to $(pwd)"
 
     echo "Sending $repository_name.zip to GCP VM $gcp_vm_name"
