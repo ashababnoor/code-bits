@@ -12,6 +12,7 @@ gcp_project_zone=${2-$default_gcp_project_zone}
 gcp_vm_name=${3-$default_gcp_vm_name}
 gcp_vm_path=${4-$default_gcp_vm_path}
 
+alias gssh="gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_name"
 
 function create_repo_zip() {
     current_dir=$(pwd)
@@ -37,7 +38,7 @@ function create_repo_zip() {
     echo "Done"
 
     echo "Creating $repository_name.zip file"
-    zip -r $repository_name.zip repository
+    zip -r $repository_name.zip $repository_name
     echo "Zip file created successfully"
 
     mv $repository_name.zip ..
@@ -64,12 +65,16 @@ function send_repo_zip_to_gcp_vm_and_unzip() {
 
     cd $current_dir
     echo "Moved back to $(pwd)"
+    echo 
+
+    gssh --command="(command -v unzip &>/dev/null) || (sudo apt-get install unzip)" -- -t
 
     echo "Attempting to unzip $repository_name.zip in VM"
-    gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_name --command="unzip -uo $repository_name.zip" -- -t
-    echo "Unzipping $repository_name.zip in VM completed successfully."
+    gssh --command="unzip -uo $repository_name.zip" -- -t
+    echo "Unzipping $repository_name.zip in VM completed successfully."    
 }
 
 create_repo_zip
 echo 
 send_repo_zip_to_gcp_vm_and_unzip
+unalias gssh
