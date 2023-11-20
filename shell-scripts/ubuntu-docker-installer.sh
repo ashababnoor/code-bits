@@ -24,5 +24,29 @@ function do_post_istallation_steps() {
 	newgrp docker
 }
 
-do_install
-do_post_istallation_steps
+function main() {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if [ -f /etc/os-release ]; then
+            source /etc/os-release
+            if [ "$ID" == "ubuntu" ]; then
+                echo "The operating system is Ubuntu."
+                echo "Installing Docker..."
+
+                # Main function call
+                do_install
+                do_post_istallation_steps
+
+            else
+                echo "The operating system is not Ubuntu."
+            fi
+        else
+            echo "Unable to determine the operating system."
+        fi
+
+    else
+        echo "OS type ${OSTYPE} is not supported."
+        echo "Run this script in a linux-gnu machine to make swapfile."
+    fi
+}
+
+main
