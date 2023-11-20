@@ -14,6 +14,10 @@ gcp_vm_name=${3-$default_gcp_vm_name}
 gcp_vm_user=${4-$default_gcp_vm_user}
 gcp_vm_path=${5-$default_gcp_vm_path}
 
+# List of directories and file extension to be deleted
+directories_to_be_deleted=(".git" "venv" "__pycache__")
+extensions_to_be_deleted=("tmp")
+
 
 function gcloud_ssh_do() {
     local command=$1
@@ -34,14 +38,17 @@ function create_repo_zip() {
 
     cd tmp
 
-    echo "Deleting directories: .git, venv... "
-    find . -type d -name ".git" -exec rm -rf {} \;
-    find . -type d -name "venv" -exec rm -rf {} \;
+    for dir in "${directories_to_be_deleted[@]}"; do
+        echo "Deleting directory: $dir"
+        find . -type d -name $dir -exec rm -rf {} \;
+    done
     echo "Directories deleted successfully"
 
-    echo -n "Deleting files: *.csv... "
-    find . -type f -name "*.csv" -delete
-    echo "Done"
+    for ext in "${extensions_to_be_deleted[@]}"; do
+        echo "Deleting files with extension .$ext"
+        find . -type f -name "*.$ext" -delete
+    done
+    echo "Files deleted successfully"
 
     echo "Creating $repository_name.zip file"
     zip -r $repository_name.zip $repository_name
