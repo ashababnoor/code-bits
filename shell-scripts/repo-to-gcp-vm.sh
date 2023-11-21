@@ -50,6 +50,25 @@ function gcloud_ssh_do() {
     gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_user@$gcp_vm_name  --command="$command" -- -t
 }
 
+function clean_using_gitignore() {
+    if [ -f .gitignore ]; then
+        echo ".gitignore file found"
+        echo "Deleting files and directories that match with patterns found in .gitignore"
+
+        patterns=($(grep -v '^#' .gitignore))  # Ignore lines starting with #
+
+        for pattern in "${patterns[@]}"; do
+            # Delete directories matching the pattern
+            find . -type d -name "$pattern" -exec rm -rf {} +
+
+            # Delete files matching the pattern
+            find . -type f -name "$pattern" -delete
+        done
+    else
+        echo ".gitignore file not found."
+    fi
+}
+
 function create_repo_zip() {
     current_dir=$(pwd)
     echo "Currently inside ${current_dir}"
@@ -79,6 +98,8 @@ function create_repo_zip() {
     echo "Creating $repository_name.zip file"
     zip -r $repository_name.zip $repository_name
     echo "Zip file created successfully"
+
+    clean_using_gitignore
 
     mv $repository_name.zip ..
     cd ..
