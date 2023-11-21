@@ -1,18 +1,44 @@
 #!/bin/bash
 
-# Add values here as needed
-default_gcp_project_id=""    # Google cloud platform porject ID
-default_gcp_project_zone=""  # Google cloud platform porject zone
-default_gcp_vm_name=""       # Google cloud platform virtual machine name
-default_gcp_vm_user="$USER"  # Google cloud platform virtual machine user
-default_gcp_vm_path="~/"     # Google cloud platform virtual machine path where contents will be sent
+DEPLOYMENT=${1:-"dev"}
+
+# Configure here as needed
+case $DEPLOYMENT in
+    prod)
+        default_gcp_project_id=""
+        default_gcp_project_zone=""
+        default_gcp_vm_name=""
+        default_gcp_vm_user=""
+        default_gcp_vm_path=""
+    ;;
+    stage)
+        default_gcp_project_id=""
+        default_gcp_project_zone=""
+        default_gcp_vm_name=""
+        default_gcp_vm_user=""
+        default_gcp_vm_path=""
+    ;;
+    dev | local)
+        default_gcp_project_id=""
+        default_gcp_project_zone=""
+        default_gcp_vm_name=""
+        default_gcp_vm_user=""
+        default_gcp_vm_path=""
+    ;;
+    *)
+        default_gcp_project_id=""
+        default_gcp_project_zone=""
+        default_gcp_vm_name=""
+        default_gcp_vm_user=""
+        default_gcp_vm_path=""
+esac
 
 repository_name=$(basename "$(pwd)")
-gcp_project_id=${1-$default_gcp_project_id}
-gcp_project_zone=${2-$default_gcp_project_zone}
-gcp_vm_name=${3-$default_gcp_vm_name}
-gcp_vm_user=${4-$default_gcp_vm_user}
-gcp_vm_path=${5-$default_gcp_vm_path}
+gcp_project_id=${2-$default_gcp_project_id}
+gcp_project_zone=${3-$default_gcp_project_zone}
+gcp_vm_name=${4-$default_gcp_vm_name}
+gcp_vm_user=${5-$default_gcp_vm_user}
+gcp_vm_path=${6-$default_gcp_vm_path}
 
 # List of directories and file extension to be deleted
 directories_to_be_deleted=(".git" "venv" "__pycache__")
