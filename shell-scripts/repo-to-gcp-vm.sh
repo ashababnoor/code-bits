@@ -50,28 +50,41 @@ function gcloud_ssh_do() {
     gcloud compute ssh --project=$gcp_project_id --zone=$gcp_project_zone $gcp_vm_user@$gcp_vm_name  --command="$command" -- -t
 }
 
-function clean_using_gitignore() {
-    if [ -f .gitignore ]; then
-        echo ".gitignore file found"
-        echo "Deleting files and directories that match with patterns found in .gitignore"
+function read_gitignore() {
+    if [[ -f .gitignore ]]; then
+        echo ".gitignore file found in repository"
+        echo "Reading and storing patterns found in .gitignore"
 
-        patterns=($(grep -v '^#' .gitignore))  # Ignore lines starting with #
+        # Read and process the contents of .gitignore file, excluding commented lines
+        patterns=($(grep -v '^#' .gitignore))
+    else
+        echo ".gitignore file not found in repository"
+    fi
+}
 
+# Function to delete files and directories based on patterns from .gitignore
+function delete_based_on_patterns() {
+    echo "Attempting to delete files and directories using patterns from .gitignore file..."
+
+    if [[ ${#patterns[@]} -gt 0 ]]; then
         for pattern in "${patterns[@]}"; do
             # Delete directories matching the pattern
             find . -type d -name "$pattern" -exec rm -rf {} +
-
+    
             # Delete files matching the pattern
             find . -type f -name "$pattern" -delete
         done
     else
-        echo ".gitignore file not found."
+        echo "No patterns found in .gitignore."
     fi
 }
+
 
 function create_repo_zip() {
     current_dir=$(pwd)
     echo "Currently inside ${current_dir}"
+
+    read_gitignore
 
     cd ..
     echo "Moved to $(pwd)"
@@ -95,11 +108,12 @@ function create_repo_zip() {
     done
     echo "Files deleted successfully"
 
+    # Call deletion function if patterns are found in gitignore
+    delete_based_on_patterns $patterns
+
     echo "Creating $repository_name.zip file"
     zip -r $repository_name.zip $repository_name
     echo "Zip file created successfully"
-
-    clean_using_gitignore
 
     mv $repository_name.zip ..
     cd ..
