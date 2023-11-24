@@ -40,7 +40,6 @@ def convert_svg_to_jpg(input_svg, output_jpg=None):
     # Remove the temporary PNG file
     os.remove(os.path.join(output_dir, 'temp.png'))
 
-# Replace 'input.svg' with your file name
-convert_svg_to_jpg('data/map.svg')  # Output will be saved as 'output/input.jpg'
-# or specify output file name
-# convert_svg_to_jpg('input.svg', 'output_file_name.jpg')
+
+if __name__ == "__main__":
+    convert_svg_to_jpg('.svg')

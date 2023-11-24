@@ -41,7 +41,6 @@ def convert_svg_to_jpg(input_svg, output_jpg=None):
     os.remove(output_jpg.replace('.jpg', '.png'))
 
 
-
 # Replace 'input.svg' with your file name
 convert_svg_to_jpg('data/map.svg')  # Output will be saved as 'output/input.jpg'
 # or specify output file name
