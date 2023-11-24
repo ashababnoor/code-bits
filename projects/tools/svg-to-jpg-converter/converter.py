@@ -1,12 +1,23 @@
+import os
 import cairosvg
 from PIL import Image
 
-def convert_svg_to_jpg(input_svg, output_jpg):
+def convert_svg_to_jpg(input_svg, output_jpg=None):
+    # Check if the output directory exists, create it if not
+    output_dir = os.path.join(os.path.dirname(input_svg), 'output')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine output file name and path
+    if output_jpg is None:
+        output_jpg = os.path.join(output_dir, os.path.splitext(os.path.basename(input_svg))[0] + '.jpg')
+    else:
+        output_jpg = os.path.join(output_dir, output_jpg)
+
     # Convert SVG to PNG using cairosvg
-    cairosvg.svg2png(url=input_svg, write_to='temp.png')
+    cairosvg.svg2png(url=input_svg, write_to=os.path.join(output_dir, 'temp.png'))
 
     # Open the PNG image using PIL
-    img = Image.open('temp.png')
+    img = Image.open(os.path.join(output_dir, 'temp.png'))
 
     # Calculate dimensions for the new image with 20% padding
     width, height = img.size
@@ -27,8 +38,9 @@ def convert_svg_to_jpg(input_svg, output_jpg):
     new_img.save(output_jpg, "JPEG")
 
     # Remove the temporary PNG file
-    import os
-    os.remove('temp.png')
+    os.remove(os.path.join(output_dir, 'temp.png'))
 
-# Replace 'input.svg' and 'output.jpg' with your file names
-convert_svg_to_jpg('input.svg', 'output.jpg')
+# Replace 'input.svg' with your file name
+convert_svg_to_jpg('data/map.svg')  # Output will be saved as 'output/input.jpg'
+# or specify output file name
+# convert_svg_to_jpg('input.svg', 'output_file_name.jpg')
