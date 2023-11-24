@@ -30,7 +30,8 @@ Once a project gets too big they will be moved to their own repository.
 │       ├── json-to-markdown-converter *
 │       ├── mysql-postgres-etl
 │       ├── py-utils
-│       └── string-cleaner
+│       ├── string-cleaner
+│       └── svg-to-jpg-converter
 ├── shell-scripts
 └── simulations
 ```
