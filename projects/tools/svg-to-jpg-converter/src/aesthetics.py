@@ -42,7 +42,16 @@ def create_abstract_swirl(width, height, *hex_colors):
     max_radius = min(cx, cy) - 10
 
     # Convert hex colors to RGB tuples
-    rgb_colors = [tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4)) for hex_color in hex_colors]
+    rgb_colors = []
+    for hex_color in hex_colors:
+        # Remove '#' if present and ensure correct length
+        hex_color = hex_color.lstrip('#')
+        if len(hex_color) != 6:
+            raise ValueError(f"Invalid hex color: {hex_color}")
+
+        # Convert hex to RGB tuple
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        rgb_colors.append((r, g, b))
 
     # Generate abstract swirl using given colors
     for x in range(width):
