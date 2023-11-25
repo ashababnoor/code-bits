@@ -21,12 +21,12 @@ def create_color_swirl(width, height):
             angle %= 2 * np.pi
 
             distance = np.sqrt(dx ** 2 + dy ** 2)
-            if distance <= max_radius:
-                hue = angle / (2 * np.pi)
-                saturation = distance / max_radius
-                value = 0.9  # Fixed value for brightness
-                r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
-                pixels[x, y] = (r, g, b)
+            # if distance <= max_radius:
+            hue = angle / (2 * np.pi)
+            saturation = distance / max_radius
+            value = 0.9  # Fixed value for brightness
+            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
+            pixels[x, y] = (r, g, b)
 
     # Show or save the image
     img.save("color_swirl.png")  # To save the image as 'color_swirl.png'
@@ -62,12 +62,12 @@ def create_abstract_swirl(width, height, *hex_colors):
             angle %= 2 * np.pi
 
             distance = np.sqrt(dx ** 2 + dy ** 2)
-            if distance <= max_radius:
-                color_idx = int((angle / (2 * np.pi)) * len(rgb_colors)) % len(rgb_colors)
-                hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_colors[color_idx]])
-                saturation = distance / max_radius
-                r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
-                pixels[x, y] = (r, g, b)
+            # if distance <= max_radius:
+            color_idx = int((angle / (2 * np.pi)) * len(rgb_colors)) % len(rgb_colors)
+            hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_colors[color_idx]])
+            saturation = distance / max_radius
+            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
+            pixels[x, y] = (r, g, b)
 
     # Show or save the image
     # img.show()  # To display the image
@@ -76,11 +76,11 @@ def create_abstract_swirl(width, height, *hex_colors):
 
 def main():
     # Provide 3 or 4 hex color codes
-    create_abstract_swirl(800, 800, '#FF0000', '#00FF00', '#0000FF')  # For 3 colors
+    # create_abstract_swirl(800, 800, '#FF0000', '#00FF00', '#0000FF')  # For 3 colors
     # create_abstract_swirl(800, 800, '#FF0000', '#00FF00', '#0000FF', '#FFFF00')  # For 4 colors
 
     # Set the desired width and height
-    # create_color_swirl(800, 800)
+    create_color_swirl(800, 800)
     
 if __name__ == "__main__":
     main()
