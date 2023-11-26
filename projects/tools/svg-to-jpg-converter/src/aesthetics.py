@@ -38,7 +38,7 @@ def create_abstract_swirl(width: int, height: int, hex_colors: list):
     img = Image.new('RGB', (width, height), 'white')
     pixels = img.load()
 
-    # Define center and max radius
+    # Define center and maximum radius
     cx, cy = width // 2, height // 2
     max_radius = min(cx, cy) - 10
 
@@ -53,8 +53,8 @@ def create_abstract_swirl(width: int, height: int, hex_colors: list):
         # Convert hex to RGB tuple
         r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
         rgb_colors.append((r, g, b))
-
-    # Generate abstract swirl using given colors
+    
+    # Generate abstract swirl using given colors with blending
     for x in range(width):
         for y in range(height):
             dx = x - cx
@@ -63,12 +63,18 @@ def create_abstract_swirl(width: int, height: int, hex_colors: list):
             angle %= 2 * np.pi
 
             distance = np.sqrt(dx ** 2 + dy ** 2)
-
-            color_idx = int((angle / (2 * np.pi)) * len(rgb_colors)) % len(rgb_colors)
-            hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_colors[color_idx]])
-            saturation = distance / max_radius
-            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
             
+            # Calculate color index and the interpolation factor
+            color_idx = angle / (2 * np.pi) * len(rgb_colors)
+            color_idx_1 = int(color_idx) % len(rgb_colors)
+            color_idx_2 = (color_idx_1 + 1) % len(rgb_colors)
+            blend = color_idx - int(color_idx)
+
+            # Interpolate between two adjacent colors
+            r = int((1 - blend) * rgb_colors[color_idx_1][0] + blend * rgb_colors[color_idx_2][0])
+            g = int((1 - blend) * rgb_colors[color_idx_1][1] + blend * rgb_colors[color_idx_2][1])
+            b = int((1 - blend) * rgb_colors[color_idx_1][2] + blend * rgb_colors[color_idx_2][2])
+
             pixels[x, y] = (r, g, b)
 
     # Save the image
@@ -126,7 +132,7 @@ def create_spot_pattern(width: int, height: int, hex_colors: list, spiral_satura
 
     # Save the image
     img.save("spots.png")
-    
+
 
 def generate_color_gradient(start_color: str, end_color: str, num_steps: int):
     start_color = start_color.lstrip('#')
@@ -175,7 +181,7 @@ def create_gradient_image(width: int, height: int, start_color: str, end_color: 
 
     # Save the image
     img.save("gradient_image.png")
-    
+
 
 def create_gradient_image_with_angle(width: int, height: int, start_color: str, end_color: str, angle: int):
     # Create a new blank image
@@ -199,60 +205,12 @@ def create_gradient_image_with_angle(width: int, height: int, start_color: str, 
     img.save("gradient_image_with_angle.png")
 
 
-def create_abstract_swirl(width: int, height: int, hex_colors: list):
-    # Create a blank image
-    img = Image.new('RGB', (width, height), 'white')
-    pixels = img.load()
-
-    # Define center and maximum radius
-    cx, cy = width // 2, height // 2
-    max_radius = min(cx, cy) - 10
-
-    # Convert hex colors to RGB tuples
-    rgb_colors = []
-    for hex_color in hex_colors:
-        # Remove '#' if present and ensure correct length
-        hex_color = hex_color.lstrip('#')
-        if len(hex_color) != 6:
-            raise ValueError(f"Invalid hex color: {hex_color}")
-
-        # Convert hex to RGB tuple
-        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-        rgb_colors.append((r, g, b))
-    
-    # Generate abstract swirl using given colors with blending
-    for x in range(width):
-        for y in range(height):
-            dx = x - cx
-            dy = y - cy
-            angle = np.arctan2(dy, dx)
-            angle %= 2 * np.pi
-
-            distance = np.sqrt(dx ** 2 + dy ** 2)
-            
-            # Calculate color index and the interpolation factor
-            color_idx = angle / (2 * np.pi) * len(rgb_colors)
-            color_idx_1 = int(color_idx) % len(rgb_colors)
-            color_idx_2 = (color_idx_1 + 1) % len(rgb_colors)
-            blend = color_idx - int(color_idx)
-
-            # Interpolate between two adjacent colors
-            r = int((1 - blend) * rgb_colors[color_idx_1][0] + blend * rgb_colors[color_idx_2][0])
-            g = int((1 - blend) * rgb_colors[color_idx_1][1] + blend * rgb_colors[color_idx_2][1])
-            b = int((1 - blend) * rgb_colors[color_idx_1][2] + blend * rgb_colors[color_idx_2][2])
-
-            pixels[x, y] = (r, g, b)
-
-    # Save the image
-    img.save("abstract_swirl_blended.png")
-
-
 def main():
     # Create image with color swirl
     # create_color_swirl(800, 800)
     
     # Create image with abstract color swirl
-    create_abstract_swirl(800, 800, ['#FF0000', '#0000FF'])
+    # create_abstract_swirl(800, 800, ['#FF0000', '#0000FF'])
     
     # Create image with spot pattern
     # create_spot_pattern(512, 532, ['#0077b6', '#00b4d8', '#90e0ef'])
@@ -261,7 +219,7 @@ def main():
     # create_gradient_image(512, 512, '#FF0000', '#0000FF')
     
     # Create image with color gradient with given angle
-    # create_gradient_image_with_angle(512, 512, '#FF0000', '#0000FF', 70)
+    # create_gradient_image_with_angle(512, 512, '#FF0000', '#0000FF', 180)
 
     pass
     
