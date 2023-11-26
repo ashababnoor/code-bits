@@ -152,6 +152,26 @@ def generate_color_gradient(start_color, end_color, num_steps):
     return gradient
 
 
+def create_gradient_image(width, height, gradient):
+    # Create a new blank image
+    img = Image.new('RGB', (width, height))
+
+    # Calculate step size for each gradient color
+    step = height / len(gradient)
+
+    # Fill the image with the gradient colors
+    for i, color in enumerate(gradient):
+        start = int(step * i)
+        end = int(step * (i + 1))
+        for y in range(start, end):
+            for x in range(width):
+                img.putpixel((x, y), color)
+
+    # Show or save the image
+    # img.show()  # To display the image
+    img.save("gradient_image.png")
+
+
 def main():
     # Set the desired width and height
     # create_color_swirl(800, 800)
@@ -164,10 +184,11 @@ def main():
     
     start_hex_color = 'FF0000'  # Red
     end_hex_color = '0000FF'    # Blue
-    steps = 10  # Number of steps in the gradient
+    steps = 512  # Number of steps in the gradient
 
     gradient = generate_color_gradient(start_hex_color, end_hex_color, steps)
-    print(gradient)  # This will print the RGB values of the gradient colors
+    # print(gradient)  # This will print the RGB values of the gradient colors
+    create_gradient_image(512, 512, gradient)
 
     pass
     
