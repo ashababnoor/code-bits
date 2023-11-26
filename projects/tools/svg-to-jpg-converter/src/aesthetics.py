@@ -29,8 +29,7 @@ def create_color_swirl(width: int, height: int):
             r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
             pixels[x, y] = (r, g, b)
 
-    # Show or save the image
-    # img.show()  # To display the image
+    # Save the image
     img.save("color_swirl.png")
 
 
@@ -72,8 +71,7 @@ def create_abstract_swirl(width: int, height: int, hex_colors: list):
             
             pixels[x, y] = (r, g, b)
 
-    # Show or save the image
-    # img.show()  # To display the image
+    # Save the image
     img.save("abstract_swirl.png")
 
 
@@ -126,8 +124,7 @@ def create_spot_pattern(width: int, height: int, hex_colors: list, spiral_satura
                         continue
                     pixels[x+i, y+j] = (r, g, b)
 
-    # Show or save the image
-    # img.show()  # To display the image
+    # Save the image
     img.save("spots.png")
     
 
@@ -170,8 +167,7 @@ def create_gradient_image(width: int, height: int, start_color: str, end_color: 
             for x in range(width):
                 img.putpixel((x, y), color)
 
-    # Show or save the image
-    # img.show()  # To display the image
+    # Save the image
     img.save("gradient_image.png")
     
 
@@ -198,20 +194,20 @@ def create_gradient_image_with_angle(width: int, height: int, start_color: str, 
 
 
 def main():
-    # Set the desired width and height
+    # Create image with color swirl
     # create_color_swirl(800, 800)
     
-    # Set the desired width and height and provide hex color codes
+    # Create image with abstract color swirl
     # create_abstract_swirl(800, 800, ['#FF0000', '#00FF00', '#0000FF'])
     
-    # Set the desired width and height and provide hex color codes
+    # Create image with spot pattern
     # create_spot_pattern(512, 532, ['#0077b6', '#00b4d8', '#90e0ef'])
-    
-    start_hex_color = 'FF0000'  # Red
-    end_hex_color = '0000FF'    # Blue
 
-    # create_gradient_image(512, 512, start_hex_color, end_hex_color)
-    create_gradient_image_with_angle(512, 512, start_hex_color, end_hex_color, 70)
+    # Create image with color gradient
+    # create_gradient_image(512, 512, 'FF0000', '0000FF')
+    
+    # Create image with color gradient with given angle
+    # create_gradient_image_with_angle(512, 512, 'FF0000', '0000FF', 70)
 
     pass
     
