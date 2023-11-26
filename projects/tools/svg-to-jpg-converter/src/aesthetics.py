@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw, ImageOps
 import numpy as np
 import colorsys
 import random
@@ -173,6 +173,28 @@ def create_gradient_image(width: int, height: int, start_color: str, end_color: 
     # Show or save the image
     # img.show()  # To display the image
     img.save("gradient_image.png")
+    
+
+def create_gradient_image_with_angle(width: int, height: int, start_color: str, end_color: str, angle: int):
+    # Create a new blank image
+    img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    
+    # Get color gradient
+    gradient = generate_color_gradient(start_color, end_color, max(width, height))
+
+    # Create a gradient using ImageOps
+    gradient_img = Image.new('RGBA', (max(width, height), 1))
+    gradient_img.putdata([(r, g, b, 255) for (r, g, b) in gradient])  # Add alpha channel (255 for opaque)
+    gradient_img = gradient_img.rotate(-angle, expand=True)
+
+    # Resize the gradient image to match the main image dimensions
+    gradient_img = gradient_img.resize((width, height))
+
+    # Paste the gradient onto the main image
+    img.paste(gradient_img, box=(0, 0), mask=gradient_img)
+
+    # Save the image
+    img.save("gradient_image_with_angle.png")
 
 
 def main():
@@ -187,11 +209,9 @@ def main():
     
     start_hex_color = 'FF0000'  # Red
     end_hex_color = '0000FF'    # Blue
-    steps = 512  # Number of steps in the gradient
 
-    gradient = generate_color_gradient(start_hex_color, end_hex_color, steps)
-    # print(gradient)  # This will print the RGB values of the gradient colors
-    create_gradient_image(512, 512, gradient)
+    # create_gradient_image(512, 512, start_hex_color, end_hex_color)
+    create_gradient_image_with_angle(512, 512, start_hex_color, end_hex_color, 70)
 
     pass
     
