@@ -135,11 +135,11 @@ def main():
     # Set the desired width and height
     # create_color_swirl(800, 800)
     
-    # Set the desired width and height and provide 3 or 4 hex color codes
-    # create_abstract_swirl(800, 800, ['#FF0000', '#00FF00', '#0000FF'])
+    # Set the desired width and height and provide hex color codes
+    create_abstract_swirl(800, 800, ['#FF0000', '#00FF00', '#0000FF'])
     
-    # Set the desired width and height and provide 3 or 4 hex color codes
-    create_spot_pattern(512, 532, ['#0077b6', '#00b4d8', '#90e0ef'])
+    # Set the desired width and height and provide hex color codes
+    # create_spot_pattern(512, 532, ['#0077b6', '#00b4d8', '#90e0ef'])
 
     pass
     
