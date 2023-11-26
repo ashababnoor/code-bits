@@ -129,6 +129,27 @@ def create_spot_pattern(width: int, height: int, hex_colors: list, spiral_satura
     # Show or save the image
     # img.show()  # To display the image
     img.save("spots.png")
+    
+
+def generate_color_gradient(start_color, end_color, num_steps):
+    # Convert hex colors to RGB tuples
+    start_r, start_g, start_b = tuple(int(start_color[i:i+2], 16) for i in (0, 2, 4))
+    end_r, end_g, end_b = tuple(int(end_color[i:i+2], 16) for i in (0, 2, 4))
+
+    # Calculate step size for each color channel
+    step_r = (end_r - start_r) / (num_steps - 1)
+    step_g = (end_g - start_g) / (num_steps - 1)
+    step_b = (end_b - start_b) / (num_steps - 1)
+
+    # Generate gradient by linear interpolation (lerp) between the colors
+    gradient = []
+    for i in range(num_steps):
+        r = int(start_r + step_r * i)
+        g = int(start_g + step_g * i)
+        b = int(start_b + step_b * i)
+        gradient.append((r, g, b))
+    
+    return gradient
 
 
 def main():
@@ -136,10 +157,17 @@ def main():
     # create_color_swirl(800, 800)
     
     # Set the desired width and height and provide hex color codes
-    create_abstract_swirl(800, 800, ['#FF0000', '#00FF00', '#0000FF'])
+    # create_abstract_swirl(800, 800, ['#FF0000', '#00FF00', '#0000FF'])
     
     # Set the desired width and height and provide hex color codes
     # create_spot_pattern(512, 532, ['#0077b6', '#00b4d8', '#90e0ef'])
+    
+    start_hex_color = 'FF0000'  # Red
+    end_hex_color = '0000FF'    # Blue
+    steps = 10  # Number of steps in the gradient
+
+    gradient = generate_color_gradient(start_hex_color, end_hex_color, steps)
+    print(gradient)  # This will print the RGB values of the gradient colors
 
     pass
     
