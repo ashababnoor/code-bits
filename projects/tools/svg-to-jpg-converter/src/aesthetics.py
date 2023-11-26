@@ -114,10 +114,10 @@ def create_spot_pattern(width, height, *hex_colors):
             # if distance <= max_radius:
             
             rgb_color = random.choice(rgb_colors)
-            # hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_color])
-            # saturation = distance / max_radius
-            # r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
-            r, g, b = rgb_color
+            hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_color])
+            saturation = distance / max_radius
+            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
+            # r, g, b = rgb_color
             
             for i in range(density+1):
                 for j in range(density+1):
@@ -127,7 +127,7 @@ def create_spot_pattern(width, height, *hex_colors):
 
     # Show or save the image
     # img.show()  # To display the image
-    img.save("spots.png")  # To save the image as 'abstract_swirl.png'
+    img.save("spots.png")
 
 
 def main():
