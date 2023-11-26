@@ -131,7 +131,7 @@ def create_spot_pattern(width: int, height: int, hex_colors: list, spiral_satura
     img.save("spots.png")
     
 
-def generate_color_gradient(start_color, end_color, num_steps):
+def generate_color_gradient(start_color: int, end_color: int, num_steps: int):
     # Convert hex colors to RGB tuples
     start_r, start_g, start_b = tuple(int(start_color[i:i+2], 16) for i in (0, 2, 4))
     end_r, end_g, end_b = tuple(int(end_color[i:i+2], 16) for i in (0, 2, 4))
@@ -152,9 +152,12 @@ def generate_color_gradient(start_color, end_color, num_steps):
     return gradient
 
 
-def create_gradient_image(width, height, gradient):
+def create_gradient_image(width: int, height: int, start_color: str, end_color: str):
     # Create a new blank image
     img = Image.new('RGB', (width, height))
+    
+    # Get color gradient
+    gradient = generate_color_gradient(start_color, end_color, max(width, height))
 
     # Calculate step size for each gradient color
     step = height / len(gradient)
