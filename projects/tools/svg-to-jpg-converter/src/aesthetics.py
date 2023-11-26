@@ -22,14 +22,15 @@ def create_color_swirl(width: int, height: int):
             angle %= 2 * np.pi
 
             distance = np.sqrt(dx ** 2 + dy ** 2)
-            # if distance <= max_radius:
             hue = angle / (2 * np.pi)
             saturation = distance / max_radius
             value = 0.9  # Fixed value for brightness
+            
             r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
             pixels[x, y] = (r, g, b)
 
     # Show or save the image
+    # img.show()  # To display the image
     img.save("color_swirl.png")
 
 
@@ -74,10 +75,9 @@ def create_abstract_swirl(width: int, height: int, hex_colors: list):
     # Show or save the image
     # img.show()  # To display the image
     img.save("abstract_swirl.png")
-    
 
 
-def create_spot_pattern(width: int, height: int, hex_colors: list):
+def create_spot_pattern(width: int, height: int, hex_colors: list, spiral_saturation: bool = False):
     # Create a blank image
     density: int = 5
     
@@ -110,14 +110,15 @@ def create_spot_pattern(width: int, height: int, hex_colors: list):
             dy = y - cy
             angle = np.arctan2(dy, dx)
             angle %= 2 * np.pi
-
             distance = np.sqrt(dx ** 2 + dy ** 2)
             
             rgb_color = random.choice(rgb_colors)
-            # hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_color])
-            # saturation = distance / max_radius
-            # r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
-            r, g, b = rgb_color
+            if spiral_saturation:
+                hue, saturation, value = colorsys.rgb_to_hsv(*[c / 255 for c in rgb_color])
+                saturation = distance / max_radius
+                r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(hue, saturation, value)]
+            else:
+                r, g, b = rgb_color
             
             for i in range(density+1):
                 for j in range(density+1):
