@@ -69,8 +69,6 @@ class RedisIngestor:
         worker_count: int=10,
         redis_data_type: str=JSON,
         use_special_windowing_method: bool=False,
-        special_windowing_method_direction: Literal[1, -1]=-1,
-        special_windowing_method_substring_length: int=None
     ):
         redis_client = self.redis_client
         bigquery_client = self.bigquery_client
@@ -136,12 +134,10 @@ class RedisIngestor:
             from concurrent.futures import ThreadPoolExecutor
             
             worker_numbers = list(range(worker_count))
-            if query.query_name == "address_history" and use_special_windowing_method:
-                if verbose: print("Address History query passed; using special method for getting windowed queries")
-                query_strings = query.get_windowed_query_strings_for_address_history_using_substring(
+            if use_special_windowing_method:
+                query_strings = query.get_windowed_query_strings(
                     bigquery_client=bigquery_client,
-                    direction=special_windowing_method_direction,
-                    substring_length=special_windowing_method_substring_length
+                    window_number=worker_count
                 )
                 worker_numbers = list(range(len(query_strings)))
             else:
