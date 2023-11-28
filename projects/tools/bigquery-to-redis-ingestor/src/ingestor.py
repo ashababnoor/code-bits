@@ -162,38 +162,3 @@ class RedisIngestor:
                 ]
         
         if verbose: Print.success(f"Data ingestion complete. Total {sum(results):,} rows ingested.")
-    
-    
-    def ingest_address_history(
-            self,
-            limit: list[Union[int, str, None]]=None,
-            verbose: bool=False,
-            show_progress: bool=False,
-            parallel_computation: bool=True,
-            worker_count: int=10,
-            use_special_windowing_method: bool=True,
-            special_windowing_method_direction: Literal[1, -1]=-1,
-            special_windowing_method_substring_length: int=None
-        ):
-        query = Query(
-            query_name="address_history",
-            grain=1,
-            limit=limit
-        )
-        redis_key_columns = ["recipient_identifier"]
-        redis_value_columns = ["address_history"]
-        redis_data_type = RedisIngestor.JSON
-        
-        self.ingest_data(
-            query=query,
-            redis_key_columns=redis_key_columns,
-            redis_value_columns=redis_value_columns,
-            verbose=verbose,
-            show_progress=show_progress,
-            parallel_computation=parallel_computation,
-            worker_count=worker_count,
-            redis_data_type=redis_data_type,
-            use_special_windowing_method=use_special_windowing_method,
-            special_windowing_method_direction=special_windowing_method_direction,
-            special_windowing_method_substring_length=special_windowing_method_substring_length
-        )
