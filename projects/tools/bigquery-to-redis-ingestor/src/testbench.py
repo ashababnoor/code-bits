@@ -17,11 +17,10 @@ data_dir = "data/"
 
 # Defining query object configuration
 limit = None
-address_history = dict(query_name="address_history", grain=1, limit=limit)
 popular_search_terms = dict(query_name="popular_search_terms", grain=2, limit=limit)
 latest_popular_search_terms = dict(query_name="latest_popular_search_terms", grain=1, limit=limit)
 
-query = Query(**address_history)
+query = Query(**popular_search_terms)
 
 
 run_this = False
@@ -123,14 +122,14 @@ if run_this:
     ri = RedisIngestor(redis_client=redis_local, bigquery_client=bq)
     
     limit_ = 10
-    query_ah = Query(**address_history)
-    query_st = Query(**latest_popular_search_terms)
+    query_st = Query(**popular_search_terms)
+    query_pst = Query(**latest_popular_search_terms)
     
     redis_local.flushall()
     
     with TimerBlock("RedisIngestor ingest_data() -- type=JSON; Parallel_computation=True; worker=8"):
         ri.ingest_data(
-            query=query_ah.add_limit(limit_)
+            query=query_st.add_limit(limit_)
             , verbose=True
             , show_progress=True
             , parallel_computation=True
@@ -140,7 +139,7 @@ if run_this:
         
     with TimerBlock("RedisIngestor ingest_data() -- type=HSET; Parallel_computation=True; worker=8"):
         ri.ingest_data(
-            query=query_st.add_limit(limit_)
+            query=query_pst.add_limit(limit_)
             , verbose=True
             , show_progress=True
             , parallel_computation=True
@@ -148,23 +147,6 @@ if run_this:
         )
     
     redis_local.close()
-
-
-run_this = True
-if run_this:
-    from connector import redis_local
-    ri = RedisIngestor(redis_client=redis_local, bigquery_client=bq)
-    
-    limit_ = 1000
-    
-    redis_local.flushall()
-    
-    with TimerBlock("RedisIngestor ingest_address_history() -- using special windowing method"):
-        ri.ingest_address_history(
-            limit=limit_
-            , verbose=True
-            , parallel_computation=True
-        )
 
 
 TimerBlock.timing_summary()
