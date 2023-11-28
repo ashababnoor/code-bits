@@ -25,9 +25,8 @@ Once a project gets too big they will be moved to their own repository.
 │   │   ├── connect-four
 │   │   └── math-quiz
 │   └── tools
-│       ├── bigquery-schema-comparer *
 │       ├── bigquery-to-redis-ingestor
-│       ├── json-to-markdown-converter *
+│       ├── data-tools *
 │       ├── mysql-postgres-etl
 │       ├── py-utils
 │       ├── string-cleaner
