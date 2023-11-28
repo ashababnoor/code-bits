@@ -92,7 +92,3 @@ class BigqueryLoader:
                 json.dump(query_output_dict, json_file, default=str)
 
         if verbose: Print.success("Writing to json file completed!")
-    
-
-class Redis:
-    pass
