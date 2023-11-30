@@ -57,6 +57,7 @@ def custom_print(message: str) -> None:
 
 print = custom_print
 
+
 def get_question() -> float:
     '''
     This function generates a question, prints the question in stdout and returns the correct answer.
@@ -86,8 +87,8 @@ def get_question() -> float:
             number2=number2
         )
     )
-    
     return float(answer)
+
 
 def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -> bool:
     '''
@@ -121,6 +122,7 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
         print_wrong_answer_message()
         return get_answer(answer=answer, history=history, bindings=bindings)
 
+
 def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bool, float]:
     '''
     This function takes user input and checks wether user wants to exit or not
@@ -145,16 +147,20 @@ def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bo
         print_not_a_number_message()
         return take_user_input(history=history, bindings=bindings)
 
+
 def print_not_a_number_message() -> None:
     print(f"{yellow}Not a number.{reset} Try again.")
+
     
 def print_wrong_answer_message() -> None:
     print(f"{red}Wrong Answer!{reset} Try again.")
+
 
 def print_correct_answer_message() -> None:
     global question_counter, score_counter
     
     print(f"{green}Correct answer!{reset} Score: {score_counter}/{question_counter}")
+
 
 def print_exit_message() -> None:
     global question_counter, score_counter
@@ -162,6 +168,7 @@ def print_exit_message() -> None:
     print(f"You have answered {score_counter} questions correctly on your first try out of {question_counter-1}!")
     print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
+    
     
 def print_welcome_message() -> None:
     std_print()
@@ -175,8 +182,7 @@ def print_welcome_message() -> None:
     std_print()
 
 
-# Main driver code
-if __name__ == "__main__":
+def main():
     print_welcome_message()
     history = InMemoryHistory()
     bindings = KeyBindings()
@@ -185,3 +191,8 @@ if __name__ == "__main__":
     while (keep_playing):
         answer = get_question()
         keep_playing = get_answer(answer=answer, history=history, bindings=bindings)
+
+
+# Main driver code
+if __name__ == "__main__":
+    main()
