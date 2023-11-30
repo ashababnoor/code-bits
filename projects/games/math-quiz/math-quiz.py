@@ -7,6 +7,7 @@ import textwrap
 
 import random
 from typing import Union
+from enum import Enum
 
 
 # Quiz Configuration 
@@ -44,9 +45,25 @@ purple_bold='\033[1;35m'     # Bold Purple
 # Custom Function
 std_print = print
 
+class PrintType:
+    QUESTION: str = "question"
+    INPUT: str = "input"
+    OUTPUT: str = "output"
+    NONE: str = "none"
+    
+    MAPPING: dict = {
+        QUESTION: " Q |",
+        INPUT:    " A |",
+        OUTPUT:   " ~ |",
+        NONE:     "",
+    }
+    
+    def __getitem__(self, type: 'PrintType') -> str:
+        return self.MAPPING.get(type)
+
 def custom_print(
     message: str,
-    type: str,
+    type: PrintType = PrintType.OUTPUT,
     sep: Union[str, None] = " ",
     end: Union[str, None] = "\n",
 ) -> None:
@@ -63,8 +80,10 @@ def custom_print(
         >>> print("...")
         math-quiz >> ...
     '''
+    type_prefix = PrintType()[type]
+    
     custom_print_prefix = "math-quiz >>"
-    std_print(f"{blue_bold}{custom_print_prefix}{reset} {message}", sep=sep, end=end)
+    std_print(f"{blue_bold}{custom_print_prefix}{reset} {type_prefix} {message}", sep=sep, end=end)
 
 print = custom_print
 
@@ -96,7 +115,8 @@ def get_question() -> float:
             number1=number1, 
             operand=operand,
             number2=number2
-        )
+        ),
+        type=PrintType.QUESTION
     )
     return float(answer)
 
@@ -149,7 +169,7 @@ def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bo
     exit_statement = EXIT_STATEMENT
     
     try:
-        print()
+        print(message="", type=PrintType.INPUT, end="")
         user_input = prompt(history=history, key_bindings=bindings).strip()
     except KeyboardInterrupt:
         user_input = exit_statement
@@ -181,6 +201,7 @@ def print_correct_answer_message() -> None:
 def print_exit_message() -> None:
     global QUESTION_COUNTER, SCORE_COUNTER
     
+    std_print()
     print(f"You have answered {SCORE_COUNTER} questions correctly on your first try out of {QUESTION_COUNTER-1}!")
     print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
