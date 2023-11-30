@@ -183,9 +183,19 @@ def print_welcome_message() -> None:
 
 
 def main():
-    print_welcome_message()
     history = InMemoryHistory()
     bindings = KeyBindings()
+    
+    @bindings.add('c-p')  # Define keybinding for up arrow (control + p)
+    def _(event):
+        event.current_buffer.auto_up()
+
+    @bindings.add('c-n')  # Define keybinding for down arrow (control + n)
+    def _(event):
+        event.current_buffer.auto_down()
+    
+    
+    print_welcome_message()
     
     keep_playing = True
     while (keep_playing):
