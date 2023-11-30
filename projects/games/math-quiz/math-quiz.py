@@ -78,7 +78,6 @@ def get_question() -> float:
 
     operand = random.choice(operands)
     answer = round(eval(f"{number1} {operand} {number2}"), 2)
-    print(answer)
     
     print(
         question_template.format(
@@ -120,7 +119,7 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
         first_attempt_failed = True
         
         print_wrong_answer_message()
-        return get_answer(answer)
+        return get_answer(answer=answer, history=history, bindings=bindings)
 
 def check_for_exit_statement(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bool, float]:
     '''
