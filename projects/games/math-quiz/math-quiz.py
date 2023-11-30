@@ -6,6 +6,7 @@ from prompt_toolkit.key_binding import KeyBindings
 import textwrap
 
 import random
+from typing import Union
 
 
 # Quiz Configuration 
@@ -43,7 +44,12 @@ purple_bold='\033[1;35m'     # Bold Purple
 # Custom Function
 std_print = print
 
-def custom_print(message: str) -> None:
+def custom_print(
+    message: str,
+    type: str,
+    sep: Union[str, None] = " ",
+    end: Union[str, None] = "\n",
+) -> None:
     '''
     This function is a custom print function that overrides the standard print function.
     
@@ -52,9 +58,13 @@ def custom_print(message: str) -> None:
     
     Returns:
         None
+    
+    Example:
+        >>> print("...")
+        math-quiz >> ...
     '''
     custom_print_prefix = "math-quiz >>"
-    std_print(f"{blue_bold}{custom_print_prefix}{reset} {message}")
+    std_print(f"{blue_bold}{custom_print_prefix}{reset} {message}", sep=sep, end=end)
 
 print = custom_print
 
@@ -139,6 +149,7 @@ def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bo
     exit_statement = EXIT_STATEMENT
     
     try:
+        print()
         user_input = prompt(history=history, key_bindings=bindings).strip()
     except KeyboardInterrupt:
         user_input = exit_statement
