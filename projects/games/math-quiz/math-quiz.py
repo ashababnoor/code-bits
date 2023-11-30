@@ -101,7 +101,7 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
     '''
     global score_counter, first_attempt_failed
     
-    user_wants_to_exit, user_input = check_for_exit_statement(history=history, bindings=bindings)
+    user_wants_to_exit, user_input = take_user_input(history=history, bindings=bindings)
     keep_playing = True
     
     if user_wants_to_exit:
@@ -121,7 +121,7 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
         print_wrong_answer_message()
         return get_answer(answer=answer, history=history, bindings=bindings)
 
-def check_for_exit_statement(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bool, float]:
+def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bool, float]:
     '''
     This function takes user input and checks wether user wants to exit or not
     
@@ -143,7 +143,7 @@ def check_for_exit_statement(history: InMemoryHistory, bindings: KeyBindings) ->
         return False, float(user_input)
     except:
         print_not_a_number_message()
-        return check_for_exit_statement()
+        return take_user_input(history=history, bindings=bindings)
 
 def print_not_a_number_message() -> None:
     print(f"{yellow}Not a number.{reset} Try again.")
