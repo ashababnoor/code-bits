@@ -173,6 +173,7 @@ def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bo
         user_input = prompt(history=history, key_bindings=bindings).strip()
     except KeyboardInterrupt:
         user_input = exit_statement
+        std_print()
     
     if user_input == exit_statement:
         return True, 0        
@@ -201,7 +202,6 @@ def print_correct_answer_message() -> None:
 def print_exit_message() -> None:
     global QUESTION_COUNTER, SCORE_COUNTER
     
-    std_print()
     print(f"You have answered {SCORE_COUNTER} questions correctly on your first try out of {QUESTION_COUNTER-1}!")
     print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
