@@ -1,5 +1,12 @@
-import random
+from redis import exceptions
+from redis import Redis
+from prompt_toolkit import prompt
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.key_binding import KeyBindings
 import textwrap
+
+import random
+
 
 # Quiz Configuration 
 number_lower_range = 1
@@ -83,7 +90,7 @@ def get_question() -> float:
     
     return float(answer)
 
-def get_answer(answer: float) -> bool:
+def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -> bool:
     '''
     This function checks if user has given the correct answer or not; or wether the user wants to exit.
     
@@ -95,7 +102,7 @@ def get_answer(answer: float) -> bool:
     '''
     global score_counter, first_attempt_failed
     
-    user_wants_to_exit, user_input = check_for_exit_statement()
+    user_wants_to_exit, user_input = check_for_exit_statement(history=history, bindings=bindings)
     keep_playing = True
     
     if user_wants_to_exit:
@@ -115,7 +122,7 @@ def get_answer(answer: float) -> bool:
         print_wrong_answer_message()
         return get_answer(answer)
 
-def check_for_exit_statement() -> tuple[bool, float]:
+def check_for_exit_statement(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bool, float]:
     '''
     This function takes user input and checks wether user wants to exit or not
     
@@ -129,7 +136,7 @@ def check_for_exit_statement() -> tuple[bool, float]:
     '''
     exit_statement = "exit"
     
-    user_input = input().strip()
+    user_input = prompt(history=history, key_bindings=bindings).strip()
     if user_input == exit_statement:
         return True, 0        
 
@@ -172,8 +179,10 @@ def print_welcome_message() -> None:
 # Main driver code
 if __name__ == "__main__":
     print_welcome_message()
+    history = InMemoryHistory()
+    bindings = KeyBindings()
     
     keep_playing = True
     while (keep_playing):
         answer = get_question()
-        keep_playing = get_answer(answer)
+        keep_playing = get_answer(answer=answer, history=history, bindings=bindings)
