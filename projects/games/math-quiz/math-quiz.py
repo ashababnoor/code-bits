@@ -9,13 +9,14 @@ import random
 
 
 # Quiz Configuration 
-number_lower_range = 1
-number_upper_range = 10
-question_template = "What is {number1} {operand} {number2}?"
+NUMBER_LOWER_RANGE = 1
+NUMBER_UPPER_RANGE = 10
+QUESTION_TEMPLATE = "What is {number1} {operand} {number2}?"
 
-question_counter = 0
-score_counter = 0
-first_attempt_failed = False
+QUESTION_COUNTER = 0
+SCORE_COUNTER = 0
+FIRST_ATTEMPT_FAILED = False
+EXIT_STATEMENT = "exit"
 
 
 # Define bold text and reset color and formatting
@@ -68,20 +69,20 @@ def get_question() -> float:
     Returns:
         answer (float)
     '''
-    global question_counter, first_attempt_failed
+    global QUESTION_COUNTER, FIRST_ATTEMPT_FAILED
     
-    question_counter += 1
-    first_attempt_failed = False
+    QUESTION_COUNTER += 1
+    FIRST_ATTEMPT_FAILED = False
     
-    number1 = random.randint(number_lower_range, number_upper_range)
-    number2 = random.randint(number_lower_range, number_upper_range)
+    number1 = random.randint(NUMBER_LOWER_RANGE, NUMBER_UPPER_RANGE)
+    number2 = random.randint(NUMBER_LOWER_RANGE, NUMBER_UPPER_RANGE)
     operands = ["+", "-", "*", "/"]
 
     operand = random.choice(operands)
     answer = round(eval(f"{number1} {operand} {number2}"), 2)
     
     print(
-        question_template.format(
+        QUESTION_TEMPLATE.format(
             number1=number1, 
             operand=operand,
             number2=number2
@@ -100,7 +101,7 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
     Returns:
         keep_playing (bool): Weather player wants to keep playing or not
     '''
-    global score_counter, first_attempt_failed
+    global SCORE_COUNTER, FIRST_ATTEMPT_FAILED
     
     user_wants_to_exit, user_input = take_user_input(history=history, bindings=bindings)
     keep_playing = True
@@ -111,13 +112,13 @@ def get_answer(answer: float, history: InMemoryHistory, bindings: KeyBindings) -
         return keep_playing
     
     if user_input == answer:
-        if not first_attempt_failed:
-            score_counter += 1
+        if not FIRST_ATTEMPT_FAILED:
+            SCORE_COUNTER += 1
         
         print_correct_answer_message()
         return keep_playing
     else:
-        first_attempt_failed = True
+        FIRST_ATTEMPT_FAILED = True
         
         print_wrong_answer_message()
         return get_answer(answer=answer, history=history, bindings=bindings)
@@ -135,9 +136,13 @@ def take_user_input(history: InMemoryHistory, bindings: KeyBindings) -> tuple[bo
             bool: Users wants to keep playing or not
             float: User input if user wants to keep playing, 0 if they don't
     '''
-    exit_statement = "exit"
+    exit_statement = EXIT_STATEMENT
     
-    user_input = prompt(history=history, key_bindings=bindings).strip()
+    try:
+        user_input = prompt(history=history, key_bindings=bindings).strip()
+    except KeyboardInterrupt:
+        user_input = exit_statement
+    
     if user_input == exit_statement:
         return True, 0        
 
@@ -157,15 +162,15 @@ def print_wrong_answer_message() -> None:
 
 
 def print_correct_answer_message() -> None:
-    global question_counter, score_counter
+    global QUESTION_COUNTER, SCORE_COUNTER
     
-    print(f"{green}Correct answer!{reset} Score: {score_counter}/{question_counter}")
+    print(f"{green}Correct answer!{reset} Score: {SCORE_COUNTER}/{QUESTION_COUNTER}")
 
 
 def print_exit_message() -> None:
-    global question_counter, score_counter
+    global QUESTION_COUNTER, SCORE_COUNTER
     
-    print(f"You have answered {score_counter} questions correctly on your first try out of {question_counter-1}!")
+    print(f"You have answered {SCORE_COUNTER} questions correctly on your first try out of {QUESTION_COUNTER-1}!")
     print(f"{light_blue_bold}Good bye!{reset}")
     std_print()
     
@@ -176,7 +181,7 @@ def print_welcome_message() -> None:
     instructions = f"""
     {bold}Instructions:{reset}
         Answer each question on your first try to get a point.
-        Type "exit" at any time to end the game and exit.
+        Type "exit" or press (ctrl+c) at any time to end the game and exit.
     """
     std_print(textwrap.dedent(instructions))
     std_print()
@@ -193,6 +198,11 @@ def main():
     @bindings.add('c-n')  # Define keybinding for down arrow (control + n)
     def _(event):
         event.current_buffer.auto_down()
+    
+    @bindings.add('c-c')  # Define keybinding for Control + C to exit
+    def on_control_c(event) -> None:
+        event.app.exit()
+        raise KeyboardInterrupt
     
     
     print_welcome_message()
