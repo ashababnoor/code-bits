@@ -3,11 +3,9 @@
 Random code bits that I've written for various purposes that don't deserve their own repo.  
 Once a project gets too big they will be moved to their own repository.
 
-**Repository Structure**
+### Repository Structure
 ```
 .
-├── data-science
-│   └── natural-language-processing
 ├── experiments
 │   ├── django
 │   │   ├── django-poll-app
@@ -35,8 +33,16 @@ Once a project gets too big they will be moved to their own repository.
 └── simulations
 ```
 
-*Note:* Marked with `*` indicates moved to or being maintained in different repository
+*Note:* Marked with `*` indicates moved to or being maintained in a different repository
 
+
+### Moved Projects
+| Project      |  Repository                                                     |
+|:-------------|:--------------------------------------------------------------------|
+| `data-tools` | [ashababnoor/data-tools](https://github.com/ashababnoor/data-tools) |
+
+
+### Extra
 Generated directory tree using the following command
 ```bash
 tree -L 3 -I venv -d
