@@ -3,7 +3,6 @@ from print import Print
 from codeblock import CodeBlock
 from timerblock import TimerBlock
 from miscellaneous import *
-from lambdas import *
 
 
 if __name__ == "__main__":

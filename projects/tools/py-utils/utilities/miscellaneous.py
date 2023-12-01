@@ -1,9 +1,13 @@
+from datetime import datetime
+
+
 def get_attributes(object: any) -> list:
     return [
         attr 
         for attr in dir(object) 
         if not callable(getattr(object, attr)) and not attr.startswith('__')
     ]
+
 
 def get_regular_methods(object: any) -> list:
     return [
@@ -12,6 +16,7 @@ def get_regular_methods(object: any) -> list:
         if callable(getattr(object, method)) and not method.startswith('__')
     ]
 
+
 def get_dunder_methods(object: any) -> list:
     return [
         method 
@@ -19,8 +24,14 @@ def get_dunder_methods(object: any) -> list:
         if callable(getattr(object, method)) and method.startswith('__')
     ]
 
+
 def check_iterable_datatype(iterable, datatype):
     return all(isinstance(item, datatype) for item in iterable)
+
+
+def now():
+    return datetime.now().strftime('%H:%M:%S')
+
 
 def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True) -> str:
     import humanize
@@ -46,6 +57,7 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
     if use_short_names:
         for name, short_name in short_names.items(): human_readable_time = human_readable_time.replace(name, short_name)
     return human_readable_time
+
 
 def to_human_readable_time_(seconds: int, max_depth: int=2, use_short_names=True) -> str:
     time_unit_to_seconds_mapping = dict(
