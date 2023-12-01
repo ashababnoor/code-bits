@@ -1,7 +1,17 @@
 from datetime import datetime
+from typing import Iterable
 
 
 def get_attributes(object: any) -> list:
+    """
+    Get attributes of a class object
+
+    Args:
+        object (any): Object of any class
+
+    Returns:
+        list: List of attributes belonging to the class object
+    """
     return [
         attr 
         for attr in dir(object) 
@@ -10,6 +20,15 @@ def get_attributes(object: any) -> list:
 
 
 def get_regular_methods(object: any) -> list:
+    """
+    Get methods of a class object
+
+    Args:
+        object (any): Object of any class
+
+    Returns:
+        list: List of methods belonging to the class object
+    """
     return [
         method 
         for method in dir(object) 
@@ -18,6 +37,15 @@ def get_regular_methods(object: any) -> list:
 
 
 def get_dunder_methods(object: any) -> list:
+    """
+    Get dunder (special) methods of a class object
+
+    Args:
+        object (any): Object of any class
+
+    Returns:
+        list: List of dunder methods belonging to the class object
+    """
     return [
         method 
         for method in dir(object) 
@@ -25,7 +53,7 @@ def get_dunder_methods(object: any) -> list:
     ]
 
 
-def check_iterable_datatype(iterable, datatype):
+def check_iterable_datatype(iterable: Iterable[object], datatype) -> bool:
     return all(isinstance(item, datatype) for item in iterable)
 
 
