@@ -1,8 +1,8 @@
-from color import Color
-from print import Print
-from codeblock import CodeBlock
-from timerblock import TimerBlock
-from miscellaneous import *
+from utilities.color import Color
+from utilities.print import Print
+from utilities.codeblock import CodeBlock
+from utilities.timerblock import TimerBlock
+from utilities.miscellaneous import *
 
 
 if __name__ == "__main__":
