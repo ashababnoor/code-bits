@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from .color import Color
 from .print import Print
 from .codeblock import CodeBlock
-from functions import to_human_readable_time
+from miscellaneous import to_human_readable_time
 
 class TimerBlock(CodeBlock):
     declaration_message: str = "Inside TimerBlock"
