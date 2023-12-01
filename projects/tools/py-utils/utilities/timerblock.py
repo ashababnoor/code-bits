@@ -4,10 +4,10 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from color import Color
-from print import Print
-from codeblock import CodeBlock
-from miscellaneous import to_human_readable_time
+from .color import Color
+from .print import Print
+from .codeblock import CodeBlock
+from .miscellaneous import to_human_readable_time
 
 
 class TimerBlock(CodeBlock):

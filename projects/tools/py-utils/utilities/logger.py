@@ -1,4 +1,4 @@
-from .classes.color import Color
+from .color import Color
 import logging
 import sys
 
