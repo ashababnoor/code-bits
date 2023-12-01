@@ -1,7 +1,7 @@
-from classes.color import Color
-from classes.print import Print
-from classes.codeblock import CodeBlock
-from classes.timerblock import TimerBlock
+from color import Color
+from print import Print
+from codeblock import CodeBlock
+from timerblock import TimerBlock
 from miscellaneous import *
 from lambdas import *
 

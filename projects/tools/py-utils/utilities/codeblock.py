@@ -1,4 +1,5 @@
-from .color import Color
+from color import Color
+
 
 class CodeBlock():
     declaration_message: str = "Inside CodeBlock"

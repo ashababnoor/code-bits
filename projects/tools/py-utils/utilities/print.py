@@ -1,4 +1,5 @@
-from .color import Color
+from color import Color
+
 
 class Print():
     info_keyword_color:str = Color.dodger_blue
