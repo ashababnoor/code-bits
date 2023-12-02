@@ -23,9 +23,8 @@ Once a project gets too big they will be moved to their own repository.
 │   │   ├── connect-four
 │   │   └── math-quiz
 │   └── tools
-│       ├── bigquery-to-redis-ingestor
 │       ├── data-tools *
-│       ├── mysql-postgres-etl
+│       ├── etl-tools *
 │       ├── py-utils
 │       ├── string-cleaner
 │       └── svg-to-jpg-converter
@@ -37,9 +36,10 @@ Once a project gets too big they will be moved to their own repository.
 
 
 ### Moved Projects
-| Project      |  Repository                                                     |
+| Project      |  Repository                                                         |
 |:-------------|:--------------------------------------------------------------------|
 | `data-tools` | [ashababnoor/data-tools](https://github.com/ashababnoor/data-tools) |
+| `etl-tools`  | [ashababnoor/data-tools](https://github.com/ashababnoor/etl-tools)  |
 
 
 ### Extra
