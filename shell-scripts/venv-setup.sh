@@ -1,4 +1,8 @@
-ROOT_PROJECT_DIR=$(pwd)
+#!/bin/sh
+
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+ROOT_PROJECT_DIR=$SCRIPT_DIR
+
 
 function log() {
     echo -e "$(date +"%Y-%m-%d %H:%M:%S %z") ${blue}INFO${reset} $@"
