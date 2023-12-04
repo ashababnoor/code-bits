@@ -38,8 +38,11 @@ function create_python_venv() {
         fi
         log "Virtual environment created"
     fi
+}
 
+function activate_python_venv() {
     log "Activating virtual environment"
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         source venv/bin/activate
     elif [[ "$OSTYPE" == "cygwin"* ]]; then
@@ -49,10 +52,7 @@ function create_python_venv() {
     else
         source venv/bin/activate
     fi
-
-    # pip install --upgrade pip
-
-    log "Virtual environment activated successfully, Now installing requirements..."
+    log "Virtual environment activated successfully"
 }
 
 function install_venv_requirements() {
