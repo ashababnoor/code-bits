@@ -64,3 +64,20 @@ function install_venv_requirements() {
         warn "No 'requirements.txt' file found, So, not installing any dependencies"
     fi
 }
+
+function pip_install() {
+    if [[ $# -ne 1 ]]; then
+        echo "Usage: pip_install <package_name>"
+        return 1
+    fi
+
+    local package_name="$1"
+    local installed_packages=$(pip freeze)
+
+    if echo "$installed_packages" | grep -iq "^$package_name"; then
+        echo "$package_name is already installed"
+    else
+        echo "Installing $package_name"
+        pip install "$package_name"
+    fi
+}
