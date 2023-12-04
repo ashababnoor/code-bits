@@ -81,3 +81,34 @@ function pip_install() {
         pip install "$package_name"
     fi
 }
+
+function install_requirements_full() {
+    if [[ -f "requirements.txt" ]]; then
+        log "Installing requirements"
+        
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+        log "Requirements installed successfully"
+    else
+        warn "No 'requirements.txt' file found, So, not installing any dependencies"
+    fi
+}
+
+function install_requirements_partial() {
+    # Get the list of installed packages
+    installed_packages=$(pip freeze)
+
+    # Read requirements.txt line by line
+    while IFS= read -r package
+    do
+    # Check if the package is installed
+    if ! echo "$installed_packages" | grep -iq "^$package"; then
+        # If not installed, install it
+        echo "Installing $package"
+        # pip install "$package"
+    else
+        echo "$package is already installed"
+    fi
+    done < requirements.txt
+}
