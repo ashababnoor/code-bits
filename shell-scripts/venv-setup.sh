@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 ROOT_PROJECT_DIR=$SCRIPT_DIR
 
 
@@ -106,7 +106,7 @@ function install_requirements_partial() {
     if ! echo "$installed_packages" | grep -iq "^$package"; then
         # If not installed, install it
         echo "Installing $package"
-        # pip install "$package"
+        pip install "$package"
     else
         echo "$package is already installed"
     fi
