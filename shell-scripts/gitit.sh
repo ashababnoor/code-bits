@@ -141,6 +141,12 @@ function git_add_commit_push() {
     echo "${command_running_message} git commit -m \"$commit_message\""
     git commit -m "$commit_message"
 
+    # Check if commit was successful
+    if [ $? -ne 0 ]; then
+        echo "${red_bold}Error:${reset} Commit failed, not pushing changes"
+        return 1
+    fi
+
     # Push changes to the current branch
     branch=$(get_git_current_branch)
     do_git_push $branch
