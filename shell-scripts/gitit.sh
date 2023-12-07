@@ -70,6 +70,14 @@ function print_last_commit_changes() {
     '
 }
 
+function do_git_push() {
+    local default_push_branch=$(get_git_current_branch)
+    
+    branch=${1:-$default_push_branch}
+    echo "${command_running_message} git push origin $branch"
+    git push origin $branch
+}
+
 function print_success_message(){
     local server=$1
     local repo=$2
