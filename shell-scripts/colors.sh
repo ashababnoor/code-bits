@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Define Unicode code points
+# Define Unicode code points for emojis
 party_popper_emoji="\U0001F389"   # 🎉
 confetti_ball_emoji="\U0001F38A"  # 🎊
 
