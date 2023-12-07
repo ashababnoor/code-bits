@@ -3,6 +3,8 @@
 SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
+command_running_message="${cyan}Command running:${reset}"
+
 
 function check_if_valid_git_repo(){
     local dir="$PWD"
@@ -101,7 +103,6 @@ function print_success_message(){
 function git_add_commit_push() {
     local no_add=false
     local commit_message
-    local command_running_message="${cyan}Command running:${reset}"
 
     # Check if inside a git repo or not
     git_repo_validity_message=$(check_if_valid_git_repo)
@@ -158,4 +159,6 @@ function git_add_commit_push() {
     print_last_commit_changes
 }
 
-alias gitit=git_add_commit_push 
+alias gitit=git_add_commit_push
+alias gpush=do_git_push
+alias gpull=do_git_pull
