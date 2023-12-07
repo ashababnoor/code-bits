@@ -78,6 +78,14 @@ function do_git_push() {
     git push origin $branch
 }
 
+function do_git_pull() {
+    local default_pull_branch=$(get_git_current_branch)
+    
+    branch=${1:-$default_pull_branch}
+    echo "${command_running_message} git pull origin $branch"
+    git pull origin $branch
+}
+
 function print_success_message(){
     local server=$1
     local repo=$2
