@@ -143,8 +143,7 @@ function git_add_commit_push() {
 
     # Push changes to the current branch
     branch=$(get_git_current_branch)
-    echo "${command_running_message} git push origin $branch"
-    git push origin $branch
+    do_git_push $branch
 
     # Print success message
     echo ""
