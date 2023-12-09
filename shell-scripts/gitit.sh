@@ -3,7 +3,21 @@
 SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
+
 command_running_message="${cyan}Command running:${reset}"
+
+gitit_help_message="""\
+Git add, commit and push in one command
+
+${bold}Usage:${reset} 
+    gitit [OPTIONS] <commit-message>
+
+${bold}Options:${reset} 
+    --no-add    Do not add changes to staging area
+
+${bold}Example:${reset}
+    gitit \"initial commit\"
+"""
 
 
 function check_if_valid_git_repo(){
@@ -112,6 +126,13 @@ function git_add_commit_push() {
         return 1
     fi
 
+    # Check that we have at least one argument
+    if [[ $# -lt 1 ]]; then
+        echo -e $gitit_help_message
+        return 1
+    fi
+
+    # Process the arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --no-add)
