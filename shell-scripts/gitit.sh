@@ -105,10 +105,10 @@ function git_add_commit_push() {
     local commit_message
 
     # Check if inside a git repo or not
-    git_repo_validity_message=$(check_if_valid_git_repo)
+    git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
 
-    if [[ $git_repo_validity_message == "This is not a Git repository." ]]; then
-        echo "${red_bold}Fatal:${reset} not a git repository (or any of the parent directories)"
+    if [[ $git_repo_validity_message != "true" ]]; then
+        echo "${red_bold}Fatal:${reset} $git_repo_validity_message"
         return 1
     fi
 
