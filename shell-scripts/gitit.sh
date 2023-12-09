@@ -91,7 +91,7 @@ function do_git_push() {
     
     branch=${1:-$default_push_branch}
     echo "${command_running_message} git push origin $branch"
-    git push origin $branch
+    git push origin "$branch"
 }
 
 function do_git_pull() {
@@ -99,7 +99,7 @@ function do_git_pull() {
     
     branch=${1:-$default_pull_branch}
     echo "${command_running_message} git pull origin $branch"
-    git pull origin $branch
+    git pull origin "$branch"
 }
 
 function print_success_message(){
@@ -122,7 +122,7 @@ function git_add_commit_push() {
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
 
     if [[ $git_repo_validity_message != "true" ]]; then
-        echo "${red_bold}Fatal:${reset} $git_repo_validity_message"
+        echo -e "${red_bold}Fatal:${reset} $git_repo_validity_message"
         return 1
     fi
 
@@ -148,13 +148,13 @@ function git_add_commit_push() {
 
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
-        echo "${red_bold}Error:${reset} Please provide a commit message"
+        echo -e "${red_bold}Error:${reset} Please provide a commit message"
         return 1
     fi
 
     # Add changes to staging area if --no-add flag is not given
     if [[ ! $no_add = true ]]; then
-        echo "${command_running_message} git add ."
+        echo -e "${command_running_message} git add ."
         git add .
     fi
 
@@ -170,7 +170,7 @@ function git_add_commit_push() {
 
     # Push changes to the current branch
     branch=$(get_git_current_branch)
-    do_git_push $branch
+    do_git_push "$branch"
 
     # Print success message
     echo ""
@@ -178,7 +178,7 @@ function git_add_commit_push() {
     server=$(get_git_remote_server)
     repo=$(get_git_remote_repository)
 
-    print_success_message $server $repo $branch
+    print_success_message "$server" "$repo" "$branch"
 
     # Print last commit changes
     echo ""
