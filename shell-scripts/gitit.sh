@@ -14,6 +14,7 @@ ${bold}Usage:${reset}
 
 ${bold}Options:${reset} 
     --no-add    Do not add changes to staging area
+    --help      Display this help message
 
 ${bold}Example:${reset}
     gitit \"initial commit\"
@@ -139,6 +140,10 @@ function git_add_commit_push() {
                 no_add=true
                 shift
                 ;;
+            --help)
+                echo -e $gitit_help_message
+                return 0
+            ;;
             *)
                 commit_message="$1"
                 shift
