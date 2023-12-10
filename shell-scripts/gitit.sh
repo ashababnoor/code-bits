@@ -13,9 +13,9 @@ ${bold}Usage:${reset}
     gitit [OPTIONS] <commit-message>
 
 ${bold}Options:${reset} 
-    --no-add    Do not add changes to staging area
-    --help      Display this help message
-    --force     Force push the branch to remote
+    --skip-stage  Do not add changes to staging area
+    --help        Display this help message
+    --force       Force push the branch to remote
 
 ${bold}Example:${reset}
     gitit \"my awesome commit\"
@@ -158,11 +158,11 @@ function git_add_commit_push() {
                 no_add=true
                 shift
                 ;;
-            --force)
+            --force|-f)
                 force_push=true
                 shift
                 ;;
-            --help)
+            --help|-h)
                 echo -e $gitit_help_message
                 return 0
             ;;
@@ -172,7 +172,7 @@ function git_add_commit_push() {
                 ;;
         esac
     done
-
+    
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
         echo -e "${red_bold}Error:${reset} Please provide a commit message"
