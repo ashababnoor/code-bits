@@ -91,8 +91,22 @@ function print_last_commit_changes() {
 
 function do_git_push() {
     local default_push_branch=$(get_git_current_branch)
+    local force_push=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --force)
+                force_push=true
+                shift
+                ;;
+            *)
+                branch="$1"
+                shift
+                ;;
+        esac
+    done
     
-    branch=${1:-$default_push_branch}
+    local branch=${1:-$default_push_branch}
     echo "${command_running_message} git push origin $branch"
     git push origin "$branch"
 }
@@ -120,7 +134,7 @@ function print_success_message(){
 function git_add_commit_push() {
     local no_add=false
     local force_push=false
-    local commit_message
+    local commit_message=""
 
     # Check if inside a git repo or not
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
