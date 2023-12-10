@@ -17,8 +17,10 @@ ${bold}Options:${reset}
     --help      Display this help message
 
 ${bold}Example:${reset}
-    gitit \"initial commit\"
+    gitit \"my awesome commit\"
 """
+
+gitit_help_hint_message="Run 'gitit --help' to display help message"
 
 
 function check_if_valid_git_repo(){
@@ -154,6 +156,8 @@ function git_add_commit_push() {
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
         echo -e "${red_bold}Error:${reset} Please provide a commit message"
+        echo ""
+        echo $gitit_help_hint_message
         return 1
     fi
 
