@@ -119,6 +119,7 @@ function print_success_message(){
 
 function git_add_commit_push() {
     local no_add=false
+    local force_push=false
     local commit_message
 
     # Check if inside a git repo or not
@@ -140,6 +141,10 @@ function git_add_commit_push() {
         case "$1" in
             --no-add)
                 no_add=true
+                shift
+                ;;
+            --force)
+                force_push=true
                 shift
                 ;;
             --help)
@@ -179,7 +184,12 @@ function git_add_commit_push() {
 
     # Push changes to the current branch
     branch=$(get_git_current_branch)
-    do_git_push "$branch"
+
+    if $force_push; then 
+        do_git_push --force "$branch"
+    else
+        do_git_push "$branch"
+    fi
 
     # Print success message
     echo ""
