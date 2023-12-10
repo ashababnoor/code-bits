@@ -15,6 +15,7 @@ ${bold}Usage:${reset}
 ${bold}Options:${reset} 
     --no-add    Do not add changes to staging area
     --help      Display this help message
+    --force     Force push the branch to remote
 
 ${bold}Example:${reset}
     gitit \"my awesome commit\"
