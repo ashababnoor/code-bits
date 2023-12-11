@@ -6,8 +6,8 @@ emoji_confetti_ball="\U0001F38A"  # 🎊
 emoji_sparkles="\U00002728"       # ✨
 
 # Define bold text and reset color and formatting
-bold=$(echo -e '\033[1m')  # bold text
-reset=$(echo -e '\033[0m') # reset color and formatting
+style_bold=$(echo -e '\033[1m')  # bold text
+style_reset=$(echo -e '\033[0m') # reset color and formatting
 
 # Define 3-bit non-bold color codes
 black=$(echo -e '\033[0;30m')         # Black
