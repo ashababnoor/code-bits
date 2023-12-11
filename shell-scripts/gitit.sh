@@ -4,22 +4,22 @@ SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
 
-command_running_message="${cyan}Command running:${reset}"
+command_running_message="${cyan}Command running:${style_reset}"
 
 gitit_help_message="""\
-${sparkles_emoji} ${bold}gitit${reset} ${sparkles_emoji}
+${sparkles_emoji} ${style_bold}gitit${style_reset} ${sparkles_emoji}
 
 Git add, commit and push in one command
 
-${bold}Usage:${reset} 
+${style_bold}Usage:${style_reset} 
     gitit [OPTIONS] <commit-message>
 
-${bold}Options:${reset} 
+${style_bold}Options:${style_reset} 
     --skip-stage  Do not add changes to staging area
     --help        Display this help message
     --force       Force push the branch to remote
 
-${bold}Example:${reset}
+${style_bold}Example:${style_reset}
     gitit \"my awesome commit\"
 """
 
@@ -74,7 +74,7 @@ function print_last_commit_changes() {
     local last_commit_time=$(git log -n 1 --format="%cd" --date=format:'%a %d %b %Y %H:%M:%S %z')
 
     # Show modified files in the last commit
-    echo "Changes made in last commit: ${highlight_color}$last_commit_short_hash${reset} ($last_commit_time)"
+    echo "Changes made in last commit: ${highlight_color}$last_commit_short_hash${style_reset} ($last_commit_time)"
     git diff --name-status $last_commit_hash^..$last_commit_hash | awk '
         BEGIN {
             color_D = "\033[0;31m";  # Red
@@ -134,10 +134,10 @@ function print_success_message(){
     local branch=$3
     local highlight_color=${4:-$dark_orange}
 
-    echo "${green_bold}Hurray!${reset} ${party_popper_emoji}${confetti_ball_emoji}"
-    echo "Successfully, pushed to remote server: ${highlight_color}$server${reset}"
-    echo "                        remote repo:   ${highlight_color}$repo${reset}"
-    echo "                        remote branch: ${highlight_color}$branch${reset}"
+    echo "${green_bold}Hurray!${style_reset} ${party_popper_emoji}${confetti_ball_emoji}"
+    echo "Successfully, pushed to remote server: ${highlight_color}$server${style_reset}"
+    echo "                        remote repo:   ${highlight_color}$repo${style_reset}"
+    echo "                        remote branch: ${highlight_color}$branch${style_reset}"
 }
 
 function git_add_commit_push() {
@@ -153,7 +153,7 @@ function git_add_commit_push() {
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
 
     if [[ $git_repo_validity_message != "true" ]]; then
-        echo -e "${red_bold}Fatal:${reset} $git_repo_validity_message"
+        echo -e "${red_bold}Fatal:${style_reset} $git_repo_validity_message"
         return 1
     fi
 
@@ -187,7 +187,7 @@ function git_add_commit_push() {
 
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
-        echo -e "${red_bold}Error:${reset} Please provide a commit message"
+        echo -e "${red_bold}Error:${style_reset} Please provide a commit message"
         echo ""
         echo $gitit_help_hint_message
         return 1
@@ -205,7 +205,7 @@ function git_add_commit_push() {
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
-        echo "${red_bold}Error:${reset} Commit failed, not pushing changes"
+        echo "${red_bold}Error:${style_reset} Commit failed, not pushing changes"
         return 1
     fi
 
