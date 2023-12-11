@@ -107,9 +107,15 @@ function do_git_push() {
         esac
     done
     
-    local branch=${1:-$default_push_branch}
-    echo "${command_running_message} git push origin $branch"
-    git push origin "$branch"
+    local branch=${branch:-$default_push_branch}
+
+    if [[ $force_push = true ]]; then
+        echo "${command_running_message} git push --force origin $branch"
+        # git push --force origin "$branch"
+    else
+        echo "${command_running_message} git push origin $branch"
+        # git push origin "$branch"
+    fi    
 }
 
 function do_git_pull() {
@@ -184,21 +190,21 @@ function git_add_commit_push() {
     # Add changes to staging area if --no-add flag is not given
     if [[ ! $no_add = true ]]; then
         echo -e "${command_running_message} git add ."
-        git add .
+        # git add .
     fi
 
     # Commit changes with the provided message
     echo "${command_running_message} git commit -m \"$commit_message\""
-    git commit -m "$commit_message"
+    # git commit -m "$commit_message"
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
         echo "${red_bold}Error:${reset} Commit failed, not pushing changes"
         return 1
     fi
-
+    
     # Push changes to the current branch
-    branch=$(get_git_current_branch)
+    local branch=$(get_git_current_branch)
 
     if $force_push; then 
         do_git_push --force "$branch"
