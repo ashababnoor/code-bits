@@ -3,6 +3,7 @@
 # Define Unicode code points for emojis
 party_popper_emoji="\U0001F389"   # 🎉
 confetti_ball_emoji="\U0001F38A"  # 🎊
+sparkles_emoji="\U00002728"       # ✨
 
 # Define bold text and reset color and formatting
 bold=$(echo -e '\033[1m')  # bold text

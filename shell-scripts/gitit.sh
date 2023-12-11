@@ -7,6 +7,8 @@ source $SCRIPT_DIR/colors.sh
 command_running_message="${cyan}Command running:${reset}"
 
 gitit_help_message="""\
+${sparkles_emoji} ${bold}gitit${reset} ${sparkles_emoji}
+
 Git add, commit and push in one command
 
 ${bold}Usage:${reset} 
@@ -142,6 +144,10 @@ function git_add_commit_push() {
     local no_add=false
     local force_push=false
     local commit_message=""
+    local branch=""
+    local server=""
+    local repo=""
+    local git_repo_validity_message=""
 
     # Check if inside a git repo or not
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
@@ -202,9 +208,9 @@ function git_add_commit_push() {
         echo "${red_bold}Error:${reset} Commit failed, not pushing changes"
         return 1
     fi
-    
+
     # Push changes to the current branch
-    local branch=$(get_git_current_branch)
+    branch=$(get_git_current_branch)
 
     if $force_push; then 
         do_git_push --force "$branch"
