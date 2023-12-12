@@ -7,7 +7,7 @@ source $SCRIPT_DIR/colors.sh
 command_running_message="${cyan}Command running:${style_reset}"
 
 gitit_help_message="""\
-${sparkles_emoji} ${style_bold}gitit${style_reset} ${sparkles_emoji}
+${emoji_sparkles} ${style_bold}gitit${style_reset} ${emoji_sparkles}
 
 Git add, commit and push in one command
 
@@ -66,7 +66,7 @@ function get_git_current_branch(){
 }
 
 function print_last_commit_changes() {
-    local highlight_color=${1-$light_sea_green_bold}
+    local highlight_color=${1-$color_light_sea_green_bold}
 
     # Find the commit range of the last push
     local last_commit_hash=$(git log -n 1 --pretty=format:%H)
@@ -81,13 +81,13 @@ function print_last_commit_changes() {
             color_A = "\033[0;32m";  # Green
             color_M = "\033[0;33m";  # Yellow
             color_fbk = "\033[0;36m" # Cyan; Fallback color
-            reset = "\033[0m";       # Reset color
+            style_reset = "\033[0m"; # Reset color
         }
         {
-                 if ($1 == "A") { print color_A $1 reset "    " $2 }
-            else if ($1 == "M") { print color_M $1 reset "    " $2 }
-            else if ($1 == "D") { print color_D $1 reset "    " $2 }
-            else { print color_fbk $1 reset "    " $2 }
+                 if ($1 == "A") { print color_A $1 style_reset "    " $2 }
+            else if ($1 == "M") { print color_M $1 style_reset "    " $2 }
+            else if ($1 == "D") { print color_D $1 style_reset "    " $2 }
+            else { print color_fbk $1 style_reset "    " $2 }
         }
     '
 }
@@ -123,7 +123,7 @@ function do_git_push() {
 function do_git_pull() {
     local default_pull_branch=$(get_git_current_branch)
     
-    branch=${1:-$default_pull_branch}
+    local branch=${1:-$default_pull_branch}
     echo "${command_running_message} git pull origin $branch"
     git pull origin "$branch"
 }
@@ -132,9 +132,9 @@ function print_success_message(){
     local server=$1
     local repo=$2
     local branch=$3
-    local highlight_color=${4:-$dark_orange}
+    local highlight_color=${4:-$color_dark_orange}
 
-    echo "${green_bold}Hurray!${style_reset} ${party_popper_emoji}${confetti_ball_emoji}"
+    echo "${color_green_bold}Hurray!${style_reset} ${emoji_party_popper}${emoji_confetti_ball}"
     echo "Successfully, pushed to remote server: ${highlight_color}$server${style_reset}"
     echo "                        remote repo:   ${highlight_color}$repo${style_reset}"
     echo "                        remote branch: ${highlight_color}$branch${style_reset}"
@@ -153,7 +153,7 @@ function git_add_commit_push() {
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
 
     if [[ $git_repo_validity_message != "true" ]]; then
-        echo -e "${red_bold}Fatal:${style_reset} $git_repo_validity_message"
+        echo -e "${color_red_bold}Fatal:${style_reset} $git_repo_validity_message"
         return 1
     fi
 
@@ -187,7 +187,7 @@ function git_add_commit_push() {
 
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
-        echo -e "${red_bold}Error:${style_reset} Please provide a commit message"
+        echo -e "${color_red_bold}Error:${style_reset} Please provide a commit message"
         echo ""
         echo $gitit_help_hint_message
         return 1
@@ -205,7 +205,7 @@ function git_add_commit_push() {
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
-        echo "${red_bold}Error:${style_reset} Commit failed, not pushing changes"
+        echo "${color_red_bold}Error:${style_reset} Commit failed, not pushing changes"
         return 1
     fi
 
