@@ -95,6 +95,7 @@ function print_last_commit_changes() {
 function do_git_push() {
     local default_push_branch=$(get_git_current_branch)
     local force_push=false
+    local branch=""
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -110,7 +111,7 @@ function do_git_push() {
     done
     
     local branch=${branch:-$default_push_branch}
-
+    
     if [[ $force_push = true ]]; then
         echo "${command_running_message} git push --force origin $branch"
         # git push --force origin "$branch"
