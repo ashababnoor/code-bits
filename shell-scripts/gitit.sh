@@ -142,7 +142,7 @@ function print_success_message(){
 }
 
 function git_add_commit_push() {
-    local no_add=false
+    local skip_stage=false
     local force_push=false
     local commit_message=""
     local branch=""
@@ -167,8 +167,8 @@ function git_add_commit_push() {
     # Process the arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --no-add)
-                no_add=true
+            --skip-stage|-s)
+                skip_stage=true
                 shift
                 ;;
             --force|-f)
@@ -195,7 +195,7 @@ function git_add_commit_push() {
     fi
 
     # Add changes to staging area if --no-add flag is not given
-    if [[ ! $no_add = true ]]; then
+    if [[ ! $skip_stage = true ]]; then
         echo -e "${command_running_message} git add ."
         # git add .
     fi
