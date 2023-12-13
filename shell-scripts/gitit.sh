@@ -4,7 +4,7 @@ SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
 
-command_running_message="${cyan}Command running:${style_reset}"
+command_running_message="${color_cyan}Command running:${style_reset}"
 
 gitit_help_message="""\
 ${emoji_sparkles} ${style_bold}gitit${style_reset} ${emoji_sparkles}
@@ -118,7 +118,7 @@ function do_git_push() {
     else
         echo "${command_running_message} git push origin $branch"
         # git push origin "$branch"
-    fi    
+    fi
 }
 
 function do_git_pull() {
