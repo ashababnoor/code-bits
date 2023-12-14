@@ -4,8 +4,6 @@ SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
 
-command_running_message="${color_cyan}Command running:${style_reset}"
-
 gitit_name_ascii_art="""${style_bold}
           _   _     _   _   
          (_) | |   (_) | |  
@@ -37,6 +35,16 @@ ${style_bold}Example${style_reset}
 """
 
 gitit_help_hint_message="Run 'gitit --help' to display help message"
+
+
+command_running_message="${color_cyan}Command running:${style_reset}"
+
+function execute() {
+    echo -e "$command_running_message $@"
+    local command=$1
+    shift
+    $command $@
+}
 
 
 function check_if_valid_git_repo(){
