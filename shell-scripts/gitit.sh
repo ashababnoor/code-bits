@@ -127,10 +127,10 @@ function do_git_push() {
     
     if [[ $force_push = true ]]; then
         echo "${command_running_message} git push --force origin $branch"
-        # git push --force origin "$branch"
+        git push --force origin "$branch"
     else
         echo "${command_running_message} git push origin $branch"
-        # git push origin "$branch"
+        git push origin "$branch"
     fi
 }
 
@@ -210,12 +210,12 @@ function git_add_commit_push() {
     # Add changes to staging area if --no-add flag is not given
     if [[ ! $skip_stage = true ]]; then
         echo -e "${command_running_message} git add ."
-        # git add .
+        git add .
     fi
 
     # Commit changes with the provided message
     echo "${command_running_message} git commit -m \"$commit_message\""
-    # git commit -m "$commit_message"
+    git commit -m "$commit_message"
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
@@ -252,12 +252,22 @@ alias gpull=do_git_pull
 
 # TODO: New features to be added 
 
-# --amend: This option could be used to amend the last commit. This is useful if you made a mistake in your last commit message or forgot to add some changes.
+# --amend: 
+#     This option could be used to amend the last commit. 
+#     This is useful if you made a mistake in your last 
+#     commit message or forgot to add some changes.
 
-# --force: This option could be used to force push to the remote repository. This is useful when you need to overwrite the remote branch, but should be used with caution.
+# --branch: 
+#     This option could allow the user to specify a branch 
+#     to push to, instead of always pushing to the current 
+#     branch.
 
-# --branch: This option could allow the user to specify a branch to push to, instead of always pushing to the current branch.
+# --remote: 
+#     This option could allow the user to specify a remote 
+#     to push to, instead of always pushing to the default 
+#     remote.
 
-# --remote: This option could allow the user to specify a remote to push to, instead of always pushing to the default remote.
-
-# --all: This option could add all changes (including untracked files) to the staging area, instead of only changes to already tracked files.
+# --all: 
+#     This option could add all changes (including untracked 
+#     files) to the staging area, instead of only changes to 
+#     already tracked files.
