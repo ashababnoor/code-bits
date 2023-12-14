@@ -6,7 +6,7 @@ source $SCRIPT_DIR/colors.sh
 
 command_running_message="${color_cyan}Command running:${style_reset}"
 
-tool_name="""${style_bold}\
+gitit_name_ascii_art="""${style_bold}
           _   _     _   _   
          (_) | |   (_) | |  
    __ _   _  | |_   _  | |_ 
@@ -18,7 +18,7 @@ tool_name="""${style_bold}\
 ${style_reset}"""
 
 gitit_help_message="""\
-$tool_name
+$gitit_name_ascii_art
 
 Git add, commit and push in one command
 
