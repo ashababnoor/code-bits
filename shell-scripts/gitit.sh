@@ -6,21 +6,34 @@ source $SCRIPT_DIR/colors.sh
 
 command_running_message="${color_cyan}Command running:${style_reset}"
 
+tool_name="""${style_bold}\
+          _   _     _   _   
+         (_) | |   (_) | |  
+   __ _   _  | |_   _  | |_ 
+  / _  | | | | __| | | | __|
+ | (_| | | | | |_  | | | |_ 
+  \__, | |_|  \__| |_|  \__|
+   __/ |                    
+  |___/                     
+${style_reset}"""
+
 gitit_help_message="""\
-${emoji_sparkles} ${style_bold}gitit${style_reset} ${emoji_sparkles}
+$tool_name
 
 Git add, commit and push in one command
 
-${style_bold}Usage:${style_reset} 
+${style_bold}Usage${style_reset} 
     gitit [OPTIONS] <commit-message>
 
-${style_bold}Options:${style_reset} 
-    --skip-stage  Do not add changes to staging area
-    --help        Display this help message
-    --force       Force push the branch to remote
+${style_bold}Options${style_reset} 
+    -s, --skip-stage  Do not add changes to staging area
+    -f, --force       Force push the branch to remote
+    -h, --help        Display this help message
 
-${style_bold}Example:${style_reset}
+${style_bold}Example${style_reset}
     gitit \"my awesome commit\"
+    gitit --skip-stage \"commit without adding changes to stage\"
+    gitit --force \"force push commit\"
 """
 
 gitit_help_hint_message="Run 'gitit --help' to display help message"
