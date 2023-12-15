@@ -38,10 +38,12 @@ gitit_help_hint_message="Run 'gitit --help' to display help message"
 
 
 command_running_message="${color_cyan}Running command:${style_reset}"
+error_prefix="${color_red_bold}Error:${style_reset}"
+fatal_prefix="${color_red_bold}Fatal:${style_reset}"
 
 function execute() {
     if [ $# -eq 0 ]; then
-        echo -e "${color_red_bold}Fatal:${style_reset} No command provided"
+        echo -e "${fatal_prefix} No command provided"
         return 1
     fi
 
@@ -49,7 +51,7 @@ function execute() {
     shift
 
     if ! command -v "$command" &> /dev/null; then
-        echo -e "${color_red_bold}Fatal:${style_reset} Command '$command' not found"
+        echo -e "${fatal_prefix} Command '$command' not found"
         return 1
     fi
 
@@ -183,7 +185,7 @@ function git_add_commit_push() {
     git_repo_validity_message=$(git rev-parse --is-inside-work-tree 2>&1)
 
     if [[ $git_repo_validity_message != "true" ]]; then
-        echo -e "${color_red_bold}Fatal:${style_reset} $git_repo_validity_message"
+        echo -e "${fatal_prefix} $git_repo_validity_message"
         return 1
     fi
 
@@ -217,7 +219,7 @@ function git_add_commit_push() {
 
     # Check if a commit message is provided
     if [[ -z $commit_message ]]; then
-        echo -e "${color_red_bold}Error:${style_reset} Please provide a commit message"
+        echo -e "${error_prefix} Please provide a commit message"
         echo ""
         echo $gitit_help_hint_message
         return 1
@@ -233,7 +235,7 @@ function git_add_commit_push() {
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
-        echo "${color_red_bold}Error:${style_reset} Commit failed, not pushing changes"
+        echo "${error_prefix} Commit failed, not pushing changes"
         return 1
     fi
 
