@@ -161,7 +161,15 @@ function do_git_pull() {
     execute git pull origin "$branch"
 }
 
-function print_push_success_message(){
+function print_commit_success_message() {
+    local branch=$1
+    local highlight_color=${2:-$color_dark_orange}
+
+    echo "${color_green_bold}Hurray!${style_reset} ${emoji_party_popper}${emoji_confetti_ball}"
+    echo "Successfully, committed changes in branch: ${highlight_color}$branch${style_reset}"
+}
+
+function print_push_success_message() {
     local server=$1
     local repo=$2
     local branch=$3
@@ -246,6 +254,9 @@ function git_add_commit_push() {
     # Check if any remote exists
     if [[ -z $(git remote) ]]; then
         echo -e "${warning_prefix} No remote repository found. Skipping git push"
+
+        # Print commit success message
+        print_commit_success_message "$branch"
     else
         if $force_push; then 
             do_git_push --force "$branch"
@@ -256,7 +267,7 @@ function git_add_commit_push() {
         server=$(get_git_remote_server)
         repo=$(get_git_remote_repository)
 
-        # Print success message
+        # Print push success message
         echo ""
         print_push_success_message "$server" "$repo" "$branch"
     fi
