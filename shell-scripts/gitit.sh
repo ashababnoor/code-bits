@@ -246,21 +246,20 @@ function git_add_commit_push() {
     # Check if any remote exists
     if [[ -z $(git remote) ]]; then
         echo -e "${warning_prefix} No remote repository found. Skipping git push"
-        return 1
-    fi
-
-    if $force_push; then 
-        do_git_push --force "$branch"
     else
-        do_git_push "$branch"
+        if $force_push; then 
+            do_git_push --force "$branch"
+        else
+            do_git_push "$branch"
+        fi
+
+        server=$(get_git_remote_server)
+        repo=$(get_git_remote_repository)
+
+        # Print success message
+        echo ""
+        print_push_success_message "$server" "$repo" "$branch"
     fi
-
-    server=$(get_git_remote_server)
-    repo=$(get_git_remote_repository)
-
-    # Print success message
-    echo ""
-    print_push_success_message "$server" "$repo" "$branch"
 
     # Print last commit changes
     echo ""
