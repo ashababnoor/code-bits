@@ -256,6 +256,7 @@ function git_add_commit_push() {
         echo -e "${warning_prefix} No remote repository found. Skipping git push"
 
         # Print commit success message
+        echo ""
         print_commit_success_message "$branch"
     else
         if $force_push; then 
