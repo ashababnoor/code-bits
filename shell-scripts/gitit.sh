@@ -45,10 +45,16 @@ function execute() {
         return 1
     fi
 
-    echo -e "$command_running_message $@"
     local command=$1
     shift
-    $command $@
+
+    if ! command -v "$command" &> /dev/null; then
+        echo -e "${color_red_bold}Fatal:${style_reset} Command '$command' not found"
+        return 1
+    fi
+
+    echo -e "$command_running_message $command $@"
+    $command "$@"
 }
 
 
