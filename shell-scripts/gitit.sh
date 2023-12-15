@@ -248,12 +248,11 @@ function git_add_commit_push() {
         do_git_push "$branch"
     fi
 
-    # Print success message
-    echo ""
-
     server=$(get_git_remote_server)
     repo=$(get_git_remote_repository)
 
+    # Print success message
+    echo ""
     print_success_message "$server" "$repo" "$branch"
 
     # Print last commit changes
