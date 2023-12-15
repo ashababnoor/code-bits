@@ -40,6 +40,11 @@ gitit_help_hint_message="Run 'gitit --help' to display help message"
 command_running_message="${color_cyan}Running command:${style_reset}"
 
 function execute() {
+    if [ $# -eq 0 ]; then
+        echo -e "${color_red_bold}Fatal:${style_reset} No command provided"
+        return 1
+    fi
+
     echo -e "$command_running_message $@"
     local command=$1
     shift
