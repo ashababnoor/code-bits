@@ -37,7 +37,7 @@ ${style_bold}Example${style_reset}
 gitit_help_hint_message="Run 'gitit --help' to display help message"
 
 
-command_running_message="${color_cyan}Command running:${style_reset}"
+command_running_message="${color_cyan}Running command:${style_reset}"
 
 function execute() {
     echo -e "$command_running_message $@"
@@ -134,11 +134,9 @@ function do_git_push() {
     local branch=${branch:-$default_push_branch}
     
     if [[ $force_push = true ]]; then
-        echo "${command_running_message} git push --force origin $branch"
-        git push --force origin "$branch"
+        execute git push --force origin "$branch"
     else
-        echo "${command_running_message} git push origin $branch"
-        git push origin "$branch"
+        execute git push origin "$branch"
     fi
 }
 
@@ -146,8 +144,7 @@ function do_git_pull() {
     local default_pull_branch=$(get_git_current_branch)
     
     local branch=${1:-$default_pull_branch}
-    echo "${command_running_message} git pull origin $branch"
-    git pull origin "$branch"
+    execute git pull origin "$branch"
 }
 
 function print_success_message(){
@@ -217,13 +214,11 @@ function git_add_commit_push() {
 
     # Add changes to staging area if --no-add flag is not given
     if [[ ! $skip_stage = true ]]; then
-        echo -e "${command_running_message} git add ."
-        git add .
+        execute git add .
     fi
 
     # Commit changes with the provided message
-    echo "${command_running_message} git commit -m \"$commit_message\""
-    git commit -m "$commit_message"
+    execute git commit -m "$commit_message"
 
     # Check if commit was successful
     if [ $? -ne 0 ]; then
