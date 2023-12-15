@@ -161,7 +161,7 @@ function do_git_pull() {
     execute git pull origin "$branch"
 }
 
-function print_success_message(){
+function print_push_success_message(){
     local server=$1
     local repo=$2
     local branch=$3
@@ -260,7 +260,7 @@ function git_add_commit_push() {
 
     # Print success message
     echo ""
-    print_success_message "$server" "$repo" "$branch"
+    print_push_success_message "$server" "$repo" "$branch"
 
     # Print last commit changes
     echo ""
