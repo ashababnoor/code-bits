@@ -38,6 +38,7 @@ gitit_help_hint_message="Run 'gitit --help' to display help message"
 
 
 command_running_message="${color_cyan}Running command:${style_reset}"
+warning_prefix="${color_yellow_bold}Warning:${style_reset}"
 error_prefix="${color_red_bold}Error:${style_reset}"
 fatal_prefix="${color_red_bold}Fatal:${style_reset}"
 
@@ -241,6 +242,12 @@ function git_add_commit_push() {
 
     # Push changes to the current branch
     branch=$(get_git_current_branch)
+
+    # Check if any remote exists
+    if [[ -z $(git remote) ]]; then
+        echo -e "${warning_prefix} No remote repository found. Skipping git push"
+        return 1
+    fi
 
     if $force_push; then 
         do_git_push --force "$branch"
