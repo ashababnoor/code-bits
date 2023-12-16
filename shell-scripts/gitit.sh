@@ -131,11 +131,16 @@ function do_git_push() {
     local default_push_branch=$(get_git_current_branch)
     local force_push=false
     local branch=""
+    local print_success_message=false
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --force)
                 force_push=true
+                shift
+                ;;
+            --print-success)
+                print_success_message=true
                 shift
                 ;;
             *)
@@ -151,6 +156,15 @@ function do_git_push() {
         execute git push --force origin "$branch"
     else
         execute git push origin "$branch"
+    fi
+
+    if [[ $print_success_message = true ]]; then
+        local server=$(get_git_remote_server)
+        local repo=$(get_git_remote_repository)
+
+        # Print push success message
+        echo ""
+        print_push_success_message "$server" "$repo" "$branch"
     fi
 }
 
@@ -279,7 +293,7 @@ function git_add_commit_push() {
 }
 
 alias gitit=git_add_commit_push
-alias gpush=do_git_push
+alias gpush="do_git_push --print-success"
 alias gpull=do_git_pull
 
 
