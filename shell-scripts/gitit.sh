@@ -133,6 +133,16 @@ function do_git_push() {
     local branch=""
     local print_success_message=false
 
+    # Check if there is anything to push
+    local git_status=$(git status --porcelain)
+
+    # Check if there are any changes staged for commit
+    git diff --cached --quiet
+    local changes_staged=$?
+
+    # Check if there were any commits since the last push
+    local commits_since_last_push=$(git rev-list --count @{u}..)
+
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --force)
@@ -158,7 +168,7 @@ function do_git_push() {
         execute git push origin "$branch"
     fi
 
-    if [[ $print_success_message = true ]]; then
+    if [[ $print_success_message = true && $commits_since_last_push -gt 0 ]]; then
         local server=$(get_git_remote_server)
         local repo=$(get_git_remote_repository)
 
