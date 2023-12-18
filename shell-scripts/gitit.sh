@@ -137,11 +137,21 @@ function do_git_push() {
     local git_status=$(git status --porcelain)
 
     # Check if there are any changes staged for commit
+    # 0 = nothing staged for commit, 1 = changes staged for commit
     git diff --cached --quiet
     local changes_staged=$?
 
     # Check if there were any commits since the last push
+    # Returns count of commits
     local commits_since_last_push=$(git rev-list --count @{u}..)
+
+    if [[ $changes_staged -e 0 ]]; then
+        echo "No changes staged to be committed"
+    fi
+    
+    if [[ $commits_since_last_push -e 0 ]]; then
+        echo "No changes committed to be pushed"
+    fi
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
