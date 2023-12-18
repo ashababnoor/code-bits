@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Define Unicode code points for emojis
-emoji_party_popper="\U0001F389"   # 🎉
-emoji_confetti_ball="\U0001F38A"  # 🎊
-emoji_sparkles="\U00002728"       # ✨
+emoji_party_popper="\U0001F389"             # 🎉
+emoji_confetti_ball="\U0001F38A"            # 🎊
+emoji_sparkles="\U00002728"                 # ✨
 
 # Define bold text and reset color and formatting
-style_bold=$(echo -e '\033[1m')  # bold text
-style_reset=$(echo -e '\033[0m') # reset color and formatting
+style_bold=$(echo -e '\033[1m')             # bold text
+style_reset=$(echo -e '\033[0m')            # reset color and formatting
 
 # Define 3-bit non-bold color codes
 color_black=$(echo -e '\033[0;30m')         # Black
@@ -40,11 +40,11 @@ color_cyan_bold=$(echo -e '\033[1;36m')     # Bold Cyan
 color_white_bold=$(echo -e '\033[1;37m')    # Bold White
 
 # Define 8-bit color non-bold codes
-color_orage=$(echo -e '\033[38;5;214m')          # Orange
-color_dark_orange=$(echo -e '\033[38;5;208m')    # Dark Orange
-color_orange_red=$(echo -e '\033[38;5;202m')     # Orange Red
-color_light_sea_green=$(echo -e '\033[38;5;37m') # Light Sea Green
-color_dodger_blue=$(echo -e '\033[38;5;33m')     # Dodger Blue
+color_orage=$(echo -e '\033[38;5;214m')                 # Orange
+color_dark_orange=$(echo -e '\033[38;5;208m')           # Dark Orange
+color_orange_red=$(echo -e '\033[38;5;202m')            # Orange Red
+color_light_sea_green=$(echo -e '\033[38;5;37m')        # Light Sea Green
+color_dodger_blue=$(echo -e '\033[38;5;33m')            # Dodger Blue
 
 # Define 8-bit color bold codes
 color_orage_bold=$(echo -e '\033[1;38;5;214m')          # Bold Orange
