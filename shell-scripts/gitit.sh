@@ -145,11 +145,11 @@ function do_git_push() {
     # Returns count of commits
     local commits_since_last_push=$(git rev-list --count @{u}..)
 
-    if [[ $changes_staged -e 0 ]]; then
+    if [[ $changes_staged -eq 0 ]]; then
         echo "No changes staged to be committed"
     fi
     
-    if [[ $commits_since_last_push -e 0 ]]; then
+    if [[ $commits_since_last_push -eq 0 ]]; then
         echo "No changes committed to be pushed"
     fi
 
