@@ -151,7 +151,7 @@ function do_git_push() {
     # Returns count of commits
     local commits_since_last_push=$(git rev-list --count @{u}..)
 
-    # Function logic breakdown
+    # Pre-checking logic breakdown
     # .
     # ├── git_status = "" (empty)
     # │   ├── commit_count = 0: No changes made. Everything up-to-date
@@ -177,33 +177,23 @@ function do_git_push() {
         fi
     else
         if [[ $commits_since_last_push -eq 0 ]]; then
+            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo ""
+            
             if [[ $changes_staged -eq 0 ]]; then
-                echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
-                echo ""
                 echo "Changes not staged for commit. No changes added to commit either"
-                echo -e "${warning_prefix} Skipping git push"
-                return 1
             else
-                echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
-                echo ""
                 echo "Changes staged for commit. But no changes added to commit"
-                echo -e "${warning_prefix} Skipping git push"
-                return 1
             fi
+            
+            echo -e "${warning_prefix} Skipping git push"
+            return 1
         else
             echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
             echo "${info_prefix} More changes found in working tree. To push additional changes, first add changes to stage and commit"
             echo ""
         fi
-    fi
-
-    if [[ $changes_staged -eq 0 ]]; then
-        echo "No changes staged to be committed"
-    fi
-    
-    if [[ $commits_since_last_push -eq 0 ]]; then
-        echo "No changes committed to be pushed"
     fi
 
     while [[ $# -gt 0 ]]; do
@@ -231,7 +221,7 @@ function do_git_push() {
         execute git push origin "$branch"
     fi
 
-    if [[ $print_success_message = true && $commits_since_last_push -gt 0 ]]; then
+    if [[ $print_success_message = true ]]; then
         local server=$(get_git_remote_server)
         local repo=$(get_git_remote_repository)
 
