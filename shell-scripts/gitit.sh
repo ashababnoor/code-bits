@@ -378,26 +378,3 @@ function git_add_commit_push() {
 alias gitit=git_add_commit_push
 alias gpush="do_git_push --print-success"
 alias gpull=do_git_pull
-
-
-# TODO: New features to be added 
-
-# --amend: 
-#     This option could be used to amend the last commit. 
-#     This is useful if you made a mistake in your last 
-#     commit message or forgot to add some changes.
-
-# --branch: 
-#     This option could allow the user to specify a branch 
-#     to push to, instead of always pushing to the current 
-#     branch.
-
-# --remote: 
-#     This option could allow the user to specify a remote 
-#     to push to, instead of always pushing to the default 
-#     remote.
-
-# --all: 
-#     This option could add all changes (including untracked 
-#     files) to the staging area, instead of only changes to 
-#     already tracked files.
