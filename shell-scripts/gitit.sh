@@ -178,7 +178,7 @@ function do_git_push() {
     if [[ -z $git_status ]]; then
         if [[ $commits_since_last_push -eq 0 ]]; then
             # default push branch is the same as current git branch
-            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
             echo "No changes made. Working tree is clean"
             echo -e "${warning_prefix} Skipping git push"
@@ -186,7 +186,7 @@ function do_git_push() {
         fi
     else
         if [[ $commits_since_last_push -eq 0 ]]; then
-            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
             
             if [[ $changes_staged -eq 0 ]]; then
@@ -198,9 +198,9 @@ function do_git_push() {
             echo -e "${warning_prefix} Skipping git push"
             return 1
         else
-            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
-            echo "${info_prefix} More changes found in working tree. To push additional changes, first add changes to stage and commit"
+            echo -e "${info_prefix} More changes found in working tree. To push additional changes, first add changes to stage and commit"
             echo ""
         fi
     fi
