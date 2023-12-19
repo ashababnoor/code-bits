@@ -144,13 +144,14 @@ function do_git_push() {
     # Check if any remote exists
     if [[ -z $(git remote) ]]; then
         echo -e "No remote repository found"
+        echo ""
         echo -e "${warning_prefix} Skipping git push"
         return 1
     fi
 
     # Check if no upstream is configured for the current branch; if not then empty branch is always pushed
     if ! git rev-parse --abbrev-ref --symbolic-full-name @{upstream} > /dev/null 2>&1; then
-        echo -e "${warning_prefix} no upstream configured for the current branch"
+        echo -e "${info_prefix} no upstream configured for the current branch"
         echo "Empty branch will be pushed to remote repository"
         echo ""
 
@@ -168,7 +169,8 @@ function do_git_push() {
 
     # Check if there were any commits since the last push
     # Returns count of commits
-    local commits_since_last_push=$(git rev-list --count @{u}..)
+    local commits_since_last_push=0
+    [[ $bypass_check = false ]] && commits_since_last_push=$(git rev-list --count @{u}..)
 
     # Pre-checking logic breakdown
     # .
@@ -196,7 +198,7 @@ function do_git_push() {
             [[ $bypass_check = false ]] && return 1
         fi
     else
-        if [[ $commits_since_last_push -eq 0 ]]; then
+        if [[ $commits_since_last_push -eq 0 && $bypass_check = false ]]; then
             echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             
             if [[ $changes_staged -eq 0 ]]; then
@@ -208,8 +210,8 @@ function do_git_push() {
             echo ""
             echo -e "${warning_prefix} Skipping git push"
             
-            [[ $bypass_check = false ]] && return 1
-        else
+            return 1
+        elif [[ $commits_since_last_push -gt 0 ]]; then
             echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
             echo -e "${info_prefix} More changes found in working tree"
