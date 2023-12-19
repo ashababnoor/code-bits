@@ -138,6 +138,7 @@ function do_git_push() {
     local branch=""
     local print_success_message=false
     local highlight_color=$color_dark_orange
+    local bypass_check=false
 
 
     # Check if any remote exists
@@ -145,6 +146,15 @@ function do_git_push() {
         echo -e "No remote repository found"
         echo -e "${warning_prefix} Skipping git push"
         return 1
+    fi
+
+    # Check if no upstream is configured for the current branch; if not then empty branch is always pushed
+    if ! git rev-parse --abbrev-ref --symbolic-full-name @{upstream} > /dev/null 2>&1; then
+        echo -e "${warning_prefix} no upstream configured for the current branch"
+        echo "Empty branch will be pushed to remote repository"
+        echo ""
+
+        bypass_check=true
     fi
 
 
@@ -182,7 +192,8 @@ function do_git_push() {
             echo ""
             echo "No changes made. Working tree is clean"
             echo -e "${warning_prefix} Skipping git push"
-            return 1
+            
+            [[ $bypass_check = false ]] && return 1
         fi
     else
         if [[ $commits_since_last_push -eq 0 ]]; then
@@ -196,7 +207,7 @@ function do_git_push() {
             fi
             
             echo -e "${warning_prefix} Skipping git push"
-            return 1
+            [[ $bypass_check = false ]] && return 1
         else
             echo -e "On branch: ${highlight_color}${default_push_branch}${style_reset}"
             echo ""
