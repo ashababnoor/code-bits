@@ -139,6 +139,15 @@ function do_git_push() {
     local print_success_message=false
     local highlight_color=$color_dark_orange
 
+
+    # Check if any remote exists
+    if [[ -z $(git remote) ]]; then
+        echo -e "No remote repository found"
+        echo -e "${warning_prefix} Skipping git push"
+        return 1
+    fi
+
+
     # Check if there is anything to push
     local git_status=$(git status --porcelain)
 
