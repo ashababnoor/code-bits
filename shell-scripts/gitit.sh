@@ -148,6 +148,18 @@ function do_git_push() {
     # Returns count of commits
     local commits_since_last_push=$(git rev-list --count @{u}..)
 
+    # Logic breakdown
+    # git_status: empty
+    #   - commit count: 0 = No changes staged made. Everything up-to-date
+    #   - commit count: + = Changes committed. Need to push
+    # git_status: non-empty
+    #   - commit count: 0
+    #     - changes staged: 0 = No changes staged to be committed
+    #     - changes staged: 1 = Changes staged to be committed. Need to commit
+    #   - commit count: +
+    #     - changes staged: 0 = More changes exist. Addt. changes are not staged to be committed. Need to push regardless
+    #     - changes staged: 1 = More changes exist. Addt. changes staged to be committed. Neet to commit. Need to push regardless
+
     if [[ $changes_staged -eq 0 ]]; then
         echo "No changes staged to be committed"
     fi
