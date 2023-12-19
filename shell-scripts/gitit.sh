@@ -172,21 +172,20 @@ function do_git_push() {
     local commits_since_last_push=0
     [[ $bypass_check = false ]] && commits_since_last_push=$(git rev-list --count @{u}..)
 
-    # Pre-checking logic breakdown
-    # .
-    # ├── git_status = "" (empty)
-    # │   ├── commit_count = 0: No changes made. Everything up-to-date
-    # │   └── commit_count > 0: Changes committed. Need to push
-    # │
-    # └── git_status != "" (non-empty)
-    #     ├── commit_count = 0
-    #     │    ├── changes_staged = 0: No changes staged to be committed
-    #     │    └── changes_staged = 1: Changes staged to be committed. Need to commit
-    #     │
-    #     └── commit count > 0
-    #          ├── changes_staged = 0: More changes exist. Addt. changes are not staged to be committed. Need to push regardless
-    #          └── changes_staged = 1: More changes exist. Addt. changes staged to be committed. Neet to commit. Need to push regardless
-
+    # Control flow for checking before performing git push:
+    # 
+    # If git_status is empty:
+    #   - If commit_count is 0: No changes made. Everything is up-to-date.
+    #   - If commit_count is greater than 0: Changes have been committed. Need to push.
+    # 
+    # If git_status is not empty:
+    #   - If commit_count is 0:
+    #     - If changes_staged is 0: No changes staged to be committed.
+    #     - If changes_staged is 1: Changes staged to be committed. Need to commit.
+    #   - If commit_count is greater than 0:
+    #     - If changes_staged is 0: More changes exist. Additional changes are not staged to be committed. Need to push regardless.
+    #     - If changes_staged is 1: More changes exist. Additional changes staged to be committed, need to commit. Need to push regardless.
+    
     if [[ -z $git_status ]]; then
         if [[ $commits_since_last_push -eq 0 ]]; then
             # default push branch is the same as current git branch
