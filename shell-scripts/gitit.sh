@@ -135,6 +135,7 @@ function do_git_push() {
     local force_push=false
     local branch=""
     local print_success_message=false
+    local highlight_color=$color_dark_orange
 
     # Check if there is anything to push
     local git_status=$(git status --porcelain)
@@ -148,17 +149,20 @@ function do_git_push() {
     # Returns count of commits
     local commits_since_last_push=$(git rev-list --count @{u}..)
 
-    # Logic breakdown
-    # git_status: empty
-    #   - commit count: 0 = No changes staged made. Everything up-to-date
-    #   - commit count: + = Changes committed. Need to push
-    # git_status: non-empty
-    #   - commit count: 0
-    #     - changes staged: 0 = No changes staged to be committed
-    #     - changes staged: 1 = Changes staged to be committed. Need to commit
-    #   - commit count: +
-    #     - changes staged: 0 = More changes exist. Addt. changes are not staged to be committed. Need to push regardless
-    #     - changes staged: 1 = More changes exist. Addt. changes staged to be committed. Neet to commit. Need to push regardless
+    # Function logic breakdown
+    # .
+    # ├── git_status = "" (empty)
+    # │   ├── commit_count = 0: No changes made. Everything up-to-date
+    # │   └── commit_count > 0: Changes committed. Need to push
+    # │
+    # └── git_status != "" (non-empty)
+    #     ├── commit_count = 0
+    #     │    ├── changes_staged = 0: No changes staged to be committed
+    #     │    └── changes_staged = 1: Changes staged to be committed. Need to commit
+    #     │
+    #     └── commit count > 0
+    #          ├── changes_staged = 0: More changes exist. Addt. changes are not staged to be committed. Need to push regardless
+    #          └── changes_staged = 1: More changes exist. Addt. changes staged to be committed. Neet to commit. Need to push regardless
 
     if [[ $changes_staged -eq 0 ]]; then
         echo "No changes staged to be committed"
