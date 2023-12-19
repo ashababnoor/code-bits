@@ -41,9 +41,11 @@ gitit_help_hint_message="Run 'gitit --help' to display help message"
 
 
 command_running_message="${color_cyan}Running command:${style_reset}"
+info_prefix="${color_dodger_blue_bold}Info:${style_reset}"
 warning_prefix="${color_yellow_bold}Warning:${style_reset}"
 error_prefix="${color_red_bold}Error:${style_reset}"
 fatal_prefix="${color_red_bold}Fatal:${style_reset}"
+
 
 function execute() {
     if [ $# -eq 0 ]; then
@@ -163,6 +165,38 @@ function do_git_push() {
     #     └── commit count > 0
     #          ├── changes_staged = 0: More changes exist. Addt. changes are not staged to be committed. Need to push regardless
     #          └── changes_staged = 1: More changes exist. Addt. changes staged to be committed. Neet to commit. Need to push regardless
+
+    if [[ -z $git_status ]]; then
+        if [[ $commits_since_last_push -eq 0 ]]; then
+            # default push branch is the same as current git branch
+            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo ""
+            echo "No changes made. Working tree is clean"
+            echo -e "${warning_prefix} Skipping git push"
+            return 1
+        fi
+    else
+        if [[ $commits_since_last_push -eq 0 ]]; then
+            if [[ $changes_staged -eq 0 ]]; then
+                echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+                echo ""
+                echo "Changes not staged for commit. No changes added to commit either"
+                echo -e "${warning_prefix} Skipping git push"
+                return 1
+            else
+                echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+                echo ""
+                echo "Changes staged for commit. But no changes added to commit"
+                echo -e "${warning_prefix} Skipping git push"
+                return 1
+            fi
+        else
+            echo "On branch: ${highlight_color}${default_push_branch}${style_reset}"
+            echo ""
+            echo "${info_prefix} More changes found in working tree. To push additional changes, first add changes to stage and commit"
+            echo ""
+        fi
+    fi
 
     if [[ $changes_staged -eq 0 ]]; then
         echo "No changes staged to be committed"
