@@ -197,7 +197,7 @@ function do_git_push() {
     # Check if there were any commits since the last push
     # Returns commit count
     local commits_since_last_push=0
-    [[ $bypass_check = false ]] && commits_since_last_push=$(git rev-list --count @{u}..)
+    [[ $bypass_check = false ]] && commits_since_last_push=$(git rev-list --count origin/"$branch"..)
 
     # Control flow for checking before performing git push:
     # 
