@@ -39,8 +39,16 @@ function execute() {
         return 1
     fi
 
-    echo -e "$command_running_message $command $@"
-    $command "$@"
+    # Checking if any empty arguments are passed
+    local args=()
+    for arg in "$@"; do
+        if [ -n "$arg" ]; then
+            args+=("$arg")
+        fi
+    done
+
+    echo -e "$command_running_message $command ${args[@]}"
+    "$command" "${args[@]}"
 }
 
 
@@ -160,7 +168,7 @@ function print_last_commit_changes() {
             style_reset = "\033[0m"; # Reset color
         }
         {
-                if ($1 == "A") { print color_A $1 style_reset "    " $2 }
+                 if ($1 == "A") { print color_A $1 style_reset "    " $2 }
             else if ($1 == "M") { print color_M $1 style_reset "    " $2 }
             else if ($1 == "D") { print color_D $1 style_reset "    " $2 }
             else { print color_fbk $1 style_reset "    " $2 }
@@ -214,7 +222,7 @@ function do_git_push() {
 
         if [[ -z $branch_in_remote ]]; then
             echo -e "${info_prefix} no upstream configured for the current branch"
-            echo "Empty branch will be pushed to remote repository"
+            echo "New branch will be pushed to remote repository"
             echo ""
 
             bypass_check=true
@@ -283,7 +291,8 @@ function do_git_push() {
     fi
 
     local set_upstream=""
-    if [[ $default_push_branch == $branch ]]; then
+    local upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+    if [[ $default_push_branch == $branch && -z $upstream ]]; then
         set_upstream="--set-upstream"
     fi
     
