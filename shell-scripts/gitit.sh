@@ -4,6 +4,69 @@ SCRIPT_DIR=$(cd "$(dirname -- "$0")"; pwd)
 source $SCRIPT_DIR/colors.sh
 
 
+command_running_message="${color_cyan}Running command:${style_reset}"
+info_prefix="${color_dodger_blue_bold}Info:${style_reset}"
+warning_prefix="${color_yellow_bold}Warning:${style_reset}"
+error_prefix="${color_red_bold}Error:${style_reset}"
+fatal_prefix="${color_red_bold}Fatal:${style_reset}"
+
+
+function check_command_installed() {
+    if [ $# -eq 0 ]; then
+        echo -e "${fatal_prefix} No command provided"
+        return 1
+    fi
+
+    local command=$1
+    if ! command -v $1 &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function execute() {
+    if [ $# -eq 0 ]; then
+        echo -e "${fatal_prefix} No command provided"
+        return 1
+    fi
+
+    local command=$1
+    shift
+
+    if ! command -v "$command" &> /dev/null; then
+        echo -e "${fatal_prefix} Command '$command' not found"
+        return 1
+    fi
+
+    echo -e "$command_running_message $command $@"
+    $command "$@"
+}
+
+
+check_command_installed git
+git_installed=$?
+
+if [[ $git_installed -ne 0 ]]; then 
+    echo -e "${fatal_prefix} Git is not installed"
+    echo ""
+    echo "Git must be installed to use gitit"
+    echo "Skipping gitit installation"
+    return 1
+fi
+
+check_command_installed awk
+awk_installed=$?
+
+if [[ $awk_installed -ne 0 ]]; then
+    echo -e "${fatal_prefix} awk is not installed"
+    echo ""
+    echo "Awk must be installed to use gitit"
+    echo "Skipping awk installation"
+    return 1
+fi
+
+
 gitit_name_ascii_art="""${style_bold}
            d8b  888     d8b  888    
            Y8P  888     Y8P  888    
@@ -39,71 +102,8 @@ ${style_bold}Example${style_reset}
 
 gitit_help_hint_message="Run 'gitit --help' to display help message"
 
-
-command_running_message="${color_cyan}Running command:${style_reset}"
-info_prefix="${color_dodger_blue_bold}Info:${style_reset}"
-warning_prefix="${color_yellow_bold}Warning:${style_reset}"
-error_prefix="${color_red_bold}Error:${style_reset}"
-fatal_prefix="${color_red_bold}Fatal:${style_reset}"
-
-
-check_command_installed git
-git_installed=$?
-
-if [[ $git_installed -ne 0 ]]; then 
-    echo -e "${fatal_prefix} Git is not installed"
-    echo ""
-    echo "Git must be installed to use gitit"
-    echo "Skipping gitit installation"
-    return 1
-fi
-
-check_command_installed awk
-awk_installed=$?
-
-if [[ $awk_installed -ne 0 ]]; then
-    echo -e "${fatal_prefix} awk is not installed"
-    echo ""
-    echo "Awk must be installed to use gitit"
-    echo "Skipping awk installation"
-    return 1
-fi
-
-
-function execute() {
-    if [ $# -eq 0 ]; then
-        echo -e "${fatal_prefix} No command provided"
-        return 1
-    fi
-
-    local command=$1
-    shift
-
-    if ! command -v "$command" &> /dev/null; then
-        echo -e "${fatal_prefix} Command '$command' not found"
-        return 1
-    fi
-
-    echo -e "$command_running_message $command $@"
-    $command "$@"
-}
-
-
 remote="origin"
 
-function check_command_installed() {
-    if [ $# -eq 0 ]; then
-        echo -e "${fatal_prefix} No command provided"
-        return 1
-    fi
-
-    local command=$1
-    if ! command -v $1 &> /dev/null; then
-        return 1
-    else
-        return 0
-    fi
-}
 
 function check_if_valid_git_repo(){
     local dir="$PWD"
