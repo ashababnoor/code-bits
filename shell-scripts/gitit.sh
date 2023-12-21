@@ -138,23 +138,30 @@ function print_last_commit_changes() {
     local last_commit_short_hash=$(git rev-parse --short $last_commit_hash)
     local last_commit_time=$(git log -n 1 --format="%cd" --date=format:'%a %d %b %Y %H:%M:%S %z')
 
+    check_command_installed awk
+    local awk_installed=$?
+
     # Show modified files in the last commit
     echo "Changes made in last commit: ${highlight_color}$last_commit_short_hash${style_reset} ($last_commit_time)"
-    git diff --name-status $last_commit_hash^..$last_commit_hash | awk '
-        BEGIN {
-            color_D = "\033[0;31m";  # Red
-            color_A = "\033[0;32m";  # Green
-            color_M = "\033[0;33m";  # Yellow
-            color_fbk = "\033[0;36m" # Cyan; Fallback color
-            style_reset = "\033[0m"; # Reset color
-        }
-        {
-                 if ($1 == "A") { print color_A $1 style_reset "    " $2 }
-            else if ($1 == "M") { print color_M $1 style_reset "    " $2 }
-            else if ($1 == "D") { print color_D $1 style_reset "    " $2 }
-            else { print color_fbk $1 style_reset "    " $2 }
-        }
-    '
+    if [[ $awk_installed -eq 0 ]]; then
+        git diff --name-status $last_commit_hash^..$last_commit_hash | awk '
+            BEGIN {
+                color_D = "\033[0;31m";  # Red
+                color_A = "\033[0;32m";  # Green
+                color_M = "\033[0;33m";  # Yellow
+                color_fbk = "\033[0;36m" # Cyan; Fallback color
+                style_reset = "\033[0m"; # Reset color
+            }
+            {
+                    if ($1 == "A") { print color_A $1 style_reset "    " $2 }
+                else if ($1 == "M") { print color_M $1 style_reset "    " $2 }
+                else if ($1 == "D") { print color_D $1 style_reset "    " $2 }
+                else { print color_fbk $1 style_reset "    " $2 }
+            }
+        '
+    else
+        echo "$(git diff --name-status $last_commit_hash^..$last_commit_hash)"
+    fi
 }
 
 function do_git_push() {
