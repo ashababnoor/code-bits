@@ -68,6 +68,15 @@ function execute() {
 
 remote="origin"
 
+function check_git_installed() {
+    if ! command -v git &> /dev/null; then
+        echo -e "${fatal_prefix} Git is not installed"
+        return 1
+    fi
+
+    return 0
+}
+
 function check_if_valid_git_repo(){
     local dir="$PWD"
     while [[ "$dir" != "/" ]]; do
