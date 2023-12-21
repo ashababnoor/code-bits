@@ -82,15 +82,6 @@ function check_command_installed() {
     fi
 }
 
-function check_git_installed() {
-    if ! command -v git &> /dev/null; then
-        echo -e "${fatal_prefix} Git is not installed"
-        return 1
-    else
-        return 0
-    fi
-}
-
 function check_if_valid_git_repo(){
     local dir="$PWD"
     while [[ "$dir" != "/" ]]; do
@@ -429,10 +420,11 @@ function git_add_commit_push() {
 }
 
 
-check_git_installed
+check_command_installed git
 git_installed=$?
 
 if [[ $git_installed -ne 0 ]]; then 
+    echo -e "${fatal_prefix} Git is not installed"
     echo ""
     echo "Git must be installed to use gitit"
     echo "Skipping gitit installation"
@@ -443,7 +435,7 @@ check_command_installed awk
 awk_installed=$?
 
 if [[ $awk_installed -ne 0 ]]; then
-    echo "${fatal_prefix} awk is not installed"
+    echo -e "${fatal_prefix} awk is not installed"
     echo ""
     echo "Awk must be installed to use gitit"
     echo "Skipping awk installation"
