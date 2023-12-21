@@ -44,27 +44,24 @@ function execute() {
 }
 
 
-check_command_installed git
-git_installed=$?
+# Array to hold all dependencies
+dependencies=("git" "awk")
 
-if [[ $git_installed -ne 0 ]]; then 
-    echo -e "${fatal_prefix} Git is not installed"
-    echo ""
-    echo "Git must be installed to use gitit"
-    echo "Skipping gitit installation"
-    return 1
-fi
+# Function to check if dependencies are installed
+function check_dependencies() {
+    for dependency in "${dependencies[@]}"; do
+        check_command_installed "$dependency"
+        if [[ $? -ne 0 ]]; then
+            echo -e "${fatal_prefix} $dependency is not installed"
+            echo ""
+            echo "$dependency must be installed to use gitit"
+            echo "Skipping gitit installation"
+            return 1
+        fi
+    done
+}
 
-check_command_installed awk
-awk_installed=$?
-
-if [[ $awk_installed -ne 0 ]]; then
-    echo -e "${fatal_prefix} awk is not installed"
-    echo ""
-    echo "Awk must be installed to use gitit"
-    echo "Skipping awk installation"
-    return 1
-fi
+check_dependencies
 
 
 gitit_name_ascii_art="""${style_bold}
