@@ -439,6 +439,17 @@ if [[ $git_installed -ne 0 ]]; then
     return 1
 fi
 
+check_command_installed awk
+awk_installed=$?
+
+if [[ $awk_installed -ne 0 ]]; then
+    echo "${fatal_prefix} awk is not installed"
+    echo ""
+    echo "Awk must be installed to use gitit"
+    echo "Skipping awk installation"
+    return 1
+fi
+
 alias gitit=git_add_commit_push
 alias gpush="do_git_push --print-success"
 alias gpull=do_git_pull
