@@ -66,6 +66,8 @@ function execute() {
 }
 
 
+remote="origin"
+
 function check_if_valid_git_repo(){
     local dir="$PWD"
     while [[ "$dir" != "/" ]]; do
@@ -80,7 +82,7 @@ function check_if_valid_git_repo(){
 }
 
 function get_git_remote_url(){
-    remote_url=$(git remote get-url origin)
+    remote_url=$(git remote get-url "$remote")
     echo $remote_url
 }
 
@@ -174,7 +176,7 @@ function do_git_push() {
         
         # Sometimes above condition can give wrong output as upstream may not actually be set
         # Checking if branch is found in the remote repository
-        local branch_in_remote=$(git ls-remote --heads origin | grep refs/heads/"$branch")
+        local branch_in_remote=$(git ls-remote --heads "$remote" | grep refs/heads/"$branch")
 
         if [[ -z $branch_in_remote ]]; then
             echo -e "${info_prefix} no upstream configured for the current branch"
@@ -197,7 +199,7 @@ function do_git_push() {
     # Check if there were any commits since the last push
     # Returns commit count
     local commits_since_last_push=0
-    [[ $bypass_check == false ]] && commits_since_last_push=$(git rev-list --count origin/"$branch"..)
+    [[ $bypass_check == false ]] && commits_since_last_push=$(git rev-list --count "$remote"/"$branch"..)
 
     # Control flow for checking before performing git push:
     # 
@@ -254,9 +256,9 @@ function do_git_push() {
     # Perform git push 
     if [[ $force_push == true ]]; then
 
-        execute git push --force "$set_upstream" origin "$branch"
+        execute git push --force "$set_upstream" "$remote" "$branch"
     else
-        execute git push "$set_upstream" origin "$branch"
+        execute git push "$set_upstream" "$remote" "$branch"
     fi
 
     if [[ $print_success_message == true ]]; then
@@ -273,7 +275,7 @@ function do_git_pull() {
     local default_pull_branch=$(get_git_current_branch)
     
     local branch=${1:-$default_pull_branch}
-    execute git pull origin "$branch"
+    execute git pull "$remote" "$branch"
 }
 
 function print_commit_success_message() {
