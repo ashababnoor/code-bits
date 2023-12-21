@@ -68,13 +68,27 @@ function execute() {
 
 remote="origin"
 
+function check_command_installed() {
+    if [ $# -eq 0 ]; then
+        echo -e "${fatal_prefix} No command provided"
+        return 1
+    fi
+
+    local command=$1
+    if ! command -v $1 &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 function check_git_installed() {
     if ! command -v git &> /dev/null; then
         echo -e "${fatal_prefix} Git is not installed"
         return 1
+    else
+        return 0
     fi
-
-    return 0
 }
 
 function check_if_valid_git_repo(){
