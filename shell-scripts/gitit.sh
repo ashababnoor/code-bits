@@ -47,6 +47,29 @@ error_prefix="${color_red_bold}Error:${style_reset}"
 fatal_prefix="${color_red_bold}Fatal:${style_reset}"
 
 
+check_command_installed git
+git_installed=$?
+
+if [[ $git_installed -ne 0 ]]; then 
+    echo -e "${fatal_prefix} Git is not installed"
+    echo ""
+    echo "Git must be installed to use gitit"
+    echo "Skipping gitit installation"
+    return 1
+fi
+
+check_command_installed awk
+awk_installed=$?
+
+if [[ $awk_installed -ne 0 ]]; then
+    echo -e "${fatal_prefix} awk is not installed"
+    echo ""
+    echo "Awk must be installed to use gitit"
+    echo "Skipping awk installation"
+    return 1
+fi
+
+
 function execute() {
     if [ $# -eq 0 ]; then
         echo -e "${fatal_prefix} No command provided"
@@ -412,28 +435,6 @@ function git_add_commit_push() {
     print_last_commit_changes
 }
 
-
-check_command_installed git
-git_installed=$?
-
-if [[ $git_installed -ne 0 ]]; then 
-    echo -e "${fatal_prefix} Git is not installed"
-    echo ""
-    echo "Git must be installed to use gitit"
-    echo "Skipping gitit installation"
-    return 1
-fi
-
-check_command_installed awk
-awk_installed=$?
-
-if [[ $awk_installed -ne 0 ]]; then
-    echo -e "${fatal_prefix} awk is not installed"
-    echo ""
-    echo "Awk must be installed to use gitit"
-    echo "Skipping awk installation"
-    return 1
-fi
 
 alias gitit=git_add_commit_push
 alias gpush="do_git_push --print-success"
