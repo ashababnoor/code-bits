@@ -51,3 +51,7 @@ Following are the different commit types
 
 
 By adopting Conventional Commits, teams streamline communication, automate release notes generation, and facilitate better tracking of changes. This standardized approach fosters clearer understanding and efficient collaboration within development projects.
+
+### Reference
+
+Read more about conventional commits here: [Conventional Commits](https://www.conventionalcommits.org/)
