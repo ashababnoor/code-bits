@@ -16,6 +16,8 @@ Conventional Commits offer a standardized format for writing commit messages in 
 4. **Body [optional]:** Provides more detailed information about the changes.
 5. **Footer [optional]:** Contains additional details like references to issues or breaking changes.
 
+
+## Type
 Following are the different commit types
 
 ### Major Categories
@@ -50,8 +52,20 @@ Following are the different commit types
 - **`ci`**: Changes to Continuous Integration (CI) configuration or workflows.
 
 
+## Scope
+
+A scope, if used, can follow the type. It should comprise a descriptive noun enclosed in parentheses, delineating a specific section of the codebase. For instance, `fix(parser):` indicates a fix in the parser section.
+
+**Example**
+```
+fix(parser): Resolve issue with parsing JSON arrays
+```
+
+
+## Conclusion
+
 By adopting Conventional Commits, teams streamline communication, automate release notes generation, and facilitate better tracking of changes. This standardized approach fosters clearer understanding and efficient collaboration within development projects.
 
-### Reference
+## Reference
 
 Read more about conventional commits here: [Conventional Commits](https://www.conventionalcommits.org/)
