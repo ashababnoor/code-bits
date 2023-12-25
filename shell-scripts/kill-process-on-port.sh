@@ -13,7 +13,9 @@ kill_process_on_port() {
         echo "Processes running on port $port:"
         echo "$process_ids"
         echo -en "Killing processes... "
-        kill -9 $process_ids
+        kill -15 "$process_ids"
+        sleep 2
+        kill -9 "$process_ids" 2>/dev/null
         echo "Done"
     fi
 }
