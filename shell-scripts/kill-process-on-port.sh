@@ -1,6 +1,8 @@
 kill_process_on_port() {
     if [[ $# -ne 1 ]]; then
-        echo "Usage: kill_process_on_port <port_number>"
+        echo "Usage:"
+        echo "    kill-port <PORT_NUM>"
+        echo "    kill_process_on_port <PORT_NUM>"
         return 1
     fi
 
