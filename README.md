@@ -25,6 +25,7 @@ Once a project gets too big they will be moved to their own repository.
 │   └── tools
 │       ├── data-tools *
 │       ├── etl-tools *
+│       ├── map-route-visualizer
 │       ├── py-utils
 │       ├── string-cleaner
 │       └── svg-to-jpg-converter
