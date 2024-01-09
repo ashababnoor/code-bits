@@ -26,10 +26,10 @@ Once a project gets too big they will be moved to their own repository.
 │       ├── data-tools *
 │       ├── emailer
 │       ├── etl-tools *
+│       ├── img-tools
 │       ├── map-route-visualizer
 │       ├── py-utils
-│       ├── string-cleaner
-│       └── svg-to-jpg-converter
+│       └── string-cleaner
 ├── shell-scripts
 └── simulations
 ```
