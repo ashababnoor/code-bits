@@ -24,6 +24,7 @@ Once a project gets too big they will be moved to their own repository.
 │   │   └── math-quiz
 │   └── tools
 │       ├── data-tools *
+│       ├── emailer
 │       ├── etl-tools *
 │       ├── map-route-visualizer
 │       ├── py-utils
