@@ -101,6 +101,21 @@ def to_human_readable_time_(seconds: int, max_depth: int=2, use_short_names=True
     pass
 
 
+def _print_config(config: dict):
+    from utilities.color import Color
+    
+    print(f"\n{Color.bold}CONFIGURATION:{Color.reset}")
+    
+    for key in config:
+        if key.isupper() and not key.endswith("PASSWORD"):
+            value = config[key]
+            string = f"{Color.blue}{key}:{Color.reset} {Color.light_sea_green}{value}{Color.reset}"
+            
+            print(f"  {string}")
+                
+    print()
+    
+
 def print_config(config: dict):
     """
     Prints the configuration dictionary, excluding keys that are not uppercase or end with 'PASSWORD'.
