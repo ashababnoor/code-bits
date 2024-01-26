@@ -122,7 +122,7 @@ def pretty_print(func):
     
     def wrapper(*args, **kwargs):
         # Redirect stdout to a StringIO object
-        old_stdout = sys.stdout
+        sys_stdout = sys.stdout
         sys.stdout = buffer = io.StringIO()
 
         # Call the function
@@ -130,13 +130,18 @@ def pretty_print(func):
 
         # Get the stdout output and restore the original stdout
         result = buffer.getvalue()
-        sys.stdout = old_stdout
+        sys.stdout = sys_stdout
 
         # Process the output as before
-        result = result.split('. ')
+        result = result.split('\n')[:-1]
         result = [f'║ {line}' for line in result]
+        max_line_length = max(len(line) for line in result)
+        
+        for i, line in enumerate(result):
+            result[i] = line + ' ' * (max_line_length - len(line)) + ' ║'
+        
         result = '\n'.join(result)
-        result = f'╔{"═" * 78}╗\n{result}\n╚{"═" * 78}╝'
+        result = f'╔{"═" * max_line_length}╗\n{result}\n╚{"═" * max_line_length}╝'
         print(result)
     return wrapper 
 
@@ -170,3 +175,19 @@ def print_config(config: dict):
             print(border)
     
     print()
+    
+    
+
+if __name__ == "__main__":
+    @pretty_print
+    def test():
+        print("Hello World. This is a test. 1")
+        print("Hello World. This is a test. 2")
+        print("Hello World. This is a test. 3")
+        print("Hello World. This is a test. 4")
+        print("Hello World. This is a test. 5")
+        print("Hello World. This is a test. 6")
+        print("Hello World. This is a test. 7")
+        print("Hello World. This is a test. 8")
+    
+    test()
