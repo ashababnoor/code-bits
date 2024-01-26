@@ -114,7 +114,32 @@ def _print_config(config: dict):
             print(f"  {string}")
                 
     print()
+
+
+def pretty_print(func):
+    import io
+    import sys
     
+    def wrapper(*args, **kwargs):
+        # Redirect stdout to a StringIO object
+        old_stdout = sys.stdout
+        sys.stdout = buffer = io.StringIO()
+
+        # Call the function
+        func(*args, **kwargs)
+
+        # Get the stdout output and restore the original stdout
+        result = buffer.getvalue()
+        sys.stdout = old_stdout
+
+        # Process the output as before
+        result = result.split('. ')
+        result = [f'║ {line}' for line in result]
+        result = '\n'.join(result)
+        result = f'╔{"═" * 78}╗\n{result}\n╚{"═" * 78}╝'
+        print(result)
+    return wrapper 
+
 
 def print_config(config: dict):
     """
