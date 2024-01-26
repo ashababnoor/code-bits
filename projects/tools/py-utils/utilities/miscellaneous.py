@@ -116,33 +116,40 @@ def _print_config(config: dict):
     print()
 
 
-def pretty_print(func):
+def pretty_print(padding: int = 1):
     import io
     import sys
     
-    def wrapper(*args, **kwargs):
-        # Redirect stdout to a StringIO object
-        sys_stdout = sys.stdout
-        sys.stdout = buffer = io.StringIO()
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Redirect stdout to a StringIO object
+            sys_stdout = sys.stdout
+            sys.stdout = buffer = io.StringIO()
 
-        # Call the function
-        func(*args, **kwargs)
+            # Call the function
+            func(*args, **kwargs)
 
-        # Get the stdout output and restore the original stdout
-        lines = buffer.getvalue()
-        sys.stdout = sys_stdout
+            # Get the stdout output and restore the original stdout
+            lines = buffer.getvalue()
+            sys.stdout = sys_stdout
 
-        # Process the output as before
-        lines = lines.split('\n')[:-1]
-        max_line_length = max(len(line) for line in lines)
+            # Process the output as before
+            lines = lines.split('\n')[:-1]
+            max_line_length = max(len(line) for line in lines)
+            
+            padding_str = ' ' * padding
+            for i, line in enumerate(lines):
+                lines[i] = "║" + padding_str + line + ' ' * (max_line_length - len(line)) + padding_str + '║'
+            
+            lines = '\n'.join(lines)
+            
+            full_width = max_line_length + padding * 2
+            lines = f'╔{"═" * full_width}╗\n{lines}\n╚{"═" * full_width}╝'
+            
+            print(lines)
         
-        for i, line in enumerate(lines):
-            lines[i] = "║ " + line + ' ' * (max_line_length - len(line)) + ' ║'
-        
-        lines = '\n'.join(lines)
-        lines = f'╔{"═" * (max_line_length + 2)}╗\n{lines}\n╚{"═" * (max_line_length + 2)}╝'
-        print(lines)
-    return wrapper
+        return wrapper
+    return decorator
 
 
 def print_config(config: dict):
@@ -175,10 +182,9 @@ def print_config(config: dict):
     
     print()
     
-    
 
 if __name__ == "__main__":
-    @pretty_print
+    @pretty_print(padding=4)
     def test():
         print("Hello World. This is a test. 1")
         print("Hello World. This is a test. 2")
