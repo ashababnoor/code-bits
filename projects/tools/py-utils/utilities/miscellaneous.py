@@ -137,9 +137,13 @@ def pretty_print(padding: int = 1):
             lines = lines.split('\n')[:-1]
             max_line_length = max(len(line) for line in lines)
             
-            padding_str = ' ' * padding
+            hr_padding_str = ' ' * padding            
+            vr_padding_str = [' ' * max_line_length for _ in range(padding)]
+            
+            lines = vr_padding_str + lines + vr_padding_str
+            
             for i, line in enumerate(lines):
-                lines[i] = "║" + padding_str + line + ' ' * (max_line_length - len(line)) + padding_str + '║'
+                lines[i] = "║" + hr_padding_str + line + ' ' * (max_line_length - len(line)) + hr_padding_str + '║'
             
             lines = '\n'.join(lines)
             
