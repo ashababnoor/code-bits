@@ -137,8 +137,8 @@ def pretty_print(padding: int = 1):
             lines = lines.split('\n')[:-1]
             max_line_length = max(len(line) for line in lines)
             
-            hr_padding_str = ' ' * padding            
-            vr_padding_str = [' ' * max_line_length for _ in range(padding)]
+            hr_padding_str = ' ' * padding
+            vr_padding_str = [' ' * max_line_length for _ in range(int(padding/2))]
             
             lines = vr_padding_str + lines + vr_padding_str
             
@@ -188,7 +188,7 @@ def print_config(config: dict):
     
 
 if __name__ == "__main__":
-    @pretty_print(padding=4)
+    @pretty_print(padding=3)
     def test():
         print("Hello World. This is a test. 1")
         print("Hello World. This is a test. 2")
