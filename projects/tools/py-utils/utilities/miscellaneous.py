@@ -112,7 +112,7 @@ def _print_config(config: dict):
             string = f"{Color.blue}{key}:{Color.reset} {Color.light_sea_green}{value}{Color.reset}"
             
             print(f"  {string}")
-                
+
     print()
 
 
@@ -129,21 +129,20 @@ def pretty_print(func):
         func(*args, **kwargs)
 
         # Get the stdout output and restore the original stdout
-        result = buffer.getvalue()
+        lines = buffer.getvalue()
         sys.stdout = sys_stdout
 
         # Process the output as before
-        result = result.split('\n')[:-1]
-        result = [f'║ {line}' for line in result]
-        max_line_length = max(len(line) for line in result)
+        lines = lines.split('\n')[:-1]
+        max_line_length = max(len(line) for line in lines)
         
-        for i, line in enumerate(result):
-            result[i] = line + ' ' * (max_line_length - len(line)) + ' ║'
+        for i, line in enumerate(lines):
+            lines[i] = "║ " + line + ' ' * (max_line_length - len(line)) + ' ║'
         
-        result = '\n'.join(result)
-        result = f'╔{"═" * max_line_length}╗\n{result}\n╚{"═" * max_line_length}╝'
-        print(result)
-    return wrapper 
+        lines = '\n'.join(lines)
+        lines = f'╔{"═" * (max_line_length + 2)}╗\n{lines}\n╚{"═" * (max_line_length + 2)}╝'
+        print(lines)
+    return wrapper
 
 
 def print_config(config: dict):
