@@ -83,12 +83,13 @@ def to_human_readable_time(seconds: int, max_depth: int=2, use_short_names=True)
         human_readable_time = ", ".join(units)
     
     if use_short_names:
-        for name, short_name in short_names.items(): human_readable_time = human_readable_time.replace(name, short_name)
+        for name, short_name in short_names.items(): 
+            human_readable_time = human_readable_time.replace(name, short_name)
     return human_readable_time
 
 
 def to_human_readable_time_(seconds: int, max_depth: int=2, use_short_names=True) -> str:
-    time_unit_to_seconds_mapping = dict(
+    _time_unit_to_seconds_mapping = dict(
         microsecond=0.000001,
         millisecond=0.001,
         second=1,
@@ -116,7 +117,7 @@ def _print_config(config: dict):
     print()
 
 
-def pretty_print(padding: int = 1):
+def pretty_print(padding: int = 1, separator: bool = False):
     import io
     import sys
     
@@ -142,15 +143,21 @@ def pretty_print(padding: int = 1):
             
             lines = vr_padding_str + lines + vr_padding_str
             
+            full_width = max_line_length + padding * 2
+            top_border    = '╔' + '═' * full_width + '╗'
+            middle_border = '╠' + '═' * full_width + '╣'
+            bottom_border = '╚' + '═' * full_width + '╝'
+            
             for i, line in enumerate(lines):
                 lines[i] = "║" + hr_padding_str + line + ' ' * (max_line_length - len(line)) + hr_padding_str + '║'
+                if separator and i != 0:
+                    lines[i] = lines[i] + '\n' + middle_border
             
             lines = '\n'.join(lines)
             
-            full_width = max_line_length + padding * 2
-            lines = f'╔{"═" * full_width}╗\n{lines}\n╚{"═" * full_width}╝'
+            decorated_lines = f'{top_border}\n{lines}\n{bottom_border}'
             
-            print(lines)
+            print(decorated_lines)
         
         return wrapper
     return decorator
@@ -188,7 +195,7 @@ def print_config(config: dict):
     
 
 if __name__ == "__main__":
-    @pretty_print(padding=3)
+    @pretty_print(padding=3, separator=True)
     def test():
         print("Hello World. This is a test. 1")
         print("Hello World. This is a test. 2")
