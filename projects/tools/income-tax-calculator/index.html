@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Interactive Tax Calculator</h1>
+    <div class="container">
+        <div class="form-group">
+            <label for="monthlySalary">Monthly Salary (BDT):</label>
+            <input type="number" id="monthlySalary" placeholder="Enter your monthly salary" value="50000">
+        </div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender">
+                <option value="man">Man</option>
+                <option value="woman">Woman</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="bonusCount">Bonus Count:</label>
+            <input type="number" id="bonusCount" placeholder="Enter number of bonuses" value="1">
+        </div>
+        <button onclick="updateChart()">Calculate Tax</button>
+
+        <canvas id="taxChart"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
