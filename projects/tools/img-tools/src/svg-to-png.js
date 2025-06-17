@@ -39,13 +39,29 @@ fs.readFile(inputSvgPath, 'utf8', (err, data) => {
 
 // ---- Helper Function to Inject Fill Color ----
 function injectFillColor(svgContent, fillColor) {
-  // Add fill to <svg> tag if not already present
-  let updated = svgContent.replace(
+  let updated = svgContent;
+
+  // Remove common background shapes with white or light fills
+  updated = updated.replace(
+    /<rect[^>]*fill="(#fff|#ffffff|white)"[^>]*\/?>/gi,
+    ''
+  );
+  updated = updated.replace(
+    /<circle[^>]*fill="(#fff|#ffffff|white)"[^>]*\/?>/gi,
+    ''
+  );
+  updated = updated.replace(
+    /<path[^>]*fill="(#fff|#ffffff|white)"[^>]*\/?>/gi,
+    '' // rare, but just in case
+  );
+
+  // Inject `fill` in <svg> tag if not already present
+  updated = updated.replace(
     /<svg([^>]*)(?<!fill="[^"]*")>/,
     `<svg$1 fill="${fillColor}">`
   );
 
-  // Replace all existing fill values
+  // Overwrite any other existing fill values (colorize shapes)
   updated = updated.replace(/fill="[^"]*"/g, `fill="${fillColor}"`);
 
   return updated;
