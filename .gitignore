@@ -123,3 +123,6 @@ GitHub.sublime-settings
 # Project Specific
 *foo*
 data/
+
+# Node
+node_modules/
