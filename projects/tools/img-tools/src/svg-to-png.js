@@ -1,3 +1,5 @@
+// SVG source: https://primer.style/octicons/ 
+
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
