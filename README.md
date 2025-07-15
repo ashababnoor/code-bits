@@ -7,29 +7,32 @@ Once a project gets too big they will be moved to their own repository.
 ```
 .
 ├── experiments
-│   ├── django
-│   │   ├── django-poll-app
-│   │   └── google-api-demo
-│   ├── postgres
-│   │   └── postgres-python-client
-│   ├── redis
-│   │   └── redis-python-client
-│   └── sass
-│       └── sass-portfolio
+│   ├── django
+│   │   ├── django-poll-app
+│   │   └── google-api-demo
+│   ├── postgres
+│   │   └── postgres-python-client
+│   ├── redis
+│   │   └── redis-python-client
+│   └── sass
+│       └── sass-portfolio
+├── extras
 ├── projects
-│   ├── apps
-│   │   └── binary-calculator
-│   ├── games
-│   │   ├── connect-four
-│   │   └── math-quiz
-│   └── tools
-│       ├── data-tools *
-│       ├── emailer
-│       ├── etl-tools *
-│       ├── img-tools
-│       ├── map-route-visualizer
-│       ├── py-utils
-│       └── string-cleaner
+│   ├── apps
+│   │   ├── binary-calculator
+│   │   └── income-tax-calculator
+│   ├── games
+│   │   ├── connect-four
+│   │   ├── math-quiz
+│   │   └── snake-game
+│   └── tools
+│       ├── data-tools
+│       ├── emailer
+│       ├── etl-tools
+│       ├── img-tools
+│       ├── map-route-visualizer
+│       ├── py-utils
+│       └── string-cleaner
 ├── shell-scripts
 └── simulations
 ```
