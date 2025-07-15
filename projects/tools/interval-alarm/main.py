@@ -73,6 +73,7 @@ def main():
     interval_seconds = args.interval * unit_multipliers[args.unit]
 
     print(f"✅ Starting interval alarm every {args.interval} {args.unit}.")
+    print(f"🕒 Starting timer from {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}.")
     if args.stop_after:
         print(f"⏳ Will stop after {args.stop_after} alarms.")
     print("🚪 Press Ctrl+C to stop early.\n")
@@ -83,6 +84,7 @@ def main():
         while True:
             now = time.time()
             sleep_duration = max(0, next_alarm_time - now)
+            print(f"⏳ Next alarm should be at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(next_alarm_time))}.")
             time.sleep(sleep_duration)
 
             count += 1
