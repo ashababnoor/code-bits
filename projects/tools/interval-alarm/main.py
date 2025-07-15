@@ -78,9 +78,13 @@ def main():
     print("🚪 Press Ctrl+C to stop early.\n")
 
     count = 0
+    next_alarm_time = time.time() + interval_seconds
     try:
         while True:
-            time.sleep(interval_seconds)
+            now = time.time()
+            sleep_duration = max(0, next_alarm_time - now)
+            time.sleep(sleep_duration)
+
             count += 1
             print(f"\n⏰ Alarm #{count} at {time.strftime('%H:%M:%S')}!")
             play_alarm(args.sound, args.say)
@@ -88,6 +92,8 @@ def main():
             if args.stop_after and count >= args.stop_after:
                 print(f"\n🎉 Completed {count} alarms. Goodbye!")
                 break
+
+            next_alarm_time += interval_seconds
 
     except KeyboardInterrupt:
         print("\n👋 Stopped early. Goodbye!")
