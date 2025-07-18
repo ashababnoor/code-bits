@@ -61,8 +61,17 @@ def main():
         default=None,
         help="Stop after this many alarms (default: runs forever)"
     )
+    parser.add_argument(
+        "--notification-only",
+        action="store_true",
+        help="Send notifications instead of playing audio (requires --say)"
+    )
 
     args = parser.parse_args()
+
+    if args.notification_only and not args.say:
+        print("Error: --notification-only requires --say to be specified.")
+        return
 
     # convert interval to seconds
     unit_multipliers = {
@@ -89,7 +98,17 @@ def main():
 
             count += 1
             print(f"\n⏰ Alarm #{count} at {time.strftime('%H:%M:%S')}!")
-            play_alarm(args.sound, args.say)
+
+            if args.notification_only:
+                # Send a notification instead of playing audio
+                if sys.platform == "darwin":
+                    subprocess.run(["osascript", "-e", f'display notification "{args.say}" with title "Alarm #{count}"'])
+                elif sys.platform.startswith("linux"):
+                    subprocess.run(["notify-send", f"Alarm #{count}", args.say])
+                else:
+                    print(f"[NOTIFICATION]: Alarm #{count} - {args.say}")
+            else:
+                play_alarm(args.sound, args.say)
 
             if args.stop_after and count >= args.stop_after:
                 print(f"\n🎉 Completed {count} alarms. Goodbye!")
