@@ -57,7 +57,7 @@ def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
                     else: # sign == -1
                         equation_parts.append(f"- {num}")
             
-            equation_str = "".join(equation_parts).strip()
+            equation_str = " ".join(equation_parts).strip()
             # Clean up the equation string: if it starts with a positive sign for the first number, remove it.
             # Example: "+1 + 2" becomes "1 + 2"
             if equation_str.startswith('+'):
