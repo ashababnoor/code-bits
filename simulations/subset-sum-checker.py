@@ -22,37 +22,42 @@ The goal is to find such a set S of at most M numbers, or decide that no such se
 '''
 
 
-def generate_all_signed_sums(nums):
+def generate_all_signed_sums_with_exprs(nums):
     """
-    Given a list of distinct positive integers, return all unique sums
-    that can be formed using any non-empty subset, with each element
-    either added or subtracted once.
+    Given a list of distinct positive integers, return a dictionary:
+    key = constructible number
+    value = one possible expression that evaluates to it
     """
-    results = set()
-    n = len(nums)
+    results = {}
 
+    n = len(nums)
     for r in range(1, n + 1):
         for subset in itertools.combinations(nums, r):
-            # Generate all sign combinations: + or -
             for signs in itertools.product([1, -1], repeat=r):
-                total = sum(x * sign for x, sign in zip(subset, signs))
-                if total != 0:
-                    results.add(total)
+                terms = [s * sign for s, sign in zip(subset, signs)]
+                total = sum(terms)
+                if total == 0:
+                    continue
+                expr = " ".join(
+                    f"{'+' if sign > 0 else '-'}{abs(num)}"
+                    for num, sign in zip(subset, signs)
+                ) + f" = {total}"
+                if total not in results:
+                    results[total] = expr
     return results
 
 def find_valid_set(N, M, max_candidate=30):
-    """
-    Try all combinations of up to M distinct positive integers from 1 to max_candidate,
-    and check if any set can cover all values from 1 to N using signed sums.
-    """
     candidates = range(1, max_candidate + 1)
 
     for k in range(1, M + 1):
         for combo in itertools.combinations(candidates, k):
-            reachable = generate_all_signed_sums(combo)
-            if all(x in reachable for x in range(1, N + 1)):
-                return combo  # Found a valid set
-    return None  # No valid set found
+            expr_map = generate_all_signed_sums_with_exprs(combo)
+            if all(x in expr_map for x in range(1, N + 1)):
+                print(f"\n✅ Found valid set: {combo}\n")
+                for i in range(1, N + 1):
+                    print(f"{i}: {expr_map[i]}")
+                return
+    print("❌ No valid set found that can construct all numbers from 1 to", N)
 
 
 def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
@@ -189,11 +194,6 @@ if __name__ == "__main__":
     N6 = 40
     print(f"\nResult: {can_construct_all_numbers(numbers6, N6)}")
 
-    N = 40
-    M = 4
+    N = 50
+    M = 5
     result = find_valid_set(N, M)
-
-    if result:
-        print(f"Found a valid set of size ≤ {M} for N = {N}: {result}")
-    else:
-        print(f"No valid set of size ≤ {M} found for N = {N}")
