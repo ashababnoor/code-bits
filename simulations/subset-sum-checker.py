@@ -66,9 +66,10 @@ def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
     approach from the given list of numbers, and prints the equations.
 
     Construction involves:
-    1. Taking prefixes of the input list (e.g., [a], then [a, b], then [a, b, c]).
-    2. For each prefix, considering all combinations of adding or subtracting
-       each number in that prefix.
+    1. Iterating through the numbers one by one.
+    2. For each number, generating new sums by adding/subtracting it from
+       all previously reachable sums. This effectively considers all subsets
+       of the numbers processed so far, with plus/minus signs.
     3. ONLY considering sums that are strictly POSITIVE.
     4. Checking if the resulting positive sums cover all integers from 1 to N.
 
@@ -81,66 +82,60 @@ def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
         True if all numbers from 1 to N are constructible, False otherwise.
     """
     
-    # Dictionary to store unique positive numbers and their corresponding equations.
-    # Key: positive number (int), Value: equation string (str)
-    reachable_numbers_with_equations = {}
+    # Dictionary to store all unique sums (positive and negative) and their corresponding equations.
+    # We start with 0, representing an empty sum.
+    # Key: sum (int), Value: equation string (str)
+    reachable_sums_with_equations = {0: "0"} # Use "0" as a placeholder for the empty sum's equation
 
-    # Iterate through all possible prefixes of the input 'numbers' list.
-    # A prefix of length 'i+1' includes numbers[0] up to numbers[i].
-    for i in numbers:
-        reachable_numbers_with_equations[i] = f"{i}"  # Initialize with the number itself
-    
-    for i in range(len(numbers)):
-        # Get the current prefix of the list.
-        current_prefix = numbers[:i+1]
+    # Iterate through each number in the input list
+    for num in numbers:
+        # Create a temporary dictionary to store the new sums generated in this iteration.
+        # We copy the current reachable sums to avoid modifying the dictionary while iterating over it.
+        next_reachable_sums_with_equations = reachable_sums_with_equations.copy()
+
+        # For each sum currently reachable, and its corresponding equation
+        for current_sum, current_equation in reachable_sums_with_equations.items():
+            # Operation: Add the current number
+            new_sum_plus = current_sum + num
+            # Build the equation string for addition
+            if current_equation == "0":
+                new_equation_plus = f"{num}"
+            else:
+                new_equation_plus = f"{current_equation} + {num}"
+            
+            # Add the new sum and its equation if it's not already in the next set of reachable sums.
+            # This ensures we keep the first equation found for a given sum.
+            if new_sum_plus not in next_reachable_sums_with_equations:
+                next_reachable_sums_with_equations[new_sum_plus] = new_equation_plus
+
+            # Operation: Subtract the current number
+            new_sum_minus = current_sum - num
+            # Build the equation string for subtraction
+            if current_equation == "0":
+                new_equation_minus = f"-{num}"
+            else:
+                new_equation_minus = f"{current_equation} - {num}"
+            
+            # Add the new sum and its equation if it's not already in the next set of reachable sums.
+            if new_sum_minus not in next_reachable_sums_with_equations:
+                next_reachable_sums_with_equations[new_sum_minus] = new_equation_minus
         
-        # Define the possible signs for each number: -1 (subtract) or +1 (add).
-        signs_options = [-1, 1]
-        
-        # Generate all possible combinations of signs for the numbers in the current prefix.
-        # For a prefix of length k, there will be 2^k sign combinations.
-        for sign_combination in itertools.product(signs_options, repeat=len(current_prefix)):
-            current_sum = 0
-            equation_parts = []
-            
-            # Calculate the sum and build the equation string for the current sign combination.
-            for j in range(len(current_prefix)):
-                num = current_prefix[j]
-                sign = sign_combination[j]
-                current_sum += num * sign
-                
-                # Build the equation string.
-                # For the first number, just add it (with its sign if negative, or positive if positive)
-                if j == 0:
-                    equation_parts.append(f"{num * sign}")
-                else:
-                    # For subsequent numbers, add "+ " or "- "
-                    if sign == 1:
-                        equation_parts.append(f"+ {num}")
-                    else: # sign == -1
-                        equation_parts.append(f"- {num}")
-            
-            equation_str = " ".join(equation_parts).strip()
-            # Clean up the equation string: if it starts with a positive sign for the first number, remove it.
-            # Example: "+1 + 2" becomes "1 + 2"
-            if equation_str.startswith('+'):
-                equation_str = equation_str[1:].strip()
-            
-            # --- IMPORTANT CHANGE HERE ---
-            # Only consider the sum if it's strictly positive.
-            if current_sum > 0:
-                # Add the positive sum and its equation to the dictionary if not already present.
-                # We only store the first equation found for a given positive number.
-                if current_sum not in reachable_numbers_with_equations:
-                    reachable_numbers_with_equations[current_sum] = equation_str
+        # Update the main dictionary of reachable sums for the next iteration
+        reachable_sums_with_equations = next_reachable_sums_with_equations
+
+    # Now, filter the results to only include strictly positive sums
+    final_positive_reachable_numbers_with_equations = {}
+    for s, eq in reachable_sums_with_equations.items():
+        if s > 0:
+            final_positive_reachable_numbers_with_equations[s] = eq
 
     print(f"\n--- Checking constructibility for N={N} with numbers {numbers} ---")
     all_constructible = True
     # After generating all possible reachable numbers, check if all integers
     # from 1 to N are present in the dictionary.
     for num in range(1, N + 1):
-        if num in reachable_numbers_with_equations:
-            print(f"  {num} can be constructed: {reachable_numbers_with_equations[num]} = {num}")
+        if num in final_positive_reachable_numbers_with_equations:
+            print(f"  {num} can be constructed: {final_positive_reachable_numbers_with_equations[num]} = {num}")
         else:
             print(f"  {num} CANNOT be constructed.")
             all_constructible = False
@@ -194,6 +189,6 @@ if __name__ == "__main__":
     N6 = 40
     print(f"\nResult: {can_construct_all_numbers(numbers6, N6)}")
 
-    N = 50
-    M = 5
-    result = find_valid_set(N, M)
+    N = 40
+    M = 4
+    find_valid_set(N, M)
