@@ -27,6 +27,9 @@ def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
 
     # Iterate through all possible prefixes of the input 'numbers' list.
     # A prefix of length 'i+1' includes numbers[0] up to numbers[i].
+    for i in numbers:
+        reachable_numbers_with_equations[i] = f"{i}"  # Initialize with the number itself
+    
     for i in range(len(numbers)):
         # Get the current prefix of the list.
         current_prefix = numbers[:i+1]
@@ -83,6 +86,7 @@ def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
             all_constructible = False
             
     return all_constructible
+
 
 # --- Example Usage ---
 if __name__ == "__main__":
