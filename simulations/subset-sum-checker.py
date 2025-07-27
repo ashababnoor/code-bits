@@ -97,19 +97,19 @@ if __name__ == "__main__":
     # 4: 1+2+3-2 = 4
     # 5: 1+2+3-1 = 5
     # 6: 1+2+3 = 6
-    numbers1 = [1, 2, 3]
-    N1 = 6
-    print(f"Result: {can_construct_all_numbers(numbers1, N1)}") # Expected: True
+    # numbers1 = [1, 2, 3]
+    # N1 = 6
+    # print(f"Result: {can_construct_all_numbers(numbers1, N1)}") # Expected: True
 
     # Example 2: Should return False (2 cannot be made, 1+3=4, 1-3=-2 (ignored), 3-1=2, 3)
     # This will now be True because 3-1 = 2
-    numbers2 = [1, 3]
-    N2 = 3
-    print(f"\nResult: {can_construct_all_numbers(numbers2, N2)}") # Expected: True (1, 3, 3-1=2)
+    # numbers2 = [1, 3]
+    # N2 = 3
+    # print(f"\nResult: {can_construct_all_numbers(numbers2, N2)}") # Expected: True (1, 3, 3-1=2)
 
     # Example 3: Larger numbers, N = 10
-    numbers3 = [5, 2, 8]
-    N3 = 10
+    # numbers3 = [5, 2, 8]
+    # N3 = 10
     # Possible positive numbers:
     # Prefix [5]: 5
     # Prefix [5, 2]: 5+2=7, 5-2=3
@@ -118,14 +118,18 @@ if __name__ == "__main__":
     # -5+2+8=5, -5+2-8=-11 (ignored), -5-2+8=1, -5-2-8=-15 (ignored)
     # All reachable positive: {1, 3, 5, 7, 11, 15}
     # Missing: 2, 4, 6, 8, 9, 10
-    print(f"\nResult: {can_construct_all_numbers(numbers3, N3)}") # Expected: False
+    # print(f"\nResult: {can_construct_all_numbers(numbers3, N3)}") # Expected: False
 
     # Example 4: Empty list
-    numbers4 = []
-    N4 = 5
-    print(f"\nResult: {can_construct_all_numbers(numbers4, N4)}") # Expected: False (cannot construct 1)
+    # numbers4 = []
+    # N4 = 5
+    # print(f"\nResult: {can_construct_all_numbers(numbers4, N4)}") # Expected: False (cannot construct 1)
 
     # Example 5: N = 0
-    numbers5 = [1, 2, 3]
-    N5 = 0
-    print(f"\nResult: {can_construct_all_numbers(numbers5, N5)}") # Expected: True (no numbers from 1 to 0 to check)
+    # numbers5 = [1, 2, 3]
+    # N5 = 0
+    # print(f"\nResult: {can_construct_all_numbers(numbers5, N5)}") # Expected: True (no numbers from 1 to 0 to check)
+
+    numbers6 = [2, 5, 16, 17]
+    N6 = 40
+    print(f"\nResult: {can_construct_all_numbers(numbers6, N6)}")
