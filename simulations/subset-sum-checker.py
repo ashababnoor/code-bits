@@ -1,5 +1,60 @@
 import itertools
 
+'''
+You are given two integers:
+ - N: the largest number you need to construct (you must be able to construct all numbers from 1 to N).
+ - M: the maximum number of distinct positive integers you are allowed to choose.
+
+Your task is to choose a set S of at most M distinct positive integers.
+For example, S = {s₁, s₂, …, sₖ} where k ≤ M.
+
+Using the numbers in S, you need to construct every integer from 1 to N by performing the following:
+ - Pick any subset of S (you can choose one, two, or all of them — or even none if allowed).
+ - Assign to each number you picked a sign: either positive (+) or negative (−).
+ - Each number from S can appear at most once in a construction. You cannot use the same number multiple times in a single construction.
+ - Then sum up the selected signed numbers to get a result.
+
+You must make sure that for every number x from 1 to N, there exists a choice of subset of S and signs such that the sum equals x.
+
+In other words, the set of all sums you can generate by adding or subtracting the numbers from S (each used at most once in a construction, and any subset of S) must include all numbers from 1 to N.
+
+The goal is to find such a set S of at most M numbers, or decide that no such set exists.
+'''
+
+
+def generate_all_signed_sums(nums):
+    """
+    Given a list of distinct positive integers, return all unique sums
+    that can be formed using any non-empty subset, with each element
+    either added or subtracted once.
+    """
+    results = set()
+    n = len(nums)
+
+    for r in range(1, n + 1):
+        for subset in itertools.combinations(nums, r):
+            # Generate all sign combinations: + or -
+            for signs in itertools.product([1, -1], repeat=r):
+                total = sum(x * sign for x, sign in zip(subset, signs))
+                if total != 0:
+                    results.add(total)
+    return results
+
+def find_valid_set(N, M, max_candidate=30):
+    """
+    Try all combinations of up to M distinct positive integers from 1 to max_candidate,
+    and check if any set can cover all values from 1 to N using signed sums.
+    """
+    candidates = range(1, max_candidate + 1)
+
+    for k in range(1, M + 1):
+        for combo in itertools.combinations(candidates, k):
+            reachable = generate_all_signed_sums(combo)
+            if all(x in reachable for x in range(1, N + 1)):
+                return combo  # Found a valid set
+    return None  # No valid set found
+
+
 def can_construct_all_numbers(numbers: list[int], N: int) -> bool:
     """
     Checks if all integers from 1 to N can be constructed using a brute-force
@@ -130,6 +185,15 @@ if __name__ == "__main__":
     # N5 = 0
     # print(f"\nResult: {can_construct_all_numbers(numbers5, N5)}") # Expected: True (no numbers from 1 to 0 to check)
 
-    numbers6 = [2, 5, 16, 17]
+    numbers6 = [1, 3, 9, 27]
     N6 = 40
     print(f"\nResult: {can_construct_all_numbers(numbers6, N6)}")
+
+    N = 40
+    M = 4
+    result = find_valid_set(N, M)
+
+    if result:
+        print(f"Found a valid set of size ≤ {M} for N = {N}: {result}")
+    else:
+        print(f"No valid set of size ≤ {M} found for N = {N}")
