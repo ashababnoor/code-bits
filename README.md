@@ -30,6 +30,7 @@ Once a project gets too big they will be moved to their own repository.
 │       ├── emailer
 │       ├── etl-tools
 │       ├── img-tools
+│       ├── interval-alarm
 │       ├── map-route-visualizer
 │       ├── py-utils
 │       └── string-cleaner
