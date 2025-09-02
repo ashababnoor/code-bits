@@ -1,119 +1,168 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"io"
+	"log"
 	"net/http"
-	"os"
-	"regexp"
 	"strconv"
+	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
 )
 
-// Day holds the date and contribution count
-type Day struct {
-	Date  string
+type Contribution struct {
+	Date  time.Time
 	Count int
+	Level int // 0-4 based on count
 }
 
-func getContributions(username string) ([]Day, error) {
+func main() {
+	username := flag.String("user", "", "GitHub username")
+	flag.Parse()
+
+	if *username == "" {
+		log.Fatal("Please provide a GitHub username with -user flag")
+	}
+
+	contributions, err := fetchContributions(*username)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	displayGraph(contributions, *username)
+}
+
+func fetchContributions(username string) ([]Contribution, error) {
 	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "go-github-cli")
-	resp, err := http.DefaultClient.Do(req)
+
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to fetch contributions: %s", resp.Status)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	content := string(bodyBytes)
 
-	// Regex to match "N contributions on Month Day, Year" or "No contributions on ..."
-	re := regexp.MustCompile(`(\d+|No contributions) contributions on ([A-Za-z]+ \d{1,2}(?:st|nd|rd|th)?(?:, \d{4})?)`)
-	matches := re.FindAllStringSubmatch(content, -1)
+	var contributions []Contribution
 
-	var days []Day
-	for _, m := range matches {
-		var cnt int
-		if m[1] == "No contributions" {
-			cnt = 0
-		} else {
-			cnt, _ = strconv.Atoi(m[1])
+	// Find the contribution calendar
+	doc.Find(".ContributionCalendar-day").Each(func(i int, s *goquery.Selection) {
+		data, _ := s.Attr("data-date")
+		levelStr, _ := s.Attr("data-level")
+
+		if data == "" {
+			return
 		}
-		days = append(days, Day{Date: m[2], Count: cnt})
-	}
-	return days, nil
-}
 
-func mapLevel(count int) int {
-	switch {
-	case count == 0:
-		return 0
-	case count < 5:
-		return 1
-	case count < 20:
-		return 2
-	case count < 50:
-		return 3
-	default:
-		return 4
-	}
-}
-
-func colorBlock(level int) string {
-	switch level {
-	case 0:
-		return "\033[48;5;232m  \033[0m"
-	case 1:
-		return "\033[48;5;120m  \033[0m"
-	case 2:
-		return "\033[48;5;34m  \033[0m"
-	case 3:
-		return "\033[48;5;22m  \033[0m"
-	case 4:
-		return "\033[48;5;28m  \033[0m"
-	default:
-		return "\033[48;5;232m  \033[0m"
-	}
-}
-
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: contrib <github-username>")
-		os.Exit(1)
-	}
-	username := os.Args[1]
-
-	days, err := getContributions(username)
-	if err != nil {
-		fmt.Println("Error fetching contributions:", err)
-		os.Exit(1)
-	}
-
-	// We only have a flat list of days. To simulate the grid, we chunk by weeks:
-	const daysPerWeek = 7
-	var weeks [][]Day
-	for i := 0; i < len(days); i += daysPerWeek {
-		end := i + daysPerWeek
-		if end > len(days) {
-			end = len(days)
+		date, err := time.Parse("2006-01-02", data)
+		if err != nil {
+			return
 		}
-		weeks = append(weeks, days[i:end])
+
+		level, _ := strconv.Atoi(levelStr)
+
+		// For count, since data-count is empty, use level as approximate count
+		count := level
+
+		contributions = append(contributions, Contribution{
+			Date:  date,
+			Count: count,
+			Level: level,
+		})
+	})
+
+	return contributions, nil
+}
+
+func displayGraph(contributions []Contribution, username string) {
+	if len(contributions) == 0 {
+		fmt.Println("No contributions found.")
+		return
 	}
 
-	// Render 7 rows (each row = a day-of-week)
-	for row := 0; row < daysPerWeek; row++ {
-		for _, week := range weeks {
-			if row < len(week) {
-				level := mapLevel(week[row].Count)
-				fmt.Print(colorBlock(level))
-			} else {
-				fmt.Print("  ")
+	// Display the graph
+	// For simplicity, display last 52 weeks
+	current := time.Now().UTC()
+	start := current.AddDate(0, 0, -52*7)
+
+	// Get weekday names
+	weekdays := []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
+
+	// Print header
+	fmt.Printf("GitHub Contributions for %s\n", username)
+	fmt.Println()
+
+	// Print weekdays
+	for _, wd := range weekdays {
+		fmt.Printf("%s ", wd)
+	}
+	fmt.Println()
+
+	// Find the starting weekday
+	startWeekday := int(start.Weekday())
+	if startWeekday == 0 {
+		startWeekday = 7 // Sunday is 0, but we want 7
+	}
+	startWeekday-- // Adjust for Monday start
+
+	// Print the graph
+	day := time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, time.UTC)
+	currentMidnight := time.Date(current.Year(), current.Month(), current.Day(), 0, 0, 0, 0, time.UTC)
+	for day.Before(currentMidnight) {
+		weekday := int(day.Weekday())
+		if weekday == 0 {
+			weekday = 7
+		}
+		weekday--
+
+		if weekday == 0 {
+			// New week
+			fmt.Println()
+		}
+
+		// Find contribution for this day
+		found := false
+		for _, c := range contributions {
+			if c.Date.Equal(day) {
+				printContribution(c)
+				found = true
+				break
 			}
 		}
-		fmt.Println()
+		if !found {
+			printContribution(Contribution{Count: 0, Level: 0})
+		}
+
+		day = day.AddDate(0, 0, 1)
 	}
+	fmt.Println()
+}
+
+func printContribution(c Contribution) {
+	var col *color.Color
+	switch c.Level {
+	case 0:
+		col = color.New(color.FgWhite)
+	case 1:
+		col = color.New(color.FgGreen)
+	case 2:
+		col = color.New(color.FgGreen).Add(color.Bold)
+	case 3:
+		col = color.New(color.FgYellow).Add(color.Bold)
+	case 4:
+		col = color.New(color.FgRed).Add(color.Bold)
+	default:
+		col = color.New(color.FgWhite)
+	}
+
+	col.Print("■ ")
 }
