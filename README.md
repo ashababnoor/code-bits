@@ -48,7 +48,7 @@ Once a project gets too big they will be moved to their own repository.
 :-------------|:--------------------------------------------------------------------
  `data-tools` | [ashababnoor/data-tools](https://github.com/ashababnoor/data-tools) 
  `etl-tools`  | [ashababnoor/data-tools](https://github.com/ashababnoor/etl-tools)  
-
+ `shell-scripts` | [ashababnoor/shell-scripts](https://github.com/ashababnoor/shell-scripts)
 
 ### Extra
 Generated directory tree using the following command
