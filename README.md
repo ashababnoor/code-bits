@@ -29,6 +29,7 @@ Once a project gets too big they will be moved to their own repository.
 │       ├── data-tools
 │       ├── emailer
 │       ├── etl-tools
+│       ├── gh-contrib
 │       ├── img-tools
 │       ├── interval-alarm
 │       ├── map-route-visualizer
