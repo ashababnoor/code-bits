@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
+	"time"
 
 	"golang.org/x/net/html"
 )
@@ -56,6 +58,23 @@ func getContributions(username string) (map[string]int, error) {
 	return results, nil
 }
 
+func colorBlock(level int) string {
+	switch level {
+	case 0:
+		return "\033[48;5;232m  \033[0m" // gray/black
+	case 1:
+		return "\033[48;5;120m  \033[0m" // light green
+	case 2:
+		return "\033[48;5;34m  \033[0m" // medium green
+	case 3:
+		return "\033[48;5;22m  \033[0m" // dark green
+	case 4:
+		return "\033[48;5;28m  \033[0m" // very dark green
+	default:
+		return "\033[48;5;232m  \033[0m"
+	}
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: contrib <github-username>")
@@ -69,8 +88,50 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Print some sample entries
-	for date, lvl := range contribs {
-		fmt.Printf("%s => level %d\n", date, lvl)
+	// Extract and sort dates
+	dates := make([]time.Time, 0, len(contribs))
+	for d := range contribs {
+		t, err := time.Parse("2006-01-02", d)
+		if err == nil {
+			dates = append(dates, t)
+		}
+	}
+	sort.Slice(dates, func(i, j int) bool { return dates[i].Before(dates[j]) })
+
+	// Build grid: rows = weekdays (Sun=0 ... Sat=6), cols = weeks
+	start := dates[0]
+	// align start to previous Sunday
+	offset := int(start.Weekday())
+	start = start.AddDate(0, 0, -offset)
+
+	end := dates[len(dates)-1]
+	// align end to next Saturday
+	offset = 6 - int(end.Weekday())
+	end = end.AddDate(0, 0, offset)
+
+	weeks := int(end.Sub(start).Hours()/24/7) + 1
+	grid := make([][]int, 7)
+	for i := range grid {
+		grid[i] = make([]int, weeks)
+	}
+
+	// Fill grid
+	for i := 0; i < weeks*7; i++ {
+		d := start.AddDate(0, 0, i)
+		week := i / 7
+		day := int(d.Weekday())
+		if lvl, ok := contribs[d.Format("2006-01-02")]; ok {
+			grid[day][week] = lvl
+		} else {
+			grid[day][week] = 0
+		}
+	}
+
+	// Print rows (Sun=top row, Sat=bottom)
+	for row := 0; row < 7; row++ {
+		for col := 0; col < weeks; col++ {
+			fmt.Print(colorBlock(grid[row][col]))
+		}
+		fmt.Println()
 	}
 }
