@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"golang.org/x/net/html"
@@ -69,23 +70,7 @@ func colorBlock(level int) string {
 	}
 }
 
-func getContributions(username string) (map[string]int, error) {
-	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", userAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	doc, err := html.Parse(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
+func parseContributionLevels(doc *html.Node) map[string]int {
 	results := make(map[string]int)
 
 	var traverse func(*html.Node)
@@ -113,7 +98,68 @@ func getContributions(username string) (map[string]int, error) {
 	}
 	traverse(doc)
 
-	return results, nil
+	return results
+}
+
+func getTotalContributions(doc *html.Node) int {
+	total := 0
+	seen := make(map[string]bool)
+
+	var traverse func(*html.Node)
+	traverse = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "tool-tip" {
+			if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
+				text := strings.TrimSpace(n.FirstChild.Data)
+				if strings.HasPrefix(text, "No contributions") {
+					// skip, count = 0
+				} else if strings.Contains(text, "contribution") {
+					var count int
+					var monthStr string
+					var day int
+					if _, err := fmt.Sscanf(text, "%d contributions on %s %d", &count, &monthStr, &day); err == nil {
+						// Rebuild date string with current year
+						dateStr := fmt.Sprintf("%s %d, %d", monthStr, day, time.Now().Year())
+						if t, err := time.Parse("January 2, 2006", dateStr); err == nil {
+							date := t.Format("2006-01-02")
+							if !seen[date] {
+								total += count
+								seen[date] = true
+							}
+						}
+					}
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			traverse(c)
+		}
+	}
+	traverse(doc)
+
+	return total
+}
+
+func getContributionData(username string) (map[string]int, int, error) {
+	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", userAgent)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer resp.Body.Close()
+
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	contributionLevels := parseContributionLevels(doc)
+	totalContribution := getTotalContributions(doc)
+
+	return contributionLevels, totalContribution, nil
 }
 
 func getWeekMonthMapping(start time.Time, weeks int) map[Week]string {
@@ -221,20 +267,20 @@ func main() {
 
 	fmt.Printf("GitHub Contributions for @%s\n\n", username)
 
-	contribs, err := getContributions(username)
+	contribLevels, contribCount, err := getContributionData(username)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
-	if len(contribs) == 0 {
+	if len(contribLevels) == 0 {
 		fmt.Println("No contributions found or user doesn't exist")
 		os.Exit(0)
 	}
 
 	// Extract and sort dates
-	dates := make([]time.Time, 0, len(contribs))
-	for d := range contribs {
+	dates := make([]time.Time, 0, len(contribLevels))
+	for d := range contribLevels {
 		t, err := time.Parse("2006-01-02", d)
 		if err == nil {
 			dates = append(dates, t)
@@ -264,7 +310,7 @@ func main() {
 		d := start.AddDate(0, 0, i)
 		week := i / 7
 		day := int(d.Weekday())
-		if lvl, ok := contribs[d.Format("2006-01-02")]; ok {
+		if lvl, ok := contribLevels[d.Format("2006-01-02")]; ok {
 			grid[day][week] = lvl
 		} else {
 			grid[day][week] = 0
@@ -295,28 +341,14 @@ func main() {
 	fmt.Printf("Less %s%s%s%s More\n", colorLevel1, colorLevel2, colorLevel3, colorLevel4)
 
 	// Show date range
-	fmt.Printf("Date range: %s to %s\n",
+	fmt.Printf("\nDate range: %s to %s\n",
 		dates[0].Format("Jan 2, 2006"),
 		dates[len(dates)-1].Format("Jan 2, 2006"))
 
 	// Calculate and display total contributions
-	total := 0
-	for _, level := range contribs {
-		// Convert level to approximate contribution count
-		switch level {
-		case 1:
-			total += 1
-		case 2:
-			total += 4
-		case 3:
-			total += 8
-		case 4:
-			total += 12
-		}
-	}
-	fmt.Printf("\nTotal contributions: %d\n", total)
+	fmt.Printf("Total contributions: %d\n", contribCount)
 
 	// Show current streak
-	currentStreak := computeCurrentStreak(contribs)
+	currentStreak := computeCurrentStreak(contribLevels)
 	fmt.Printf("Current streak: %d days\n", currentStreak)
 }
