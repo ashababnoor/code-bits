@@ -105,36 +105,59 @@ func getTotalContributions(doc *html.Node) int {
 	total := 0
 	seen := make(map[string]bool)
 
-	var traverse func(*html.Node)
-	traverse = func(n *html.Node) {
-		if n.Type == html.ElementNode && n.Data == "tool-tip" {
-			if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
-				text := strings.TrimSpace(n.FirstChild.Data)
-				if strings.HasPrefix(text, "No contributions") {
-					// skip, count = 0
-				} else if strings.Contains(text, "contribution") {
-					var count int
-					var monthStr string
-					var day int
-					if _, err := fmt.Sscanf(text, "%d contributions on %s %d", &count, &monthStr, &day); err == nil {
-						// Rebuild date string with current year
-						dateStr := fmt.Sprintf("%s %d, %d", monthStr, day, time.Now().Year())
-						if t, err := time.Parse("January 2, 2006", dateStr); err == nil {
-							date := t.Format("2006-01-02")
-							if !seen[date] {
-								total += count
-								seen[date] = true
-							}
-						}
-					}
+	// parseTooltipText extracts a date (YYYY-MM-DD) and count from the tooltip text.
+	parseTooltipText := func(text string) (string, int, bool) {
+		text = strings.TrimSpace(text)
+		if strings.HasPrefix(text, "No contributions") {
+			return "", 0, false
+		}
+		if !strings.Contains(text, "contribution") {
+			return "", 0, false
+		}
+
+		var count int
+		var monthStr string
+		var day int
+		if _, err := fmt.Sscanf(text, "%d contributions on %s %d", &count, &monthStr, &day); err == nil {
+			dateStr := fmt.Sprintf("%s %d, %d", monthStr, day, time.Now().Year())
+			if t, err := time.Parse("January 2, 2006", dateStr); err == nil {
+				return t.Format("2006-01-02"), count, true
+			}
+		}
+		return "", 0, false
+	}
+
+	// getNodeText returns the concatenated text of the node's immediate text children.
+	getNodeText := func(n *html.Node) string {
+		var sb strings.Builder
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			if c.Type == html.TextNode {
+				sb.WriteString(c.Data)
+			}
+		}
+		return sb.String()
+	}
+
+	// iterative traversal using a queue to avoid deep recursion nesting
+	queue := []*html.Node{doc}
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+
+		if node.Type == html.ElementNode && node.Data == "tool-tip" {
+			text := getNodeText(node)
+			if date, count, ok := parseTooltipText(text); ok {
+				if !seen[date] {
+					total += count
+					seen[date] = true
 				}
 			}
 		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			traverse(c)
+
+		for c := node.FirstChild; c != nil; c = c.NextSibling {
+			queue = append(queue, c)
 		}
 	}
-	traverse(doc)
 
 	return total
 }
