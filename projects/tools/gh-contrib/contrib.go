@@ -15,6 +15,34 @@ const (
 	userAgent string = "GitHubContributionsCLI/1.0"
 )
 
+type Week struct {
+	start time.Time
+	end   time.Time
+}
+
+func (w Week) String() string {
+	return fmt.Sprintf("%s - %s", w.start.Format("2006-01-02"), w.end.Format("2006-01-02"))
+}
+
+func (w Week) GetMonth() Month {
+	middleOfWeek := w.start.AddDate(0, 0, 3)
+	return Month{
+		year:  middleOfWeek.Year(),
+		month: middleOfWeek.Month(),
+		label: middleOfWeek.Format("Jan"),
+	}
+}
+
+type Month struct {
+	year  int
+	month time.Month
+	label string
+}
+
+func (m Month) String() string {
+	return fmt.Sprintf("%d-%02d (%s)", m.year, int(m.month), m.label)
+}
+
 // ANSI color blocks with better contrast
 var (
 	colorEmpty  = "\033[48;5;235m  \033[0m" // dark gray (more like GitHub)
@@ -88,32 +116,65 @@ func getContributions(username string) (map[string]int, error) {
 	return results, nil
 }
 
-func getMonthLabels(start time.Time, weeks int) []string {
-	labels := make([]string, weeks)
-	currentMonth := start.Month()
+func getMonthLabels(start time.Time, weeks int) map[Week]string {
+	labels := make(map[Week]string)
 
 	for week := 0; week < weeks; week++ {
-		currentDate := start.AddDate(0, 0, week*7)
-		if currentDate.Month() != currentMonth {
-			currentMonth = currentDate.Month()
-			labels[week] = currentDate.Format("Jan")
-		} else {
-			labels[week] = ""
-		}
+		startOfWeek := start.AddDate(0, 0, week*7)
+		middleOfWeek := startOfWeek.AddDate(0, 0, 3)
+		endOfWeek := startOfWeek.AddDate(0, 0, 6)
+
+		labels[Week{start: startOfWeek, end: endOfWeek}] = middleOfWeek.Format("Jan")
 	}
 	return labels
 }
 
-func printMonthLabels(labels []string) {
-	fmt.Print("     ") // Space for weekday labels
-	for _, label := range labels {
-		if label != "" {
-			fmt.Printf("%-3s", label)
-		} else {
-			fmt.Print("   ")
+func printMonthLabels(labels map[Week]string) {
+	fmt.Print("    ") // Space for weekday labels
+
+	var months []Month
+	for week, label := range labels {
+		middleOfWeek := week.start.AddDate(0, 0, 3)
+		months = append(months, Month{
+			year:  middleOfWeek.Year(),
+			month: middleOfWeek.Month(),
+			label: label,
+		})
+	}
+
+	labelSizes := make(map[Month]int64)
+	for _, month := range months {
+		if size, found := labelSizes[month]; !found {
+			labelSizes[month] = size
+		}
+		labelSizes[month] += 2
+	}
+
+	weeks := make([]Week, 0, len(labels))
+	for week := range labels {
+		weeks = append(weeks, week)
+	}
+
+	sort.Slice(weeks, func(i, j int) bool { return weeks[i].start.Before(weeks[j].start) })
+
+	labelString := ""
+	lastLabel := "abc" // Initialize with a value that won't match any month label
+	for i := 0; i < len(weeks); i++ {
+		week := weeks[i]
+		month := week.GetMonth()
+		label := month.label
+		labelSize := labelSizes[month]
+
+		if len(label) > int(labelSize) {
+			label = ""
+		}
+		if label != lastLabel {
+			labelString += fmt.Sprintf("%-*s", labelSize, label)
+			lastLabel = label
 		}
 	}
-	fmt.Println()
+
+	fmt.Println(labelString)
 }
 
 func printWeekdayLabels() {
