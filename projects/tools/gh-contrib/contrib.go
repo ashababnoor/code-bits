@@ -11,14 +11,13 @@ import (
 	"golang.org/x/net/html"
 )
 
-// ANSI color blocks
+// ANSI color blocks with better contrast
 var (
-	colorEmpty  = "\033[48;5;232m  \033[0m" // gray/black
-	colorLevel1 = "\033[48;5;28m  \033[0m"  // very dark green
-	colorLevel2 = "\033[48;5;22m  \033[0m"  // dark green
-	colorLevel3 = "\033[48;5;34m  \033[0m"  // medium green
-	colorLevel4 = "\033[48;5;120m  \033[0m" // light green
-	colorNoCell = "\033[0m \033[0m"
+	colorEmpty  = "\033[48;5;235m  \033[0m" // dark gray (more like GitHub)
+	colorLevel1 = "\033[48;5;29m  \033[0m"  // dark green
+	colorLevel2 = "\033[48;5;36m  \033[0m"  // medium green
+	colorLevel3 = "\033[48;5;42m  \033[0m"  // bright green
+	colorLevel4 = "\033[48;5;47m  \033[0m"  // very bright green
 )
 
 func getContributions(username string) (map[string]int, error) {
@@ -81,8 +80,56 @@ func colorBlock(level int) string {
 	case 4:
 		return colorLevel4
 	default:
-		return colorNoCell
+		return colorEmpty
 	}
+}
+
+func getMonthLabels(start time.Time, weeks int) []string {
+	labels := make([]string, weeks)
+	currentMonth := start.Month()
+
+	for week := 0; week < weeks; week++ {
+		currentDate := start.AddDate(0, 0, week*7)
+		if currentDate.Month() != currentMonth {
+			currentMonth = currentDate.Month()
+			labels[week] = currentDate.Format("Jan")
+		} else {
+			labels[week] = ""
+		}
+	}
+	return labels
+}
+
+func printMonthLabels(labels []string) {
+	fmt.Print("     ") // Space for weekday labels
+	for _, label := range labels {
+		if label != "" {
+			fmt.Printf("%-3s", label)
+		} else {
+			fmt.Print("   ")
+		}
+	}
+	fmt.Println()
+}
+
+func printWeekdayLabels() {
+	weekdays := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
+	fmt.Print("     ") // Align with month labels
+	for i := 0; i < 53; i++ {
+		if i == 0 {
+			fmt.Print("   ")
+		}
+	}
+	fmt.Println()
+
+	for i, day := range weekdays {
+		if i == 0 {
+			fmt.Printf("%-4s", day)
+		} else {
+			fmt.Printf("    ")
+		}
+	}
+	fmt.Println()
 }
 
 func main() {
@@ -92,10 +139,17 @@ func main() {
 	}
 	username := os.Args[1]
 
+	fmt.Printf("GitHub Contributions for @%s\n\n", username)
+
 	contribs, err := getContributions(username)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
+	}
+
+	if len(contribs) == 0 {
+		fmt.Println("No contributions found or user doesn't exist")
+		os.Exit(0)
 	}
 
 	// Extract and sort dates
@@ -137,11 +191,69 @@ func main() {
 		}
 	}
 
-	// Print rows (Sun=top row, Sat=bottom)
+	// Generate month labels
+	monthLabels := getMonthLabels(start, weeks)
+
+	// Print month labels
+	printMonthLabels(monthLabels)
+
+	// Print the grid with better spacing
 	for row := 0; row < 7; row++ {
+		// Print weekday label on first column
+		if row == 0 {
+			fmt.Print("Sun ")
+		} else {
+			fmt.Print("    ")
+		}
+
 		for col := 0; col < weeks; col++ {
 			fmt.Print(colorBlock(grid[row][col]))
 		}
 		fmt.Println()
+	}
+
+	// Print legend
+	fmt.Println("\nLegend:")
+	fmt.Printf("%s Less\n", colorLevel1)
+	fmt.Printf("%s\n", colorLevel2)
+	fmt.Printf("%s\n", colorLevel3)
+	fmt.Printf("%s More\n", colorLevel4)
+
+	// Calculate and display total contributions
+	total := 0
+	for _, level := range contribs {
+		// Convert level to approximate contribution count
+		switch level {
+		case 1:
+			total += 1
+		case 2:
+			total += 4
+		case 3:
+			total += 8
+		case 4:
+			total += 12
+		}
+	}
+	fmt.Printf("\nTotal contributions: %d\n", total)
+
+	// Show date range
+	fmt.Printf("Date range: %s to %s\n",
+		dates[0].Format("Jan 2, 2006"),
+		dates[len(dates)-1].Format("Jan 2, 2006"))
+
+	// Show current streak (simplified)
+	currentStreak := 0
+	today := time.Now().Format("2006-01-02")
+	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+
+	if contribs[today] > 0 {
+		currentStreak++
+	}
+	if contribs[yesterday] > 0 {
+		currentStreak++
+	}
+
+	if currentStreak > 0 {
+		fmt.Printf("Current streak: %d days\n", currentStreak)
 	}
 }
