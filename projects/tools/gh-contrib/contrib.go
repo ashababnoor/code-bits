@@ -11,6 +11,16 @@ import (
 	"golang.org/x/net/html"
 )
 
+// ANSI color blocks
+var (
+	colorEmpty  = "\033[48;5;232m  \033[0m" // gray/black
+	colorLevel1 = "\033[48;5;28m  \033[0m"  // very dark green
+	colorLevel2 = "\033[48;5;22m  \033[0m"  // dark green
+	colorLevel3 = "\033[48;5;34m  \033[0m"  // medium green
+	colorLevel4 = "\033[48;5;120m  \033[0m" // light green
+	colorNoCell = "\033[0m \033[0m"
+)
+
 func getContributions(username string) (map[string]int, error) {
 	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
 
@@ -61,17 +71,17 @@ func getContributions(username string) (map[string]int, error) {
 func colorBlock(level int) string {
 	switch level {
 	case 0:
-		return "\033[48;5;232m  \033[0m" // gray/black
+		return colorEmpty
 	case 1:
-		return "\033[48;5;120m  \033[0m" // light green
+		return colorLevel1
 	case 2:
-		return "\033[48;5;34m  \033[0m" // medium green
+		return colorLevel2
 	case 3:
-		return "\033[48;5;22m  \033[0m" // dark green
+		return colorLevel3
 	case 4:
-		return "\033[48;5;28m  \033[0m" // very dark green
+		return colorLevel4
 	default:
-		return "\033[48;5;232m  \033[0m"
+		return colorNoCell
 	}
 }
 
