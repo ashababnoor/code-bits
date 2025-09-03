@@ -177,26 +177,6 @@ func printMonthLabels(labels map[Week]string) {
 	fmt.Println(labelString)
 }
 
-func printWeekdayLabels() {
-	weekdays := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
-	fmt.Print("     ") // Align with month labels
-	for i := 0; i < 53; i++ {
-		if i == 0 {
-			fmt.Print("   ")
-		}
-	}
-	fmt.Println()
-
-	for i, day := range weekdays {
-		if i == 0 {
-			fmt.Printf("%-4s", day)
-		} else {
-			fmt.Printf("    ")
-		}
-	}
-	fmt.Println()
-}
-
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: ghcontrib <github-username>")
@@ -262,14 +242,12 @@ func main() {
 	// Print month labels
 	printMonthLabels(monthLabels)
 
+	weekdays := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
+
 	// Print the grid with better spacing
 	for row := 0; row < 7; row++ {
 		// Print weekday label on first column
-		if row == 0 {
-			fmt.Print("Sun ")
-		} else {
-			fmt.Print("    ")
-		}
+		fmt.Printf("%-4s", weekdays[row])
 
 		for col := 0; col < weeks; col++ {
 			fmt.Print(colorBlock(grid[row][col]))
