@@ -116,7 +116,7 @@ func getContributions(username string) (map[string]int, error) {
 	return results, nil
 }
 
-func getMonthLabels(start time.Time, weeks int) map[Week]string {
+func getWeekMonthMapping(start time.Time, weeks int) map[Week]string {
 	labels := make(map[Week]string)
 
 	for week := 0; week < weeks; week++ {
@@ -175,6 +175,41 @@ func printMonthLabels(labels map[Week]string) {
 	}
 
 	fmt.Println(labelString)
+}
+
+func computeCurrentStreak(contribs map[string]int) int {
+	const layout = "2006-01-02"
+
+	// Find the latest date present in the map.
+	var max time.Time
+	first := true
+	for ds := range contribs {
+		t, err := time.Parse(layout, ds)
+		if err != nil {
+			continue
+		}
+		if first || t.After(max) {
+			max = t
+			first = false
+		}
+	}
+	if first { // map was empty or all parse failures
+		return 0
+	}
+
+	// Count consecutive days with level > 0, ending at the latest date.
+	streak := 0
+	for d := max; ; d = d.AddDate(0, 0, -1) {
+		val, ok := contribs[d.Format(layout)]
+		if !ok {
+			break // outside the dataset window
+		}
+		if val <= 0 {
+			break // streak broken
+		}
+		streak++
+	}
+	return streak
 }
 
 func main() {
@@ -236,11 +271,11 @@ func main() {
 		}
 	}
 
-	// Generate month labels
-	monthLabels := getMonthLabels(start, weeks)
+	// Generate week month mapping
+	weekMonthMapping := getWeekMonthMapping(start, weeks)
 
 	// Print month labels
-	printMonthLabels(monthLabels)
+	printMonthLabels(weekMonthMapping)
 
 	weekdays := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
 
@@ -259,6 +294,11 @@ func main() {
 	fmt.Println("\nLegend:")
 	fmt.Printf("Less %s%s%s%s More\n", colorLevel1, colorLevel2, colorLevel3, colorLevel4)
 
+	// Show date range
+	fmt.Printf("Date range: %s to %s\n",
+		dates[0].Format("Jan 2, 2006"),
+		dates[len(dates)-1].Format("Jan 2, 2006"))
+
 	// Calculate and display total contributions
 	total := 0
 	for _, level := range contribs {
@@ -276,24 +316,7 @@ func main() {
 	}
 	fmt.Printf("\nTotal contributions: %d\n", total)
 
-	// Show date range
-	fmt.Printf("Date range: %s to %s\n",
-		dates[0].Format("Jan 2, 2006"),
-		dates[len(dates)-1].Format("Jan 2, 2006"))
-
-	// Show current streak (simplified)
-	currentStreak := 0
-	today := time.Now().Format("2006-01-02")
-	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
-
-	if contribs[today] > 0 {
-		currentStreak++
-	}
-	if contribs[yesterday] > 0 {
-		currentStreak++
-	}
-
-	if currentStreak > 0 {
-		fmt.Printf("Current streak: %d days\n", currentStreak)
-	}
+	// Show current streak
+	currentStreak := computeCurrentStreak(contribs)
+	fmt.Printf("Current streak: %d days\n", currentStreak)
 }
