@@ -11,6 +11,10 @@ import (
 	"golang.org/x/net/html"
 )
 
+const (
+	userAgent string = "GitHubContributionsCLI/1.0"
+)
+
 // ANSI color blocks with better contrast
 var (
 	colorEmpty  = "\033[48;5;235m  \033[0m" // dark gray (more like GitHub)
@@ -20,11 +24,28 @@ var (
 	colorLevel4 = "\033[48;5;47m  \033[0m"  // very bright green
 )
 
+func colorBlock(level int) string {
+	switch level {
+	case 0:
+		return colorEmpty
+	case 1:
+		return colorLevel1
+	case 2:
+		return colorLevel2
+	case 3:
+		return colorLevel3
+	case 4:
+		return colorLevel4
+	default:
+		return colorEmpty
+	}
+}
+
 func getContributions(username string) (map[string]int, error) {
 	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
 
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "go-contrib-cli")
+	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -65,23 +86,6 @@ func getContributions(username string) (map[string]int, error) {
 	traverse(doc)
 
 	return results, nil
-}
-
-func colorBlock(level int) string {
-	switch level {
-	case 0:
-		return colorEmpty
-	case 1:
-		return colorLevel1
-	case 2:
-		return colorLevel2
-	case 3:
-		return colorLevel3
-	case 4:
-		return colorLevel4
-	default:
-		return colorEmpty
-	}
 }
 
 func getMonthLabels(start time.Time, weeks int) []string {
@@ -134,7 +138,7 @@ func printWeekdayLabels() {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: contrib <github-username>")
+		fmt.Println("Usage: ghcontrib <github-username>")
 		os.Exit(1)
 	}
 	username := os.Args[1]
@@ -214,10 +218,7 @@ func main() {
 
 	// Print legend
 	fmt.Println("\nLegend:")
-	fmt.Printf("%s Less\n", colorLevel1)
-	fmt.Printf("%s\n", colorLevel2)
-	fmt.Printf("%s\n", colorLevel3)
-	fmt.Printf("%s More\n", colorLevel4)
+	fmt.Printf("Less %s%s%s%s More\n", colorLevel1, colorLevel2, colorLevel3, colorLevel4)
 
 	// Calculate and display total contributions
 	total := 0
