@@ -388,7 +388,11 @@ func main() {
 
 	// Print legend
 	fmt.Println("\nLegend:")
-	fmt.Printf("Less %s%s%s%s More\n", colorLevel1, colorLevel2, colorLevel3, colorLevel4)
+	if showLabel {
+		fmt.Printf("Less %s%s%s%s More\n", colorLevel1WithLabel, colorLevel2WithLabel, colorLevel3WithLabel, colorLevel4WithLabel)
+	} else {
+		fmt.Printf("Less %s%s%s%s More\n", colorLevel1, colorLevel2, colorLevel3, colorLevel4)
+	}
 
 	// Show date range
 	fmt.Printf("\nDate range: %s to %s\n",
