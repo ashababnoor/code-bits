@@ -46,24 +46,46 @@ func (m Month) String() string {
 
 // ANSI color blocks with better contrast
 var (
-	colorEmpty  = "\033[48;5;235m;38;5;235m 0\033[0m" // dark gray (more like GitHub)
-	colorLevel1 = "\033[48;5;29m;38;5;29m 1\033[0m"   // dark green
-	colorLevel2 = "\033[48;5;36m;38;5;36m 2\033[0m"   // medium green
-	colorLevel3 = "\033[48;5;42m;38;5;42m 3\033[0m"   // bright green
-	colorLevel4 = "\033[48;5;47m;38;5;47m 4\033[0m"   // very bright green
+	colorEmpty  = "\033[48;5;235m  \033[0m" // dark gray (more like GitHub)
+	colorLevel1 = "\033[48;5;29m  \033[0m"  // dark green
+	colorLevel2 = "\033[48;5;36m  \033[0m"  // medium green
+	colorLevel3 = "\033[48;5;42m  \033[0m"  // bright green
+	colorLevel4 = "\033[48;5;47m  \033[0m"  // very bright green
+
+	colorEmptyWithLabel  = "\033[38;5;235m\033[48;5;235m 0\033[0m" // dark gray (more like GitHub)
+	colorLevel1WithLabel = "\033[38;5;29m\033[48;5;29m 1\033[0m"   // dark green
+	colorLevel2WithLabel = "\033[38;5;36m\033[48;5;36m 2\033[0m"   // medium green
+	colorLevel3WithLabel = "\033[38;5;42m\033[48;5;42m 3\033[0m"   // bright green
+	colorLevel4WithLabel = "\033[38;5;47m\033[48;5;47m 4\033[0m"   // very bright green
+
 )
 
-func colorBlock(level int) string {
+func colorBlock(level int, showLabel bool) string {
 	switch level {
 	case 0:
+		if showLabel {
+			return colorEmptyWithLabel
+		}
 		return colorEmpty
 	case 1:
+		if showLabel {
+			return colorLevel1WithLabel
+		}
 		return colorLevel1
 	case 2:
+		if showLabel {
+			return colorLevel2WithLabel
+		}
 		return colorLevel2
 	case 3:
+		if showLabel {
+			return colorLevel3WithLabel
+		}
 		return colorLevel3
 	case 4:
+		if showLabel {
+			return colorLevel4WithLabel
+		}
 		return colorLevel4
 	default:
 		return colorEmpty
@@ -287,6 +309,11 @@ func main() {
 		os.Exit(1)
 	}
 	username := os.Args[1]
+	showLabel := false
+
+	if len(os.Args) >= 3 && os.Args[2] == "--show-label" {
+		showLabel = true
+	}
 
 	fmt.Printf("GitHub Contributions for @%s\n\n", username)
 
@@ -354,7 +381,7 @@ func main() {
 		fmt.Printf("%-4s", weekdays[row])
 
 		for col := 0; col < weeks; col++ {
-			fmt.Print(colorBlock(grid[row][col]))
+			fmt.Print(colorBlock(grid[row][col], showLabel))
 		}
 		fmt.Println()
 	}
