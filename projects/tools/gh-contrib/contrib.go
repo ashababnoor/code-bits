@@ -46,11 +46,11 @@ func (m Month) String() string {
 
 // ANSI color blocks with better contrast
 var (
-	colorEmpty  = "\033[48;5;235m  \033[0m" // dark gray (more like GitHub)
-	colorLevel1 = "\033[48;5;29m  \033[0m"  // dark green
-	colorLevel2 = "\033[48;5;36m  \033[0m"  // medium green
-	colorLevel3 = "\033[48;5;42m  \033[0m"  // bright green
-	colorLevel4 = "\033[48;5;47m  \033[0m"  // very bright green
+	colorEmpty  = "\033[48;5;235m 0\033[0m" // dark gray (more like GitHub)
+	colorLevel1 = "\033[48;5;29m 1\033[0m"  // dark green
+	colorLevel2 = "\033[48;5;36m 2\033[0m"  // medium green
+	colorLevel3 = "\033[48;5;42m 3\033[0m"  // bright green
+	colorLevel4 = "\033[48;5;47m 4\033[0m"  // very bright green
 )
 
 func colorBlock(level int) string {
