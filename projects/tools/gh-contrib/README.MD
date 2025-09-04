@@ -1,27 +1,71 @@
 # GitHub Contribution Visualizer
 
-A CLI tool to visualize GitHub contributions using ANSI colors.
+A small CLI that fetches a user's GitHub contributions calendar and renders an ANSI-colored terminal heatmap, plus summary stats (total contributions, date range and current streak).
+
+## Features
+
+- Renders a 7×W grid (week columns × weekday rows) using ANSI color blocks to approximate GitHub's contribution graph.
+- Prints month labels, a legend, total contributions and current streak.
+- Uses a custom User-Agent to reduce the chance of simple bot blocking.
+
+## Requirements
+
+- Go 1.16+ installed and available on PATH
+- Network access to https://github.com
+
+## Build
+
+From this folder run:
+
+```bash
+go build -o ghcontrib contrib.go
+```
+
+Or run without building:
+
+```bash
+go run contrib.go <github-username>
+```
 
 ## Usage
 
 ```bash
-go build
-./ghcontrib -user <username>
+# after building
+./ghcontrib <github-username>
+
+# or directly
+go run contrib.go <github-username>
 ```
 
-Replace `<username>` with the GitHub username you want to visualize.
-
-## Example
+Example:
 
 ```bash
-./ghcontrib -user torvalds
+./ghcontrib ashababnoor
 ```
 
-This will display the contribution graph for Linus Torvalds in the terminal.
+Expected output includes:
 
-## Colors
+- Month labels across the top.
+- Week rows labeled Sun..Sat with colored blocks for each day.
+- A legend showing color intensity (less → more contributions).
+- Date range, total contributions count and the current streak in days.
 
-- White: No contributions
-- Green: Low contributions
-- Yellow: Medium contributions
-- Red: High contributions
+## Colors / Legend
+
+The program uses ANSI background color blocks for contrast. If your terminal supports 256 colors you will see four green intensity levels and a dark gray "empty" block. If colors don't display correctly, try a different terminal or ensure TERM supports 256 colors (for example: `export TERM=xterm-256color`).
+
+## Notes
+
+- The tool scrapes the contributions HTML for the given user path: `https://github.com/users/<username>/contributions`.
+- GitHub may rate-limit or change their HTML structure; if output appears empty or incorrect, inspect the page HTML and adjust parsing accordingly.
+- The program attempts to parse tooltip text to compute the total contributions; if GitHub changes tooltip wording this number may be inaccurate.
+
+## Troubleshooting
+
+- "No contributions found or user doesn't exist": the contributions grid was empty or the username/page is unavailable.
+- Network errors will be printed to stderr; check connectivity and try again.
+
+## License
+
+MIT
+
