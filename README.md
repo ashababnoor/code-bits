@@ -24,6 +24,7 @@ Once a project gets too big they will be moved to their own repository.
 │   ├── games
 │   │   ├── connect-four
 │   │   ├── math-quiz
+│   │   ├── pong
 │   │   └── snake-game
 │   └── tools
 │       ├── data-tools
@@ -37,12 +38,25 @@ Once a project gets too big they will be moved to their own repository.
 │       └── string-cleaner
 ├── shell-scripts
 └── simulations
+    ├── ball-replacement
+    ├── bd-income-tax
+    ├── epidemic
+    ├── game-of-life
+    ├── monty-hall-problem
+    ├── pi-estimation
+    ├── random-walk
+    └── subset-sum
 ```
 
-*Note:* Marked with `*` indicates moved to or being maintained in a different repository
+Generated directory tree using the following command
+```bash
+tree -L 3 -I venv -I node_modules -d
+```
 
 
 ### Moved Projects
+
+For projects that have been moved to a different/standalone repository, please refer to the following table
 
  Project         |  Repository                                                         
 :----------------|:--------------------------------------------------------------------
@@ -50,8 +64,3 @@ Once a project gets too big they will be moved to their own repository.
  `etl-tools`     | [ashababnoor/data-tools](https://github.com/ashababnoor/etl-tools)  
  `shell-scripts` | [ashababnoor/shell-scripts](https://github.com/ashababnoor/shell-scripts)
 
-### Extra
-Generated directory tree using the following command
-```bash
-tree -L 3 -I venv -d
-```
