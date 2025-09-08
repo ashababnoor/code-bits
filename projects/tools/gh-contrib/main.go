@@ -57,7 +57,6 @@ var (
 	colorLevel2WithLabel = "\033[38;5;36m\033[48;5;36m 2\033[0m"   // medium green
 	colorLevel3WithLabel = "\033[38;5;42m\033[48;5;42m 3\033[0m"   // bright green
 	colorLevel4WithLabel = "\033[38;5;47m\033[48;5;47m 4\033[0m"   // very bright green
-
 )
 
 func colorBlock(level int, showLabel bool) string {
@@ -123,9 +122,9 @@ func parseContributionLevels(doc *html.Node) map[string]int {
 	return results
 }
 
-func getTotalContributions(doc *html.Node) int {
-	total := 0
+func getDayWiseContributions(doc *html.Node) map[string]int {
 	seen := make(map[string]bool)
+	contributions := make(map[string]int)
 
 	// parseTooltipText extracts a date (YYYY-MM-DD) and count from the tooltip text.
 	parseTooltipText := func(text string) (string, int, bool) {
@@ -170,7 +169,7 @@ func getTotalContributions(doc *html.Node) int {
 			text := getNodeText(node)
 			if date, count, ok := parseTooltipText(text); ok {
 				if !seen[date] {
-					total += count
+					contributions[date] = count
 					seen[date] = true
 				}
 			}
@@ -181,10 +180,33 @@ func getTotalContributions(doc *html.Node) int {
 		}
 	}
 
+	return contributions
+}
+
+func getTotalContributions(contributions map[string]int) int {
+	total := 0
+	for _, count := range contributions {
+		total += count
+	}
 	return total
 }
 
-func getContributionData(username string) (map[string]int, int, error) {
+func getLastDateContributions(contributions map[string]int) (string, int, bool) {
+	var lastDate string
+	var lastCount int
+	for date, count := range contributions {
+		if date > lastDate {
+			lastDate = date
+			lastCount = count
+		}
+	}
+	if lastDate == "" {
+		return "", 0, false
+	}
+	return lastDate, lastCount, true
+}
+
+func getContributionData(username string) (map[string]int, map[string]int, int, error) {
 	url := fmt.Sprintf("https://github.com/users/%s/contributions", username)
 
 	req, _ := http.NewRequest("GET", url, nil)
@@ -192,19 +214,21 @@ func getContributionData(username string) (map[string]int, int, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, 0, err
+		return nil, nil, 0, err
 	}
 	defer resp.Body.Close()
 
 	doc, err := html.Parse(resp.Body)
 	if err != nil {
-		return nil, 0, err
+		return nil, nil, 0, err
 	}
 
 	contributionLevels := parseContributionLevels(doc)
-	totalContribution := getTotalContributions(doc)
 
-	return contributionLevels, totalContribution, nil
+	contributions := getDayWiseContributions(doc)
+	totalContribution := getTotalContributions(contributions)
+
+	return contributionLevels, contributions, totalContribution, nil
 }
 
 func getWeekMonthMapping(start time.Time, weeks int) map[Week]string {
@@ -317,7 +341,7 @@ func main() {
 
 	fmt.Printf("GitHub Contributions for @%s\n\n", username)
 
-	contribLevels, contribCount, err := getContributionData(username)
+	contribLevels, contributions, contribCount, err := getContributionData(username)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
@@ -405,4 +429,8 @@ func main() {
 	// Show current streak
 	currentStreak := computeCurrentStreak(contribLevels)
 	fmt.Printf("Current streak: %d days\n", currentStreak)
+
+	if _, lastCount, ok := getLastDateContributions(contributions); ok {
+		fmt.Printf("Last date contributions: %d\n", lastCount)
+	}
 }
